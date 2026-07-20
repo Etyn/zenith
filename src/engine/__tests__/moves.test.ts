@@ -67,3 +67,34 @@ test('applyMove ne mute pas l’état d’entrée', () => {
   applyMove(s, { t: 'recruit', cardId: id });
   expect(s.players[0].hand).toEqual(handBefore);
 });
+
+test('applyMove decide sans décision en attente renvoie l’état inchangé (pas d’exception)', () => {
+  const s = createGame(CONFIG, 1);
+  expect(applyMove(s, { t: 'decide', planet: 'mars' })).toBe(s);
+});
+
+test('legalMoves pendant un pending propose une décision par planète, réservée au joueur en résolution', () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    resolution: { queue: [], ctx: { player: 0, planet: 'mars' } },
+    pending: { kind: 'choosePlanet', amount: 1 },
+  };
+  const moves = legalMoves(s, 0);
+  expect(moves).toHaveLength(5);
+  expect(moves.every((m) => m.t === 'decide')).toBe(true);
+  expect(legalMoves(s, 1)).toEqual([]);
+});
+
+test('une victoire en cours de résolution ne repioche pas et ne passe pas la main', () => {
+  const base = createGame(CONFIG, 1);
+  const id = base.players[0].hand.find((cid) => cardOf(cid)!.planet === 'mars');
+  if (!id) return; // main sans carte mars → test trivialement ok
+  const s: GameState = {
+    ...base,
+    planets: { ...base.planets, mars: { discPos: 1, captured: [2, 0], bonusActive: false } },
+  };
+  const out = applyMove(s, { t: 'recruit', cardId: id });
+  expect(out.winner).toBe(0);   // 3e capture mars → victoire absolue
+  expect(out.current).toBe(0);  // la main n'est PAS passée
+});

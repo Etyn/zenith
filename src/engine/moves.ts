@@ -28,8 +28,11 @@ function endTurn(state: GameState): GameState {
 
 export function applyMove(state: GameState, move: Move): GameState {
   if (move.t === 'decide') {
+    if (state.pending === null) return state;
     const afterDecide = decideEffect(state, move.planet);
-    return afterDecide.pending === null && afterDecide.resolution === null ? endTurn(afterDecide) : afterDecide;
+    return afterDecide.pending === null && afterDecide.resolution === null && afterDecide.winner === null
+      ? endTurn(afterDecide)
+      : afterDecide;
   }
 
   // recruit
@@ -52,7 +55,9 @@ export function applyMove(state: GameState, move: Move): GameState {
     resolution: { queue: [...card.effects], ctx: { player, planet: card.planet } },
   };
   const resolved = resolve(started);
-  return resolved.pending === null && resolved.resolution === null ? endTurn(resolved) : resolved;
+  return resolved.pending === null && resolved.resolution === null && resolved.winner === null
+    ? endTurn(resolved)
+    : resolved;
 }
 
 export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
