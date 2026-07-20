@@ -39,7 +39,7 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       } else if (d.leader !== me) {
         next = { leader: me, side: 'silver' };
       } else {
-        next = { leader: me, side: d.side === 'silver' ? 'gold' : 'gold' };
+        next = { leader: me, side: 'gold' };
       }
       return { ...state, diplomacy: next };
     }

@@ -3,6 +3,7 @@ import { applyMove, legalMoves } from '../moves';
 import { cardOf } from '../effects';
 import type { GameState } from '../types';
 import { activeFace } from '../../data/tech';
+import { FIXTURE_CARDS } from '../../data/fixtures';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
 
@@ -162,14 +163,78 @@ test('leadership robot : défausse la carte, prend le badge (Argent) et gagne 1 
 
 test('la limite de repioche suit le badge Leader (4 / 5 / 6)', () => {
   const base = createGame(CONFIG, 1);
-  // joueur 0 possède le badge Or ; après un leadership (qui finit le tour), sa main est repiochée à 6.
-  // On teste directement endTurn via un recruit simple avec badge Or forcé.
-  const s: GameState = { ...base, diplomacy: { leader: 0, side: 'gold' } };
-  const id = s.players[0].hand.find((cid) => cardOf(cid)!.cost <= s.players[0].credits)!;
-  const out = applyMove(s, { t: 'recruit', cardId: id });
-  // fin de tour du joueur 0 (badge Or) → main repiochée à 6 (si deck suffisant)
-  expect(out.players[0].hand.length).toBe(Math.min(6, /* deck dispo */ out.players[0].hand.length));
-  // Vérification robuste : la limite calculée vaut 6.
-  // (Le deck fixture peut être insuffisant ; on vérifie au moins que la main ne dépasse pas 6 et ≥ 3 restantes.)
-  expect(out.players[0].hand.length).toBeLessThanOrEqual(6);
+  const allIds = FIXTURE_CARDS.map((c) => c.id);
+  // Main courte (2 cartes) et deck volontairement large (6 cartes, > need max = 5) pour que
+  // la repioche de fin de tour ne soit jamais bridée par la taille du deck : l'assertion porte
+  // alors uniquement sur handLimit(). Crédits élevés pour que le recruit soit toujours légal.
+  function stateWithBadge(diplomacy: GameState['diplomacy']): GameState {
+    return {
+      ...base,
+      current: 0,
+      diplomacy,
+      players: [
+        { ...base.players[0], hand: [allIds[0]!, allIds[1]!], credits: 999 },
+        base.players[1],
+      ],
+      deck: allIds.slice(2, 8),
+    };
+  }
+
+  // sans badge (ou badge détenu par l'adversaire) → limite 4
+  const noBadge = applyMove(stateWithBadge({ leader: null, side: 'silver' }), {
+    t: 'recruit',
+    cardId: allIds[0]!,
+  });
+  expect(noBadge.current).toBe(1); // fin de tour bien effectuée
+  expect(noBadge.players[0].hand.length).toBe(4);
+
+  // badge Argent détenu par le joueur 0 → limite 5
+  const silver = applyMove(stateWithBadge({ leader: 0, side: 'silver' }), {
+    t: 'recruit',
+    cardId: allIds[0]!,
+  });
+  expect(silver.players[0].hand.length).toBe(5);
+
+  // badge Or détenu par le joueur 0 → limite 6
+  const gold = applyMove(stateWithBadge({ leader: 0, side: 'gold' }), {
+    t: 'recruit',
+    cardId: allIds[0]!,
+  });
+  expect(gold.players[0].hand.length).toBe(6);
+});
+
+test('leadership humain : défausse la carte, prend le badge (Argent) et gagne 3 crédits', () => {
+  const base = createGame(CONFIG, 1);
+  const humainId = 'FIX_mercure_1';
+  expect(cardOf(humainId)!.people).toBe('humain'); // garde-fou si les fixtures changent
+  const creditsBefore = base.players[0].credits;
+  const s: GameState = {
+    ...base,
+    current: 0,
+    players: [{ ...base.players[0], hand: [humainId] }, base.players[1]],
+  };
+  const out = applyMove(s, { t: 'leadership', cardId: humainId });
+  expect(out.discard).toContain(humainId);
+  expect(out.diplomacy).toEqual({ leader: 0, side: 'silver' });
+  expect(out.players[0].credits).toBe(creditsBefore + 3);
+});
+
+test('leadership animod : défausse la carte, prend le badge (Argent) et mobilise 2 cartes du deck', () => {
+  const base = createGame(CONFIG, 1);
+  const animodId = 'FIX_mercure_0';
+  expect(cardOf(animodId)!.people).toBe('animod'); // garde-fou si les fixtures changent
+  // Deck connu et court pour observer précisément l'effet de mobilize (2 cartes retirées du deck
+  // et posées dans les colonnes du joueur, sans gain d'influence : thenInfluence=false pour animod).
+  const s: GameState = {
+    ...base,
+    current: 0,
+    players: [{ ...base.players[0], hand: [animodId] }, base.players[1]],
+    deck: ['FIX_venus_0', 'FIX_terra_1'],
+  };
+  const out = applyMove(s, { t: 'leadership', cardId: animodId });
+  expect(out.discard).toContain(animodId);
+  expect(out.diplomacy).toEqual({ leader: 0, side: 'silver' });
+  expect(out.deck).toHaveLength(0); // les 2 cartes du deck ont été mobilisées
+  expect(out.players[0].columns.venus).toContain('FIX_venus_0');
+  expect(out.players[0].columns.terra).toContain('FIX_terra_1');
 });
