@@ -27,6 +27,14 @@ test('ne mute pas l\'état d\'entrée', () => {
   expect(s.planets.mars.discPos).toBe(CENTER);
 });
 
+test('une capture ne mute pas le tableau captured de l\'état d\'entrée', () => {
+  const s = createGame(CONFIG, 1);
+  const before = s.planets.mars.captured.slice();
+  gainInfluence(s, 'mars', 0, 4); // amount=4 → déclenche une capture
+  expect(s.planets.mars.captured).toEqual(before); // l'état d'entrée n'est pas muté
+  expect(s.planets.mars.discPos).toBe(CENTER);      // ni le disque
+});
+
 test('victoire absolue : 3 disques d\'une même planète', () => {
   let s = createGame(CONFIG, 1);
   for (let i = 0; i < 3; i++) s = gainInfluence(s, 'mars', 0, 4);

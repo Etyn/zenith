@@ -18,7 +18,6 @@ export function gainInfluence(
 
   const reachedZone = player === 0 ? pos <= ZONE[0] : pos >= ZONE[1];
   if (reachedZone) {
-    captured = [captured[0], captured[1]];
     captured[player] += 1;
     pos = CENTER; // nouveau disque au centre (simplifié ; remise en fin de tour affinée plus tard)
     if (captured[0] + captured[1] === 1) bonusActive = false; // 1re capture de la planète
