@@ -67,6 +67,26 @@ test("influence 'choice' met une decision en attente, puis decide l'applique", (
   expect(done.planets.venus.discPos).toBe(CENTER - 2); // joueur 0, 2 crans
 });
 
+test('resolve arrête d’appliquer les effets restants après une victoire', () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    planets: { ...base.planets, mars: { discPos: 1, captured: [2, 0], bonusActive: false } },
+    resolution: {
+      queue: [
+        { k: 'influence', amount: 1, on: 'mars' },
+        { k: 'credits', amount: 5, target: 'self' },
+      ],
+      ctx: { player: 0, planet: 'mars' },
+    },
+  };
+  const creditsBefore = s.players[0].credits;
+  const out = resolve(s);
+  expect(out.winner).toBe(0);                          // 3e capture mars → victoire
+  expect(out.resolution).toBeNull();                   // résolution nettoyée
+  expect(out.players[0].credits).toBe(creditsBefore);  // l'effet credits résiduel N'EST PAS appliqué
+});
+
 test('mobilize place N cartes du deck dans les colonnes du joueur sans appliquer leurs effets', () => {
   const base = createGame(CONFIG, 1);
   const topTwo = base.deck.slice(0, 2);

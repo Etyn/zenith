@@ -55,7 +55,7 @@ function applyMobilize(state: GameState, count: number, thenInfluence: boolean, 
 
 export function resolve(state: GameState): GameState {
   let s = state;
-  while (s.resolution && s.resolution.queue.length > 0 && s.pending === null) {
+  while (s.resolution && s.resolution.queue.length > 0 && s.pending === null && s.winner === null) {
     const head = s.resolution.queue[0]!;
     const ctx = s.resolution.ctx;
     if (head.k === 'influence' && head.on === 'choice') {
@@ -65,7 +65,7 @@ export function resolve(state: GameState): GameState {
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
   }
-  if (s.resolution && s.resolution.queue.length === 0) s = { ...s, resolution: null };
+  if (s.resolution && (s.resolution.queue.length === 0 || s.winner !== null)) s = { ...s, resolution: null };
   return s;
 }
 
