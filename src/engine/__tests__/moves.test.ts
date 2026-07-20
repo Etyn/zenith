@@ -2,6 +2,7 @@ import { createGame } from '../setup';
 import { applyMove, legalMoves } from '../moves';
 import { cardOf } from '../effects';
 import type { GameState } from '../types';
+import { activeFace } from '../../data/tech';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
 
@@ -15,11 +16,15 @@ function firstAffordableFixedInfluenceCard(s: GameState): string {
   return s.players[s.current].hand[0]!;
 }
 
-test('legalMoves propose des recruit pour le joueur courant au départ', () => {
+test('legalMoves propose des recruit (et desormais des develop) pour le joueur courant au départ', () => {
   const s = createGame(CONFIG, 1);
   const moves = legalMoves(s, 0);
   expect(moves.length).toBeGreaterThan(0);
-  expect(moves.every((m) => m.t === 'recruit')).toBe(true);
+  // Depuis l'ajout de l'action develop (coût niveau 1 = 1 Zénithium = START_ZENITHIUM), les deux
+  // types de coup sont légaux dès le début de partie ; seul le type recruit était possible avant.
+  expect(moves.some((m) => m.t === 'recruit')).toBe(true);
+  expect(moves.some((m) => m.t === 'develop')).toBe(true);
+  expect(moves.every((m) => m.t === 'recruit' || m.t === 'develop')).toBe(true);
   expect(legalMoves(s, 1)).toEqual([]); // pas le tour du joueur 1
 });
 
@@ -97,4 +102,27 @@ test('une victoire en cours de résolution ne repioche pas et ne passe pas la ma
   const out = applyMove(s, { t: 'recruit', cardId: id });
   expect(out.winner).toBe(0);   // 3e capture mars → victoire absolue
   expect(out.current).toBe(0);  // la main n'est PAS passée
+});
+
+test('develop : défausse la carte, paie le coût du niveau, avance le marqueur', () => {
+  const base = createGame(CONFIG, 1);
+  const id = base.players[0].hand[0]!;
+  const people = cardOf(id)!.people;
+  const s: GameState = { ...base, players: [{ ...base.players[0], zenithium: 5 }, base.players[1]] };
+  const zBefore = s.players[0].zenithium;
+  const cost = activeFace(people, s.config.techSetup).levels[0]!.zenithium; // niveau 1
+  const out = applyMove(s, { t: 'develop', cardId: id, people });
+  expect(out.players[0].techMarkers[people]).toBe(1);
+  expect(out.players[0].zenithium).toBe(zBefore - cost);
+  expect(out.discard).toContain(id);
+  expect(out.players[0].hand).not.toContain(id);
+  expect(out.current).toBe(1); // fin de tour
+});
+
+test('develop illégal si zénithium insuffisant', () => {
+  const base = createGame(CONFIG, 1);
+  const id = base.players[0].hand[0]!;
+  const people = cardOf(id)!.people;
+  const s: GameState = { ...base, players: [{ ...base.players[0], zenithium: 0 }, base.players[1]] };
+  expect(applyMove(s, { t: 'develop', cardId: id, people })).toBe(s); // no-op
 });

@@ -1,10 +1,14 @@
 import { cardOf, resolve, decide as decideEffect } from './effects';
-import type { GameState, Planet, PlayerIndex, PlayerState } from './types';
+import { activeFace } from '../data/tech';
+import type { Effect, GameState, People, Planet, PlayerIndex, PlayerState } from './types';
 import { PLANETS } from './types';
 
 const HAND_LIMIT = 4; // limite de base ; le badge Leader (5/6) viendra dans un plan suivant
 
-export type Move = { t: 'recruit'; cardId: string } | { t: 'decide'; planet: Planet };
+export type Move =
+  | { t: 'recruit'; cardId: string }
+  | { t: 'develop'; cardId: string; people: People }
+  | { t: 'decide'; planet: Planet };
 
 function recruitCost(state: GameState, player: PlayerIndex, planet: Planet, baseCost: number): number {
   return Math.max(0, baseCost - state.players[player].columns[planet].length);
@@ -33,6 +37,39 @@ export function applyMove(state: GameState, move: Move): GameState {
     return afterDecide.pending === null && afterDecide.resolution === null && afterDecide.winner === null
       ? endTurn(afterDecide)
       : afterDecide;
+  }
+
+  if (move.t === 'develop') {
+    if (state.winner !== null || state.pending !== null || state.resolution !== null) return state;
+    const player = state.current;
+    if (!state.players[player].hand.includes(move.cardId)) return state;
+    const card = cardOf(move.cardId);
+    if (!card || card.people !== move.people) return state;
+    const current = state.players[player].techMarkers[move.people];
+    if (current >= 5) return state;
+    const face = activeFace(move.people, state.config.techSetup);
+    const newLevel = current + 1;
+    const cost = face.levels[newLevel - 1]!.zenithium;
+    if (cost > state.players[player].zenithium) return state;
+
+    const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+    const hand = players[player].hand.filter((id) => id !== move.cardId);
+    const techMarkers = { ...players[player].techMarkers, [move.people]: newLevel };
+    players[player] = { ...players[player], hand, techMarkers, zenithium: players[player].zenithium - cost };
+    // Effets cumulés : niveau atteint puis tous les inférieurs (haut → bas).
+    const queue: Effect[] = [];
+    for (let lvl = newLevel; lvl >= 1; lvl--) queue.push(...face.levels[lvl - 1]!.effects);
+
+    const started: GameState = {
+      ...state,
+      players,
+      discard: [...state.discard, move.cardId],
+      resolution: { queue, ctx: { player, planet: card.planet } },
+    };
+    const resolved = resolve(started);
+    return resolved.pending === null && resolved.resolution === null && resolved.winner === null
+      ? endTurn(resolved)
+      : resolved;
   }
 
   // recruit
@@ -68,10 +105,21 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
     return PLANETS.map((planet) => ({ t: 'decide', planet }));
   }
   if (state.resolution !== null || player !== state.current) return [];
-  return state.players[player].hand
+  const recruits: Move[] = state.players[player].hand
     .filter((id) => {
       const c = cardOf(id);
       return c !== undefined && recruitCost(state, player, c.planet, c.cost) <= state.players[player].credits;
     })
     .map((id) => ({ t: 'recruit', cardId: id }));
+  const develops: Move[] = state.players[player].hand
+    .filter((id) => {
+      const c = cardOf(id);
+      if (!c) return false;
+      const lvl = state.players[player].techMarkers[c.people];
+      if (lvl >= 5) return false;
+      const cost = activeFace(c.people, state.config.techSetup).levels[lvl]!.zenithium;
+      return cost <= state.players[player].zenithium;
+    })
+    .map((id) => ({ t: 'develop', cardId: id, people: cardOf(id)!.people }));
+  return [...recruits, ...develops];
 }
