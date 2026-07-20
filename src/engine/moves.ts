@@ -4,8 +4,6 @@ import { DIPLOMACY } from '../data/diplomacy';
 import type { Effect, GameState, People, Planet, PlayerIndex, PlayerState } from './types';
 import { PLANETS } from './types';
 
-const HAND_LIMIT = 4; // limite de base ; le badge Leader (5/6) viendra dans un plan suivant
-
 export type Move =
   | { t: 'recruit'; cardId: string }
   | { t: 'develop'; cardId: string; people: People }
@@ -16,13 +14,18 @@ function recruitCost(state: GameState, player: PlayerIndex, planet: Planet, base
   return Math.max(0, baseCost - state.players[player].columns[planet].length);
 }
 
+function handLimit(state: GameState, player: PlayerIndex): number {
+  if (state.diplomacy.leader !== player) return 4;
+  return state.diplomacy.side === 'gold' ? 6 : 5;
+}
+
 function finishOrPending(state: GameState): GameState {
   return state.pending === null && state.resolution === null && state.winner === null ? endTurn(state) : state;
 }
 
 function endTurn(state: GameState): GameState {
   const player = state.current;
-  const need = HAND_LIMIT - state.players[player].hand.length;
+  const need = handLimit(state, player) - state.players[player].hand.length;
   let deck = state.deck;
   let hand = state.players[player].hand;
   if (need > 0) {
