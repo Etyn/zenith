@@ -34,3 +34,6 @@ yarn-error.*
 # macOS
 .DS_Store
 *.pem
+
+# scratch orchestration (subagent-driven)
+.superpowers/
