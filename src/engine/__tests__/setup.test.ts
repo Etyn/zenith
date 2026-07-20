@@ -41,3 +41,9 @@ test('aucune carte perdue : main0 + main1 + deck = tout le paquet', () => {
   const total = s.players[0].hand.length + s.players[1].hand.length + s.deck.length;
   expect(total).toBe(10); // FIXTURE_CARDS
 });
+
+test('une nouvelle partie n’a ni résolution ni décision en attente', () => {
+  const s = createGame(CONFIG, 1);
+  expect(s.resolution).toBeNull();
+  expect(s.pending).toBeNull();
+});

@@ -54,6 +54,8 @@ export function createGame(config: GameConfig, seed: number, deck: CardDef[] = F
     discard: [],
     planets,
     diplomacy: { leader: null, side: 'silver' },
+    resolution: null,
+    pending: null,
     winner: null,
   };
 }

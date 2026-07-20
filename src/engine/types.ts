@@ -23,6 +23,19 @@ export type PlayerState = {
 export type TechSetup = { animod: 'S' | 'D'; humain: 'O' | 'U'; robot: 'N' | 'P' };
 export type GameConfig = { techSetup: TechSetup; firstPlayer: PlayerIndex };
 
+export type Side = 'self' | 'opponent';
+export type PlanetSelector = Planet | 'choice';
+
+export type Effect =
+  | { k: 'influence'; amount: number; on: PlanetSelector }
+  | { k: 'credits'; amount: number; target: Side }
+  | { k: 'zenithium'; amount: number; target: Side }
+  | { k: 'mobilize'; count: number; thenInfluence: boolean };
+
+export type EffectCtx = { player: PlayerIndex; planet: Planet };
+export type ResolutionState = { queue: Effect[]; ctx: EffectCtx };
+export type PendingDecision = { kind: 'choosePlanet'; amount: number };
+
 export type GameState = {
   config: GameConfig;
   rng: RngState;
@@ -32,5 +45,7 @@ export type GameState = {
   discard: string[];
   planets: Record<Planet, PlanetTrack>;
   diplomacy: { leader: PlayerIndex | null; side: 'silver' | 'gold' };
+  resolution: ResolutionState | null;
+  pending: PendingDecision | null;
   winner: PlayerIndex | null;
 };

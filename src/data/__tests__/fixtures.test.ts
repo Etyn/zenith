@@ -17,3 +17,9 @@ test('les coûts des cartes sont dans [1, 10]', () => {
     expect(c.cost).toBeLessThanOrEqual(10);
   }
 });
+
+test('chaque carte fixture a au moins un effet d’influence sur sa planète', () => {
+  for (const c of FIXTURE_CARDS) {
+    expect(c.effects.some((e) => e.k === 'influence' && e.on === c.planet)).toBe(true);
+  }
+});
