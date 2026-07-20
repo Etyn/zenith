@@ -16,15 +16,17 @@ function firstAffordableFixedInfluenceCard(s: GameState): string {
   return s.players[s.current].hand[0]!;
 }
 
-test('legalMoves propose des recruit (et desormais des develop) pour le joueur courant au départ', () => {
+test('legalMoves propose des recruit (et desormais des develop et leadership) pour le joueur courant au départ', () => {
   const s = createGame(CONFIG, 1);
   const moves = legalMoves(s, 0);
   expect(moves.length).toBeGreaterThan(0);
   // Depuis l'ajout de l'action develop (coût niveau 1 = 1 Zénithium = START_ZENITHIUM), les deux
   // types de coup sont légaux dès le début de partie ; seul le type recruit était possible avant.
+  // leadership est toujours légal (aucune ressource requise) dès qu'il y a une carte en main.
   expect(moves.some((m) => m.t === 'recruit')).toBe(true);
   expect(moves.some((m) => m.t === 'develop')).toBe(true);
-  expect(moves.every((m) => m.t === 'recruit' || m.t === 'develop')).toBe(true);
+  expect(moves.some((m) => m.t === 'leadership')).toBe(true);
+  expect(moves.every((m) => m.t === 'recruit' || m.t === 'develop' || m.t === 'leadership')).toBe(true);
   expect(legalMoves(s, 1)).toEqual([]); // pas le tour du joueur 1
 });
 
@@ -144,4 +146,16 @@ test('prime de ligne niveau 1 : quand les 3 technos atteignent le niveau 1, +1 i
   // les deux sont des influence 'choice' → une décision est en attente (pas de fin de tour)
   expect(out.pending).not.toBeNull();
   expect(out.players[0].lineBonusClaimed[1]).toBe(true);
+});
+
+test('leadership robot : défausse la carte, prend le badge (Argent) et gagne 1 zénithium', () => {
+  const base = createGame(CONFIG, 1);
+  const robotId = base.players[0].hand.find((id) => cardOf(id)!.people === 'robot');
+  if (!robotId) return;
+  const zBefore = base.players[0].zenithium;
+  const out = applyMove(base, { t: 'leadership', cardId: robotId });
+  expect(out.discard).toContain(robotId);
+  expect(out.diplomacy).toEqual({ leader: 0, side: 'silver' });
+  expect(out.players[0].zenithium).toBe(zBefore + 1);
+  expect(out.current).toBe(1); // fin de tour (leadership robot = pas de décision)
 });

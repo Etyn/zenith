@@ -1,5 +1,6 @@
 import { cardOf, resolve, decide as decideEffect } from './effects';
 import { activeFace } from '../data/tech';
+import { DIPLOMACY } from '../data/diplomacy';
 import type { Effect, GameState, People, Planet, PlayerIndex, PlayerState } from './types';
 import { PLANETS } from './types';
 
@@ -8,10 +9,15 @@ const HAND_LIMIT = 4; // limite de base ; le badge Leader (5/6) viendra dans un 
 export type Move =
   | { t: 'recruit'; cardId: string }
   | { t: 'develop'; cardId: string; people: People }
+  | { t: 'leadership'; cardId: string }
   | { t: 'decide'; planet: Planet };
 
 function recruitCost(state: GameState, player: PlayerIndex, planet: Planet, baseCost: number): number {
   return Math.max(0, baseCost - state.players[player].columns[planet].length);
+}
+
+function finishOrPending(state: GameState): GameState {
+  return state.pending === null && state.resolution === null && state.winner === null ? endTurn(state) : state;
 }
 
 function endTurn(state: GameState): GameState {
@@ -34,9 +40,7 @@ export function applyMove(state: GameState, move: Move): GameState {
   if (move.t === 'decide') {
     if (state.pending === null) return state;
     const afterDecide = decideEffect(state, move.planet);
-    return afterDecide.pending === null && afterDecide.resolution === null && afterDecide.winner === null
-      ? endTurn(afterDecide)
-      : afterDecide;
+    return finishOrPending(afterDecide);
   }
 
   if (move.t === 'develop') {
@@ -80,9 +84,25 @@ export function applyMove(state: GameState, move: Move): GameState {
       resolution: { queue, ctx: { player, planet: card.planet } },
     };
     const resolved = resolve(started);
-    return resolved.pending === null && resolved.resolution === null && resolved.winner === null
-      ? endTurn(resolved)
-      : resolved;
+    return finishOrPending(resolved);
+  }
+
+  if (move.t === 'leadership') {
+    if (state.winner !== null || state.pending !== null || state.resolution !== null) return state;
+    const player = state.current;
+    if (!state.players[player].hand.includes(move.cardId)) return state;
+    const card = cardOf(move.cardId);
+    if (!card) return state;
+    const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+    players[player] = { ...players[player], hand: players[player].hand.filter((id) => id !== move.cardId) };
+    const started: GameState = {
+      ...state,
+      players,
+      discard: [...state.discard, move.cardId],
+      resolution: { queue: [...DIPLOMACY[card.people]], ctx: { player, planet: card.planet } },
+    };
+    const resolved = resolve(started);
+    return finishOrPending(resolved);
   }
 
   // recruit
@@ -105,9 +125,7 @@ export function applyMove(state: GameState, move: Move): GameState {
     resolution: { queue: [...card.effects], ctx: { player, planet: card.planet } },
   };
   const resolved = resolve(started);
-  return resolved.pending === null && resolved.resolution === null && resolved.winner === null
-    ? endTurn(resolved)
-    : resolved;
+  return finishOrPending(resolved);
 }
 
 export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
@@ -134,5 +152,6 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
       return cost <= state.players[player].zenithium;
     })
     .map((id) => ({ t: 'develop', cardId: id, people: cardOf(id)!.people }));
-  return [...recruits, ...develops];
+  const leaderships: Move[] = state.players[player].hand.map((id) => ({ t: 'leadership', cardId: id }));
+  return [...recruits, ...develops, ...leaderships];
 }
