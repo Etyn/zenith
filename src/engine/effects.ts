@@ -1,4 +1,13 @@
-import type { Effect, EffectCtx, GameState, PlayerIndex, PlayerState } from './types';
+import { gainInfluence } from './influence';
+import type { CardDef } from '../data/types';
+import { FIXTURE_CARDS } from '../data/fixtures';
+import type { Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState } from './types';
+
+// Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
+const CARDS: Record<string, CardDef> = Object.fromEntries(FIXTURE_CARDS.map((c) => [c.id, c]));
+function cardOf(id: string): CardDef | undefined {
+  return CARDS[id];
+}
 
 function creditPlayer(
   state: GameState,
@@ -18,20 +27,55 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'zenithium':
       return creditPlayer(state, target, { zenithium: state.players[target].zenithium + effect.amount });
     case 'influence':
+      // Seul le cas planète précise est appliqué directement ; 'choice' est géré par resolve/decide.
+      if (effect.on === 'choice') throw new Error("applyEffect: 'influence choice' passe par resolve/decide");
+      return gainInfluence(state, effect.on, ctx.player, effect.amount);
     case 'mobilize':
-      throw new Error(`applyEffect: atome '${effect.k}' non géré ici (voir resolve)`);
+      return applyMobilize(state, effect.count, effect.thenInfluence, ctx.player);
   }
+}
+
+function applyMobilize(state: GameState, count: number, thenInfluence: boolean, player: PlayerIndex): GameState {
+  let s = state;
+  for (let i = 0; i < count; i++) {
+    if (s.deck.length === 0) break;
+    const [top, ...restDeck] = s.deck;
+    const card = cardOf(top!);
+    const planet: Planet | null = card ? card.planet : null;
+    const players: [PlayerState, PlayerState] = [s.players[0], s.players[1]];
+    if (planet) {
+      const columns = { ...players[player].columns, [planet]: [...players[player].columns[planet], top!] };
+      players[player] = { ...players[player], columns };
+    }
+    s = { ...s, deck: restDeck, players };
+    if (thenInfluence && planet) s = gainInfluence(s, planet, player, 1);
+  }
+  return s;
 }
 
 export function resolve(state: GameState): GameState {
   let s = state;
   while (s.resolution && s.resolution.queue.length > 0 && s.pending === null) {
-    const [head, ...rest] = s.resolution.queue;
+    const head = s.resolution.queue[0]!;
     const ctx = s.resolution.ctx;
-    // Atomes sans choix uniquement en Task 2 ; les autres seront gérés en Task 3.
-    s = applyEffect(s, head!, ctx);
-    s = { ...s, resolution: { queue: rest, ctx } };
+    if (head.k === 'influence' && head.on === 'choice') {
+      s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount } };
+      break; // en attente d'une décision ; l'atome reste en tête de file
+    }
+    s = applyEffect(s, head, ctx);
+    s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
   }
   if (s.resolution && s.resolution.queue.length === 0) s = { ...s, resolution: null };
   return s;
+}
+
+export function decide(state: GameState, planet: Planet): GameState {
+  if (state.pending === null || state.resolution === null) {
+    throw new Error('decide: aucune décision en attente');
+  }
+  const { amount } = state.pending;
+  const ctx = state.resolution.ctx;
+  let s = gainInfluence(state, planet, ctx.player, amount);
+  s = { ...s, pending: null, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
+  return resolve(s);
 }
