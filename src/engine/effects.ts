@@ -5,7 +5,7 @@ import type { Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState } f
 
 // Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
 const CARDS: Record<string, CardDef> = Object.fromEntries(FIXTURE_CARDS.map((c) => [c.id, c]));
-function cardOf(id: string): CardDef | undefined {
+export function cardOf(id: string): CardDef | undefined {
   return CARDS[id];
 }
 
