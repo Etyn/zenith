@@ -22,7 +22,7 @@ Reproduire Zenith en application mobile **jouable à 2 joueurs**, jouable **hors
 
 **Aucun effet, coût, icône ou règle n'est inventé.** Le *moteur et les atomes d'effet* sont du code (définis par le lexique officiel, photos dans `docs/lexique-*.jpg`). Le *contenu réel* (90 cartes Agent, configs du plateau Technologie, 16 jetons Bonus, effets de Diplomatie) est **fourni par l'utilisateur** (transcription depuis la boîte). En cas de doute sur une icône/description/action → **demander à l'utilisateur**. Les tests moteur utilisent des **fixtures synthétiques explicitement non canoniques**, jamais présentées comme le vrai jeu.
 
-Sources de référence : `docs/ZE_Rules_FR.pdf` (livret officiel), `docs/lexique-1.jpg` + `docs/lexique-2.jpg` (« Description des effets », p.1 et p.2).
+Sources de référence (`docs/`) : `ZE_Rules_FR.pdf` (livret officiel) ; `Description des effets 1.pdf` + `Description des effets 2.pdf` (lexique des icônes) ; `Diplomatie.pdf`, `Planete.pdf`, `Techno SUN.pdf`, `Techno DOP.pdf` (plateaux).
 
 ## 4. Organisation du projet (app Expo unique, moteur pur isolé)
 
@@ -55,7 +55,8 @@ zenith/
 - **2 joueurs.** Influence sur **5 planètes** : Mercure, Vénus, Terra, Mars, Jupiter. **3 peuples** : Animod, Humain, Robot.
 - **Victoire (fin immédiate)** : **absolue** = 3 disques d'influence d'une **même** planète ; **démocratique** = 4 disques de planètes **différentes** ; **populaire** = 5 disques au total.
 - **Piste d'influence** (1 par planète) = 9 emplacements : 1 central, 3 de chaque côté, 2 zones de contrôle (1 par joueur). Un disque part du centre ; gagner 1 influence de sa couleur le déplace d'un cran vers **sa** zone de contrôle. Ramené dans sa zone → le joueur **capture** ce disque (= 1 influence acquise sur cette planète). Excédent au-delà de la zone = perdu. Au **1er** disque capturé d'une planète, le joueur applique le **jeton Bonus** de cette planète puis le défausse. Fin de tour : un nouveau disque est remis au centre pour chaque disque capturé ; les jetons Bonus ne sont **pas** remplacés.
-- **Mise en place (2 j.)** : disque de chaque couleur au centre ; plateau Techno assemblé (config **S.U.N.** en 1re partie) ; 6 marqueurs Techno (3 noirs / 3 blancs) sur départs ; 1 jeton Bonus (aléatoire, face visible) sur chacun des 3 emplacements Techno et 5 emplacements Planètes ; badge Leader sur le plateau Diplomatie ; réserve (disques, Crédits, Zénithium, Bonus face cachée). Chaque joueur : **12 Crédits + 1 Zénithium**, **4 cartes** (main initiale, avec option de mulligan total/partiel avant de commencer). Le **2e joueur** reçoit **1 Influence Terra**. Main gardée secrète.
+- **Plateau Technologie** : 3 colonnes **fixes de gauche à droite : Animod → Humain → Robot**. Chaque colonne est une **tuile double-face** ; la face utilisée est **tirée au sort** (RNG seedé) **ou choisie par le créateur** de la partie. Faces possibles : **Animod = S | D**, **Humain = O | U**, **Robot = N | P** (soit 8 configs). S.U.N. (Animod-S, Humain-U, Robot-N) n'est qu'une combinaison « débutant », **non imposée**.
+- **Mise en place (2 j.)** : disque de chaque couleur au centre ; plateau Techno assemblé selon les faces retenues ; 6 marqueurs Techno (3 noirs / 3 blancs) sur départs ; 1 jeton Bonus (aléatoire, face visible) sur chacun des 3 emplacements Techno et 5 emplacements Planètes ; badge Leader sur le plateau Diplomatie ; réserve (disques, Crédits, Zénithium, Bonus face cachée). Chaque joueur : **12 Crédits + 1 Zénithium**, **4 cartes** (main initiale, avec option de mulligan total/partiel avant de commencer). Le **1er joueur est tiré au sort** (RNG seedé) ; en cas de **revanche**, l'ordre s'**inverse à chaque partie** (le 1er joueur alterne). Le **2e joueur** reçoit **1 Influence Terra**. Main gardée secrète.
 - **Tour de jeu** : jouer **1 carte** pour **UNE** action, puis **fin de tour** (repioche + remise en jeu des disques).
   - **A. Recruter un Agent** : poser la carte dans la colonne de sa planète (empilée, on ne voit que la bande du haut) ; payer le **coût en Crédits réduit de 1 par carte déjà présente dans cette colonne** (peut être gratuit ; jamais de gain si réduction > coût) ; appliquer les **effets de gauche à droite** (toute carte donne ≥ 1 influence sur sa planète).
   - **B. Développer une Technologie** : **défausser** une carte pour développer la techno du **peuple** de la carte (Animod/Humain/Robot) ; payer en **Zénithium** le coût du **niveau suivant** (1→5, sans saut) ; avancer le marqueur ; appliquer l'effet du niveau atteint **et de tous les niveaux inférieurs** de cette colonne. **Bonus de niveau 2** : le 1er des 2 joueurs à atteindre le niveau 2 d'une techno gagne le jeton Bonus associé. **Primes de ligne** : avoir développé les 3 technos au niveau 1 / 2 / 3 → +1 / +2 / +3 influence sur une planète au choix (chacune une seule fois, appliquée après les effets de colonne).
@@ -73,7 +74,7 @@ type PlayerIndex = 0 | 1;
 type Side = 'self' | 'opponent';
 
 type GameState = {
-  config: GameConfig;                 // id de config techno, options
+  config: GameConfig;                 // techSetup (faces animod/humain/robot) + options
   rng: RngState;                      // { seed, counter } → déterministe
   current: PlayerIndex;
   players: [PlayerState, PlayerState];
@@ -127,7 +128,7 @@ type Effect =
   | { k: 'credits'; amount: number; target: Side }
   | { k: 'zenithium'; amount: number; target: Side }
   | { k: 'steal'; resource: 'credits'|'zenithium'|'card'; amount: number }   // depuis l'adversaire
-  | { k: 'mobilize'; thenInfluence?: boolean }
+  | { k: 'mobilize'; count?: number; thenInfluence?: boolean } // thenInfluence = +1 influence sur la couleur de CHAQUE carte mobilisée
   | { k: 'transfer'; from: 'sameColor'|'choice'; thenInfluence?: boolean }
   | { k: 'exile'; who: 'own'|'opponent'; gain?: 'cost'|'influence' }
   | { k: 'discardHand'; count: number|'all'; thenInfluence?: boolean }
@@ -149,16 +150,33 @@ type Effect =
 
 > Atomes dérivés du lexique p.1/p.2. Toute variante non couverte par le lexique sera clarifiée avec l'utilisateur avant implémentation (pas d'invention).
 
+**Décodage des icônes (confirmé par l'utilisateur) — aide à la transcription :**
+- Flèche **dans** une carte = **Transférer** ; `[+]` **dans** une carte = **Mobiliser** ; carte **fendue** = **Exiler**.
+- **Silhouette blanche** accolée à un signe = l'action vise la **zone de l'adversaire** (ex. Exiler chez l'adversaire → `exile{who:'opponent'}`).
+- **Rouge** sur une ressource = **interaction avec l'adversaire**, sens donné par la flèche : **↓ = voler** (`steal`), **↑ = donner** (`credits/zenithium{target:'opponent'}`). Ex. pastille crédit rouge « 3 » ↓ = voler 3 Crédits (moins si l'adversaire en a moins) ; Zénithium rouge « 1 » ↓ = voler 1 Zénithium (rien s'il n'en a pas).
+- Compound fréquent : **Mobiliser N + influence** = mobiliser N cartes puis +1 influence sur la couleur de **chacune** (`mobilize{count:N, thenInfluence:true}`).
+- Couleurs : hexagone **jaune** = Zénithium ; carré **gris** + nombre = Crédits ; disque **gris** = couleur au choix ; disque **coloré** = cette planète.
+
 ## 8. Données de contenu
 
 ```ts
 type CardDef = { id: CardId; name: string; people: People; planet: Planet; cost: number; effects: Effect[] };
-type TechConfig = Record<'col1'|'col2'|'col3', { people: People; levels: { zenithium: number; effects: Effect[] }[] }>;
+
+// Colonnes fixes (ordre gauche→droite : animod, humain, robot). Chaque peuple a DEUX faces ;
+// une seule est en jeu, choisie/tirée à la mise en place. 5 niveaux par face.
+type TechFace = { levels: { zenithium: number; effects: Effect[] }[] };
+type TechData = {
+  animod: { S: TechFace; D: TechFace };
+  humain: { O: TechFace; U: TechFace };
+  robot:  { N: TechFace; P: TechFace };
+};
+type TechSetup = { animod: 'S'|'D'; humain: 'O'|'U'; robot: 'N'|'P' }; // faces retenues pour la partie
+
 type BonusTokenDef = { id: BonusTokenId; effects: Effect[] };
 type DiplomacyDef = Record<People, Effect[]>;  // action « Prendre le Leadership »
 ```
 
-Contenu **vérifié** disponible aujourd'hui : effets de Diplomatie (Robot +1 Zénithium ; Humain +3 Crédits ; Animod mobiliser 2), carte **Nero** (Mercure, coût 7 → +1 influence Mercure, +3 Zénithium). Tout le reste (89 autres cartes, configs Techno dont S.U.N., jetons Bonus) = **à fournir par l'utilisateur**. En attendant, fixtures de test **étiquetées non canoniques** pour exercer le moteur.
+Contenu **vérifié** disponible aujourd'hui : effets de Diplomatie (Robot +1 Zénithium ; Humain +3 Crédits ; Animod mobiliser 2), carte **Nero** (Mercure, coût 7 → +1 influence Mercure, +3 Zénithium). Tout le reste = **à fournir par l'utilisateur** : 89 autres cartes ; les **6 faces Techno** (Animod S/D, Humain O/U, Robot N/P), chacune avec ses 5 niveaux (coût Zénithium + effets) ; les 16 jetons Bonus. En attendant, fixtures de test **étiquetées non canoniques** pour exercer le moteur.
 
 ## 9. Déterminisme & vues joueur
 
@@ -175,7 +193,9 @@ Contenu **vérifié** disponible aujourd'hui : effets de Diplomatie (Robot +1 Z�
 
 ## 12. UI
 
-Expo + `expo-router`. Écrans : **Accueil** (Nouvelle partie vs Bot / [phase 3] Héberger / Rejoindre) ; **Partie** (5 pistes d'influence avec position des disques, plateau Techno + marqueurs, ma main, infos adversaire, jetons/ressources, invites de décision : choix de planète, de cible, branche du OU). Rendu depuis `playerView`, dispatch de `Move`. Views/Flexbox d'abord ; SVG/Skia envisageable plus tard.
+Expo + `expo-router`. Écrans : **Accueil** (Nouvelle partie vs Bot / [phase 3] Héberger / Rejoindre) ; **Partie** (pistes d'influence + position des disques, plateau Techno + marqueurs, ma main, infos adversaire, jetons/ressources, invites de décision : choix de planète, de cible, branche du OU). Rendu depuis `playerView`, dispatch de `Move`. Views/Flexbox d'abord ; SVG/Skia envisageable plus tard.
+
+**Principe UI (important) :** ne **pas** reproduire le plateau physique à l'identique. S'inspirer des couleurs, mais concevoir un affichage **beau, pratique et ergonomique adapté à un écran de téléphone**. On ne pourra pas tout montrer d'un coup → **divulgation progressive** (onglets/panneaux/feuilles escamotables : plateau planètes, plateau techno, ma zone de cartes, main, adversaire), interactions malignes (tap pour détailler une carte/épreuve, drag pour jouer, etc.). L'ergonomie mobile prime sur la fidélité visuelle.
 
 ## 13. Tests
 
@@ -186,7 +206,8 @@ Expo + `expo-router`. Écrans : **Accueil** (Nouvelle partie vs Bot / [phase 3] 
 ## 14. Questions ouvertes / à fournir par l'utilisateur
 
 1. **Contenu complet** (bloquant pour une version fidèle) : 90 cartes Agent, configs Techno (dont S.U.N.) avec coûts/effets par niveau, 16 jetons Bonus. → transcription utilisateur.
-2. **Détermination du 1er joueur** : le livret la lie aux « aides de jeu » tirées au hasard ; on modélisera un choix aléatoire (le 2e joueur recevant +1 Influence Terra). À confirmer si une autre règle est souhaitée.
+2. **1er joueur** : tiré au sort (RNG seedé) ; en **revanche**, l'ordre s'inverse à chaque partie. `createGame` reçoit `firstPlayer` (aléatoire pour une nouvelle partie, inversé pour une revanche — l'alternance est gérée à la couche session/app). Le 2e joueur reçoit +1 Influence Terra. *(résolu)*
 3. **Toute icône/variante d'effet hors lexique p.1/p.2** : demandée à l'utilisateur avant implémentation (règle : aucune invention).
-4. **Config Techno de départ** : S.U.N. imposée en 1re partie ; configs aléatoires ensuite (données à fournir).
+5. **Flèche rouge sur certaines cartes** : possible signification « interaction adversaire » propre à la couleur de la flèche — **à vérifier** sur les cartes réelles (parqué, non implémenté sans confirmation).
+4. **Faces Techno de départ** : tirage au sort (RNG seedé) **ou** choix par le créateur de la partie, parmi les 2 faces de chaque peuple (Animod S/D, Humain O/U, Robot N/P). S.U.N. n'est pas imposée. Les effets par niveau des 6 faces = données à fournir.
 ```
