@@ -30,6 +30,19 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       // Seul le cas planète précise est appliqué directement ; 'choice' est géré par resolve/decide.
       if (effect.on === 'choice') throw new Error("applyEffect: 'influence choice' passe par resolve/decide");
       return gainInfluence(state, effect.on, ctx.player, effect.amount);
+    case 'takeLeader': {
+      const me = ctx.player;
+      const d = state.diplomacy;
+      let next: GameState['diplomacy'];
+      if (effect.side === 'gold') {
+        next = { leader: me, side: 'gold' };
+      } else if (d.leader !== me) {
+        next = { leader: me, side: 'silver' };
+      } else {
+        next = { leader: me, side: d.side === 'silver' ? 'gold' : 'gold' };
+      }
+      return { ...state, diplomacy: next };
+    }
     case 'mobilize':
       return applyMobilize(state, effect.count, effect.thenInfluence, ctx.player);
   }

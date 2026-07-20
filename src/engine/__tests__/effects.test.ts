@@ -67,7 +67,7 @@ test("influence 'choice' met une decision en attente, puis decide l'applique", (
   expect(done.planets.venus.discPos).toBe(CENTER - 2); // joueur 0, 2 crans
 });
 
-test('resolve arrête d’appliquer les effets restants après une victoire', () => {
+test('resolve arrête d\'appliquer les effets restants après une victoire', () => {
   const base = createGame(CONFIG, 1);
   const s: GameState = {
     ...base,
@@ -98,4 +98,27 @@ test('mobilize place N cartes du deck dans les colonnes du joueur sans appliquer
   );
   for (const id of topTwo) expect(placed).toContain(id);
   expect(out.deck.length).toBe(base.deck.length - 2);
+});
+
+test('takeLeader silver : prend le badge, puis passe Or si deja possede', () => {
+  const s0 = createGame(CONFIG, 1); // leader: null
+  const s1 = applyEffect(s0, { k: 'takeLeader', side: 'silver' }, { player: 0, planet: 'mars' });
+  expect(s1.diplomacy).toEqual({ leader: 0, side: 'silver' });
+  const s2 = applyEffect(s1, { k: 'takeLeader', side: 'silver' }, { player: 0, planet: 'mars' });
+  expect(s2.diplomacy).toEqual({ leader: 0, side: 'gold' });
+  const s3 = applyEffect(s2, { k: 'takeLeader', side: 'silver' }, { player: 0, planet: 'mars' });
+  expect(s3.diplomacy).toEqual({ leader: 0, side: 'gold' }); // deja Or → inchange
+});
+
+test('takeLeader silver : reprend le badge a l\'adversaire cote Argent', () => {
+  const base = createGame(CONFIG, 1);
+  const s0 = { ...base, diplomacy: { leader: 1 as const, side: 'gold' as const } };
+  const s1 = applyEffect(s0, { k: 'takeLeader', side: 'silver' }, { player: 0, planet: 'mars' });
+  expect(s1.diplomacy).toEqual({ leader: 0, side: 'silver' });
+});
+
+test('takeLeader gold : prend directement le badge cote Or', () => {
+  const s0 = createGame(CONFIG, 1);
+  const s1 = applyEffect(s0, { k: 'takeLeader', side: 'gold' }, { player: 1, planet: 'mars' });
+  expect(s1.diplomacy).toEqual({ leader: 1, side: 'gold' });
 });
