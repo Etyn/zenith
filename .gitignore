@@ -37,3 +37,6 @@ yarn-error.*
 
 # scratch orchestration (subagent-driven)
 .superpowers/
+
+# scans de cartes (lourds) — non versionnés, usage local uniquement
+docs/content/cards/
