@@ -60,6 +60,19 @@ export function applyMove(state: GameState, move: Move): GameState {
     const queue: Effect[] = [];
     for (let lvl = newLevel; lvl >= 1; lvl--) queue.push(...face.levels[lvl - 1]!.effects);
 
+    // Primes de ligne : 3 technos au niveau tier → +tier influence au choix (1 fois chacune).
+    // Appliquées APRÈS les effets de colonne (poussées à la suite dans la file).
+    const claimed = { ...players[player].lineBonusClaimed };
+    const markers = players[player].techMarkers;
+    for (const tier of [1, 2, 3] as const) {
+      const allReached = markers.animod >= tier && markers.humain >= tier && markers.robot >= tier;
+      if (allReached && !claimed[tier]) {
+        claimed[tier] = true;
+        queue.push({ k: 'influence', amount: tier, on: 'choice' });
+      }
+    }
+    players[player] = { ...players[player], lineBonusClaimed: claimed };
+
     const started: GameState = {
       ...state,
       players,

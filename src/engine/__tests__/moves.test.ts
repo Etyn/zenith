@@ -126,3 +126,22 @@ test('develop illégal si zénithium insuffisant', () => {
   const s: GameState = { ...base, players: [{ ...base.players[0], zenithium: 0 }, base.players[1]] };
   expect(applyMove(s, { t: 'develop', cardId: id, people })).toBe(s); // no-op
 });
+
+test('prime de ligne niveau 1 : quand les 3 technos atteignent le niveau 1, +1 influence au choix', () => {
+  const base = createGame(CONFIG, 1);
+  // marqueurs : animod=1, humain=1, robot=0 ; on va développer robot avec une carte robot.
+  const robotId = base.players[0].hand.find((id) => cardOf(id)!.people === 'robot');
+  if (!robotId) return;
+  const s: GameState = {
+    ...base,
+    players: [
+      { ...base.players[0], zenithium: 5, techMarkers: { animod: 1, humain: 1, robot: 0 } },
+      base.players[1],
+    ],
+  };
+  const out = applyMove(s, { t: 'develop', cardId: robotId, people: 'robot' });
+  // develop robot niv.1 → effet niv.1 (influence choice) PUIS prime de ligne niv.1 (influence choice)
+  // les deux sont des influence 'choice' → une décision est en attente (pas de fin de tour)
+  expect(out.pending).not.toBeNull();
+  expect(out.players[0].lineBonusClaimed[1]).toBe(true);
+});
