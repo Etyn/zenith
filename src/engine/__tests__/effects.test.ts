@@ -225,3 +225,92 @@ test('resolve propage resolution.chosen à travers un atome sans choix intercal�
   expect(out.pending).toBeNull();
   expect(out.resolution).toBeNull();
 });
+
+// Fabrique un état avec des colonnes préremplies pour le joueur donné.
+function withColumns(base: GameState, index: 0 | 1, cols: Partial<Record<import('../types').Planet, string[]>>): GameState {
+  const players: [GameState['players'][0], GameState['players'][1]] = [base.players[0], base.players[1]];
+  players[index] = { ...players[index], columns: { ...players[index].columns, ...cols } };
+  return { ...base, players };
+}
+
+test("exile pose un chooseColumn côté self puis défausse la dernière carte de la colonne choisie", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['c1', 'c2'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exile', side: 'self', count: 1 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseColumn', owner: 'self', purpose: 'exile', remaining: 1 });
+  const out = decide(paused, 'terra');
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].columns.terra).toEqual(['c1']); // dernière carte retirée
+  expect(out.discard).toContain('c2'); // partie à la défausse
+});
+
+test("exile côté opponent vise les colonnes de l'adversaire", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 1, { mars: ['x1'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exile', side: 'opponent', count: 1 } as const], ctx: { player: 0 as const, planet: 'mars' as const } },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseColumn', owner: 'opponent', purpose: 'exile', remaining: 1 });
+  const out = decide(paused, 'mars');
+  expect(out.players[1].columns.mars).toEqual([]);
+  expect(out.discard).toContain('x1');
+});
+
+test("exile count=2 enchaîne deux décisions (remaining décrémenté, atome maintenu en tête)", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['a', 'b'], venus: ['v'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exile', side: 'self', count: 2 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const p1 = resolve(s);
+  expect(p1.pending).toEqual({ kind: 'chooseColumn', owner: 'self', purpose: 'exile', remaining: 2 });
+  const p2 = decide(p1, 'terra'); // retire 'b'
+  expect(p2.pending).toEqual({ kind: 'chooseColumn', owner: 'self', purpose: 'exile', remaining: 1 });
+  expect(p2.resolution!.queue.length).toBe(1); // atome toujours en tête
+  const out = decide(p2, 'venus'); // retire 'v' → terminé
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].columns.terra).toEqual(['a']);
+  expect(out.players[0].columns.venus).toEqual([]);
+  expect(out.discard).toEqual(expect.arrayContaining(['b', 'v']));
+});
+
+test("exile count=2 s'arrête (application partielle) quand il ne reste plus de colonne éligible", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['only'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exile', side: 'self', count: 2 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const p1 = resolve(s);
+  const out = decide(p1, 'terra'); // seule carte retirée → plus rien d'éligible
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].columns.terra).toEqual([]);
+});
+
+test("exile est ignoré (skip sans pending) quand aucune colonne du côté visé n'est éligible", () => {
+  const base = createGame(CONFIG, 1); // colonnes vides au départ
+  const s: GameState = {
+    ...base,
+    resolution: {
+      queue: [
+        { k: 'exile', side: 'self', count: 1 } as const,
+        { k: 'credits', amount: 3, target: 'self' } as const,
+      ],
+      ctx: { player: 0 as const, planet: 'terra' as const },
+    },
+  };
+  const out = resolve(s);
+  expect(out.pending).toBeNull(); // aucun chooseColumn posé
+  expect(out.resolution).toBeNull(); // exile skippé, credits appliqué, file vidée
+  expect(out.players[0].credits).toBe(base.players[0].credits + 3);
+});

@@ -2,7 +2,7 @@ import { gainInfluence } from './influence';
 import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
 import { PLANETS } from './types';
-import type { Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState } from './types';
+import type { Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState, Side } from './types';
 
 // Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
 const CARDS: Record<string, CardDef> = Object.fromEntries(FIXTURE_CARDS.map((c) => [c.id, c]));
@@ -70,6 +70,10 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'influenceDifferent':
       // Toujours intercepté par resolve/decide (pose un pending 'choosePlanet' avec exclusion) ; jamais appliqué directement.
       throw new Error("applyEffect: 'influenceDifferent' passe par resolve/decide");
+    case 'transfer':
+      throw new Error("applyEffect: 'transfer' passe par resolve/decide");
+    case 'exile':
+      throw new Error("applyEffect: 'exile' passe par resolve/decide");
   }
 }
 
@@ -109,6 +113,18 @@ export function resolve(state: GameState): GameState {
       s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, exclude: chosen } };
       break;
     }
+    if (head.k === 'transfer' || head.k === 'exile') {
+      const owner: Side = head.k === 'transfer' ? 'opponent' : head.side;
+      const ownerIndex: PlayerIndex = owner === 'self' ? ctx.player : ctx.player === 0 ? 1 : 0;
+      const hasEligible = PLANETS.some((p) => s.players[ownerIndex].columns[p].length > 0);
+      if (!hasEligible) {
+        // effet inapplicable → ignoré (aucun pending), on passe à l'atome suivant
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      s = { ...s, pending: { kind: 'chooseColumn', owner, purpose: head.k, remaining: head.count } };
+      break;
+    }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
   }
@@ -133,6 +149,43 @@ export function decide(state: GameState, planet: Planet): GameState {
       s = gainInfluence(s, PLANETS[start + i]!, ctx.player, pending.amount);
       if (s.winner !== null) break;
     }
+  } else if (pending.kind === 'chooseColumn') {
+    const active = ctx.player;
+    const ownerIndex: PlayerIndex = pending.owner === 'self' ? active : active === 0 ? 1 : 0;
+    const column = state.players[ownerIndex].columns[planet];
+    if (column.length === 0) {
+      throw new Error('decide: colonne vide (choix invalide)');
+    }
+    const card = column[column.length - 1]!;
+    const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+    players[ownerIndex] = {
+      ...players[ownerIndex],
+      columns: { ...players[ownerIndex].columns, [planet]: column.slice(0, -1) },
+    };
+    let moved: GameState;
+    if (pending.purpose === 'transfer') {
+      // adverse → joueur actif, même planète (active !== ownerIndex par construction)
+      players[active] = {
+        ...players[active],
+        columns: { ...players[active].columns, [planet]: [...players[active].columns[planet], card] },
+      };
+      moved = { ...state, players };
+    } else {
+      // exile → défausse
+      moved = { ...state, players, discard: [...state.discard, card] };
+    }
+    const remaining = pending.remaining - 1;
+    const stillEligible = PLANETS.some((p) => moved.players[ownerIndex].columns[p].length > 0);
+    if (remaining > 0 && stillEligible) {
+      // atome maintenu en tête de file ; on re-pose la décision avec remaining décrémenté
+      return { ...moved, pending: { kind: 'chooseColumn', owner: pending.owner, purpose: pending.purpose, remaining } };
+    }
+    const done: GameState = {
+      ...moved,
+      pending: null,
+      resolution: { queue: moved.resolution!.queue.slice(1), ctx, chosen: moved.resolution!.chosen },
+    };
+    return resolve(done);
   } else {
     // choosePlanet
     if (pending.exclude && pending.exclude.includes(planet)) {

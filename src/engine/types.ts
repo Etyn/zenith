@@ -35,13 +35,16 @@ export type Effect =
   | { k: 'takeLeader'; side: 'silver' | 'gold' }
   | { k: 'steal'; resource: 'credits' | 'zenithium'; amount: number }
   | { k: 'influenceNeighbors'; count: number; amount: number }
-  | { k: 'influenceDifferent'; amount: number };
+  | { k: 'influenceDifferent'; amount: number }
+  | { k: 'transfer'; count: number }
+  | { k: 'exile'; side: Side; count: number };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
 export type PendingDecision =
   | { kind: 'choosePlanet'; amount: number; exclude?: Planet[] }
-  | { kind: 'chooseSegment'; count: number; amount: number };
+  | { kind: 'chooseSegment'; count: number; amount: number }
+  | { kind: 'chooseColumn'; owner: 'self' | 'opponent'; purpose: 'transfer' | 'exile'; remaining: number };
 
 export type GameState = {
   config: GameConfig;
