@@ -393,6 +393,20 @@ test('exileForInfluence : exile 2 cartes de couleurs DIFFÉRENTES + 2 influence 
   expect(out.planets.mars.discPos).toBe(before.mars - 2);
 });
 
+test('exileForInfluence : rejette une couleur déjà choisie même si sa colonne n\'est pas vide', () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['t1', 't2'], mars: ['m1'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exileForInfluence', count: 2, amount: 2 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const p1 = resolve(s);
+  const p2 = decide(p1, 'terra'); // exile t2 ; terra reste non vide (['t1'])
+  expect(p2.players[0].columns.terra).toEqual(['t1']); // colonne PAS vide
+  // rechoisir terra est rejeté par le garde exclude (pas par le garde colonne vide)
+  expect(() => decide(p2, 'terra')).toThrow();
+});
+
 test('exileForInfluence : une seule couleur non vide → application partielle (1 exil, perte de la 2e influence)', () => {
   const base = createGame(CONFIG, 1);
   const seeded = withColumns(base, 0, { terra: ['t1'] });

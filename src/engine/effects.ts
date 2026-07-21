@@ -20,6 +20,10 @@ function creditPlayer(
   return { ...state, players };
 }
 
+function hasEligibleColumn(state: GameState, ownerIndex: PlayerIndex): boolean {
+  return PLANETS.some((p) => state.players[ownerIndex].columns[p].length > 0);
+}
+
 export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): GameState {
   const target: PlayerIndex = 'target' in effect && effect.target === 'opponent' ? (ctx.player === 0 ? 1 : 0) : ctx.player;
   switch (effect.k) {
@@ -118,7 +122,7 @@ export function resolve(state: GameState): GameState {
     if (head.k === 'transfer' || head.k === 'exile') {
       const owner: Side = head.k === 'transfer' ? 'opponent' : head.side;
       const ownerIndex: PlayerIndex = owner === 'self' ? ctx.player : ctx.player === 0 ? 1 : 0;
-      const hasEligible = PLANETS.some((p) => s.players[ownerIndex].columns[p].length > 0);
+      const hasEligible = hasEligibleColumn(s, ownerIndex);
       if (!hasEligible) {
         // effet inapplicable → ignoré (aucun pending), on passe à l'atome suivant
         s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
@@ -129,7 +133,7 @@ export function resolve(state: GameState): GameState {
     }
     if (head.k === 'exileForInfluence') {
       const me = ctx.player;
-      const hasEligible = PLANETS.some((p) => s.players[me].columns[p].length > 0);
+      const hasEligible = hasEligibleColumn(s, me);
       if (head.count <= 0 || !hasEligible) {
         s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
         continue;
