@@ -151,4 +151,119 @@ export const MARS_CARDS: CardDef[] = [
   },
 ];
 
-export const CARDS: CardDef[] = [...MARS_CARDS];
+export const MERCURE_CARDS: CardDef[] = [
+  { id: 'mercure-guy-gambler', name: 'Guy Gambler', people: 'humain', planet: 'mercure', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'credits', amount: 5, target: 'self' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'bonusToken' }] },
+    ] },
+  { id: 'mercure-nero', name: 'Nero', people: 'animod', planet: 'mercure', cost: 7,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'zenithium', amount: 3, target: 'self' },
+    ] },
+  { id: 'mercure-orwell', name: 'Orwell', people: 'robot', planet: 'mercure', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'bonusToken' },
+      { k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'credits', amount: 7, target: 'self' }] },
+    ] },
+  { id: 'mercure-huxley', name: 'Huxley', people: 'robot', planet: 'mercure', cost: 5,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'credits', amount: 3, target: 'self' }] },
+    ] },
+  { id: 'mercure-master-din', name: 'Master Din', people: 'humain', planet: 'mercure', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'influence', amount: 1, on: 'mars' },
+      { k: 'takeLeader', side: 'silver' },
+    ] },
+  { id: 'mercure-atlas', name: 'Atlas', people: 'animod', planet: 'mercure', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'exile', side: 'opponent', count: 1 },
+      { k: 'takeLeader', side: 'silver' },
+    ] },
+  { id: 'mercure-w3lls', name: 'W3lls', people: 'robot', planet: 'mercure', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'influence', amount: 1, on: 'mercure' }] },
+    ] },
+  { id: 'mercure-khan', name: 'Khan', people: 'animod', planet: 'mercure', cost: 9,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'influenceDifferent', amount: 1 }] },
+    ] },
+  { id: 'mercure-wul', name: 'Wul', people: 'robot', planet: 'mercure', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'zenithium', amount: 2, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'zenithium', amount: 4, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'zenithium', amount: 7, target: 'self' }] },
+      ] },
+    ] },
+  { id: 'mercure-secret-kali', name: 'Secret Kali', people: 'humain', planet: 'mercure', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'credits', amount: 3 }, { k: 'influenceChoiceExcept', exceptColor: 'mercure', amount: 1 }] },
+    ] },
+  { id: 'mercure-h4milton', name: 'H4miltøn', people: 'robot', planet: 'mercure', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'mobilize', count: 2, thenInfluence: false },
+      { k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'mobilize', count: 3, thenInfluence: false }] },
+    ] },
+  { id: 'mercure-double-joe', name: 'Double Joe', people: 'humain', planet: 'mercure', cost: 5,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'zenithium', amount: 2, target: 'self' },
+      { k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'zenithium', amount: 2, target: 'self' }] },
+    ] },
+  { // TODO(rules): "exiler 2 cartes ≠ Mercure" — l'exclusion de couleur n'est pas supportée par l'atome exile (choix libre). Mineur.
+    id: 'mercure-chaka', name: 'Chaka', people: 'animod', planet: 'mercure', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 2 }, { k: 'credits', amount: 10, target: 'self' }] },
+    ] },
+  { id: 'mercure-magellan', name: 'Magellan', people: 'animod', planet: 'mercure', cost: 10,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'influenceDifferent', amount: 1 },
+      { k: 'influenceEach', amount: 1 },
+    ] },
+  { id: 'mercure-lula-smart', name: 'Lula Smart', people: 'humain', planet: 'mercure', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'credits', amount: 4, target: 'self' },
+      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influence', amount: 1, on: 'terra' }] },
+    ] },
+  { id: 'mercure-amytis', name: 'Amytis', people: 'animod', planet: 'mercure', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'influence', amount: 1, on: 'mercure' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'influence', amount: 2, on: 'mercure' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'influence', amount: 3, on: 'mercure' }] },
+      ] },
+    ] },
+  { id: 'mercure-cl4rke', name: 'Cl4rke', people: 'robot', planet: 'mercure', cost: 9,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influenceDifferent', amount: 1 }] },
+    ] },
+  { id: 'mercure-punk-mari', name: 'Punk Mari', people: 'humain', planet: 'mercure', cost: 7,
+    effects: [
+      { k: 'influence', amount: 1, on: 'mercure' },
+      { k: 'discardHandAll' },
+      { k: 'influence', amount: 1, on: 'choice' },
+    ] },
+];
+
+export const CARDS: CardDef[] = [...MARS_CARDS, ...MERCURE_CARDS];

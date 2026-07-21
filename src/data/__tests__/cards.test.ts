@@ -1,9 +1,14 @@
 import { PLANETS, type Effect } from '../../engine/types';
-import { CARDS, MARS_CARDS } from '../cards';
+import { CARDS, MARS_CARDS, MERCURE_CARDS } from '../cards';
 
 test('Mars : 18 cartes', () => {
   expect(MARS_CARDS).toHaveLength(18);
   expect(MARS_CARDS.every((c) => c.planet === 'mars')).toBe(true);
+});
+
+test('Mercure : 18 cartes', () => {
+  expect(MERCURE_CARDS).toHaveLength(18);
+  expect(MERCURE_CARDS.every((c) => c.planet === 'mercure')).toBe(true);
 });
 
 test('ids uniques sur le catalogue', () => {
