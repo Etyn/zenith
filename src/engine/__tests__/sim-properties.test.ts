@@ -18,26 +18,18 @@ test('aucune partie ne lève d’exception et toutes terminent dans le plafond',
   }
 });
 
-// NOTE D'IMPLÉMENTATION : l'assertion originale du brief (« au moins une graine
-// mène à une victoire ») échoue systématiquement (0/50) avec le deck fixture
-// (`FIXTURE_CARDS`, voir `src/data/fixtures.ts`) : celui-ci ne contient que 10
-// cartes (2 par planète), dont 8 sont distribuées dans les mains de départ
-// (2 x 4 cartes) — il ne reste que 2 cartes à piocher. Les 50 parties se
-// terminent toutes en `stuck` après seulement 8 à 10 coups, faute de cartes
-// jouables. Ce n'est pas un défaut du moteur mais une limite du fixture non
-// canonique ; à revérifier avec le vrai contenu du jeu. L'appartenance de
-// `outcome` à l'une des trois valeurs est déjà garantie par le typage : la
-// valeur réelle de ce test est donc plus modeste — vérifier qu'aucune des
-// 50 graines supplémentaires (mapping botSeed distinct de l'autre test) ne
-// lève d'exception — et on consigne la ventilation observée pour diagnostic.
-test('chaque partie se termine par une issue valide (winner, stuck ou maxSteps)', () => {
+// Avec le VRAI deck (90 cartes), les parties progressent : les mains se rechargent et
+// les captures de planètes finissent par produire des vainqueurs — contrairement au deck
+// fixture (10 cartes) qui bloquait en `stuck` après ~8-10 coups. On vérifie ici que le
+// self-play traverse les effets interactifs sans crash ET qu'au moins une graine mène à
+// une victoire (le blocage systématique `stuck` du fixture est levé).
+test('sur le vrai deck, au moins une graine mène à une victoire (blocage stuck levé)', () => {
   const outcomes: Record<SelfPlayResult['outcome'], number> = { winner: 0, stuck: 0, maxSteps: 0 };
   for (const seed of SEEDS) {
     const res = selfPlay(CONFIG, seed, seed * 3 + 2, 1000);
     expect(['winner', 'stuck', 'maxSteps']).toContain(res.outcome);
     outcomes[res.outcome]++;
   }
-  // Ventilation observée avec le deck fixture (10 cartes, non canonique) : 50/50 `stuck`.
-  // Voir le rapport de tâche pour le détail complet (médiane/max de coups).
   expect(outcomes.winner + outcomes.stuck + outcomes.maxSteps).toBe(SEEDS.length);
+  expect(outcomes.winner).toBeGreaterThan(0); // au moins une victoire sur 50 graines
 });
