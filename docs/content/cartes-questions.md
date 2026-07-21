@@ -251,3 +251,17 @@ Cartes comportant **au moins un effet marqué ❓❓** (incertitude la plus haut
 
 ### Encore en attente (rares)
 - Jeton bicolore ▲/▼ (Bujøld, Archimedes) · œil (Handy Luke) · éventail de cartes (Punk Mari) · jauge « +9 » (Thømpsøn) · casque (P.K.Dick) · badge tout-or vs bicolore (Queen Suzanne).
+
+## ✅ RÉPONSES CONFIRMÉES — icônes rares (utilisateur, 2026-07-22)
+
+- **Bujøld** : « 0 zénithium → augmenter la techno la plus basse » ; si plusieurs technos au niveau le plus bas, **le joueur choisit** laquelle. → **atome** `developLowest` (coût 0, décision si égalité). (Le pseudo « jeton ▲/▼ » = indicateur de progression techno.)
+- **Archimedes** : = B6 (developDiscounted, peuple = Animod).
+- **Handy Luke** (œil + jeton bonus) : **choisir un jeton bonus VISIBLE sur le plateau et appliquer ses effets**. → **atome** `takeBoardBonusToken` (décision : quel jeton du plateau). (C'est l'action « cartes » anticipée : réserve OU plateau — ici plateau.)
+- **Punk Mari** (éventail de cartes) : **se défausser de TOUTE sa main**. → **atome** `discardHandAll`.
+- **Thømpsøn** : « ! crédits 6+ » = **condition** — la dernière action ne se fait que si le joueur a **≥ 6 crédits** à ce moment (rappel : on paie le recrutement d'abord). Condition = `creditsAtLeast 6`.
+- **P.K.Dick** : « ! + badge Leader » = **condition** `hasLeaderBadge` pour la dernière action.
+- **Badges** : **bicolore** = `takeLeader silver` (prendre argent, ou argent→or si déjà pris). **Tout-or** (Queen Suzanne) = `takeLeader gold` (gagner directement en or, ou argent→or). Les deux déjà supportés par l'atome existant.
+
+### Grammaire des cartes — récap des NOUVEAUX besoins moteur
+- **Combinateurs** : `optional`/facultatif (relié par flèche, choix du joueur) ; `choice` exclusif (« / ») ; `scale` (paliers coût→récompense) ; `conditional` (gate : `hasLeaderBadge`, `creditsAtLeast N`, …).
+- **Atomes** : `developDiscounted {people, discount:1}` · `developLowest {cost:0}` · `creditsFromCardValue {source: transfer|exile|discardHand}` · `takeBoardBonusToken` · `discardHandAll` · exil-échelle « de la couleur de la carte » · disque-barré = influence/effet sur couleur ≠ carte · (déjà là : `credits target:opponent`, `takeLeader silver|gold`, `influenceEach`).
