@@ -60,3 +60,22 @@ test('les atomes give-* ne sont jamais nus dans effects[]', () => {
     }
   }
 });
+
+test('cartes TODO résolues : effet complet transcrit (plus que la seule influence)', () => {
+  const resolved = [
+    'venus-ilda-flores', 'mars-lady-moore', 'mercure-chaka', 'terra-l0v3cr4ft', 'terra-h3rb3rt',
+    'mars-titus', 'terra-baron-goro', 'mars-charlize-gun', 'jupiter-bajazet',
+  ];
+  for (const id of resolved) {
+    const c = CARDS.find((x) => x.id === id)!;
+    expect(c).toBeDefined();
+    expect(c.effects.length).toBeGreaterThan(1);
+  }
+});
+
+test('aucun TODO(rules) restant dans le catalogue de cartes', () => {
+  const fs = require('fs') as typeof import('fs');
+  const path = require('path') as typeof import('path');
+  const source = fs.readFileSync(path.join(__dirname, '..', 'cards.ts'), 'utf8');
+  expect(source).not.toContain('TODO(rules)');
+});

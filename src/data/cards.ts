@@ -28,11 +28,10 @@ export const MARS_CARDS: CardDef[] = [
     ],
   },
   {
-    // TODO(rules): "≠ Mars" côté adversaire non exprimable — giveInfluenceOpponent sans exclusion. Mineur.
     id: 'mars-titus', name: 'Titus', people: 'animod', planet: 'mars', cost: 1,
     effects: [
       { k: 'influence', amount: 1, on: 'mars' },
-      { k: 'optional', effects: [{ k: 'giveInfluenceOpponent', amount: 1 }, { k: 'credits', amount: 10, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'giveInfluenceOpponent', amount: 1, exceptColor: 'mars' }, { k: 'credits', amount: 10, target: 'self' }] },
     ],
   },
   {
@@ -58,13 +57,13 @@ export const MARS_CARDS: CardDef[] = [
     ],
   },
   {
-    // TODO(rules): la silhouette "mobiliser vers la colonne ADVERSE" n'est pas exprimable
-    // (mobilize place toujours dans SA colonne). Encodé en mobilize normal + transfer(choice) pour "voler 1 carte".
+    // Clarifié (cf. cartes-todo.md, scan 23.02_5) : mobiliser 1 + transférer 1 + exiler 1 agent adverse.
     id: 'mars-charlize-gun', name: 'Charlize Gun', people: 'humain', planet: 'mars', cost: 4,
     effects: [
       { k: 'influence', amount: 1, on: 'mars' },
       { k: 'mobilize', count: 1, thenInfluence: false },
       { k: 'transfer', count: 1, from: 'choice' },
+      { k: 'exile', side: 'opponent', count: 1 },
     ],
   },
   {
@@ -141,12 +140,13 @@ export const MARS_CARDS: CardDef[] = [
     ],
   },
   {
-    // TODO(rules): "exiler 3 cartes de la MAIN adverse → +1 influence sur la couleur de chaque carte exilée"
-    // non exprimable (exile opère sur les colonnes, pas la main adverse ; influence par couleur de carte inconnue).
-    // Transcrit avec le seul 1er effet en attendant l'arbitrage utilisateur / un atome dédié.
+    // "exiler 3 cartes adverses → +1 influence sur la couleur de chaque carte exilée" :
+    // exil des COLONNES adverses (cf. cartes-todo.md, règle de vocabulaire) ; thenInfluence
+    // accorde +1 influence sur la couleur de chaque colonne exilée.
     id: 'mars-lady-moore', name: 'Lady Moore', people: 'humain', planet: 'mars', cost: 10,
     effects: [
       { k: 'influence', amount: 1, on: 'mars' },
+      { k: 'exile', side: 'opponent', count: 3, thenInfluence: true },
     ],
   },
 ];
@@ -224,11 +224,11 @@ export const MERCURE_CARDS: CardDef[] = [
       { k: 'zenithium', amount: 2, target: 'self' },
       { k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'zenithium', amount: 2, target: 'self' }] },
     ] },
-  { // TODO(rules): "exiler 2 cartes ≠ Mercure" — l'exclusion de couleur n'est pas supportée par l'atome exile (choix libre). Mineur.
+  {
     id: 'mercure-chaka', name: 'Chaka', people: 'animod', planet: 'mercure', cost: 1,
     effects: [
       { k: 'influence', amount: 1, on: 'mercure' },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 2 }, { k: 'credits', amount: 10, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 2, exceptColor: 'mercure' }, { k: 'credits', amount: 10, target: 'self' }] },
     ] },
   { id: 'mercure-magellan', name: 'Magellan', people: 'animod', planet: 'mercure', cost: 10,
     effects: [
@@ -350,12 +350,11 @@ export const VENUS_CARDS: CardDef[] = [
         { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'influence', amount: 3, on: 'venus' }] },
       ] },
     ] },
-  { // TODO(rules): "gagner du ZÉNITHIUM selon le nb de technos ≥ niv.1" non exprimable :
-    // creditsPerTechLevels donne des CRÉDITS, pas du zénithium ; aucun atome zenithiumPerTechLevels.
-    // Montant exact de la récompense également à confirmer (feuille). Transcrit avec le seul 1er effet.
+  { // Zénithium selon le nb de technos >= niv.1 : facteur confirmé ; montant [1,2,3] = lecture "1x/2x/3x hexagone" (cartes-venus.md).
     id: 'venus-ilda-flores', name: 'Ilda Flores', people: 'humain', planet: 'venus', cost: 1,
     effects: [
       { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'creditsPerTechLevels', tiers: [1, 2, 3], resource: 'zenithium' },
     ] },
   { id: 'venus-professor-zed', name: 'Professor Zed', people: 'humain', planet: 'venus', cost: 9,
     effects: [
@@ -419,11 +418,10 @@ export const TERRA_CARDS: CardDef[] = [
       { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'influence', amount: 1, on: 'terra' }] },
     ] },
   { // effet 2 FACULTATIF (give-* enveloppé), effet 3 OBLIGATOIRE.
-    // TODO(rules): "≠ Terra" côté adversaire non exprimable (giveInfluenceOpponent sans exclusion). Mineur.
     id: 'terra-baron-goro', name: 'Baron Goro', people: 'humain', planet: 'terra', cost: 4,
     effects: [
       { k: 'influence', amount: 1, on: 'terra' },
-      { k: 'optional', effects: [{ k: 'giveInfluenceOpponent', amount: 1 }] },
+      { k: 'optional', effects: [{ k: 'giveInfluenceOpponent', amount: 1, exceptColor: 'terra' }] },
       { k: 'zenithium', amount: 3, target: 'self' },
     ] },
   { id: 'terra-elisabeth', name: 'Elisabeth', people: 'animod', planet: 'terra', cost: 2,
@@ -445,16 +443,14 @@ export const TERRA_CARDS: CardDef[] = [
       { k: 'credits', amount: 4, target: 'self' },
       { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influence', amount: 2, on: 'choice' }] },
     ] },
-  { // TODO(rules): "exiler 1 carte d'une couleur PRÉCISE (Mercure/Vénus/Mars/Jupiter) → 1 zén" par couleur :
-    // l'atome exile ne peut pas épingler une colonne d'une couleur donnée (soit correspondant à ctx.planet, soit choix libre).
-    // Encodé en 4 optionals "exile self (choix libre) → 1 zén" ; la contrainte de couleur exacte n'est pas garantie.
+  { // "exiler 1 carte d'une couleur precise -> 1 zenithium", une fois par couleur (Mercure/Venus/Mars/Jupiter).
     id: 'terra-l0v3cr4ft', name: 'L0v3cr4ft', people: 'robot', planet: 'terra', cost: 5,
     effects: [
       { k: 'influence', amount: 1, on: 'terra' },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'mercure' }, { k: 'zenithium', amount: 1, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'venus' }, { k: 'zenithium', amount: 1, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'mars' }, { k: 'zenithium', amount: 1, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'jupiter' }, { k: 'zenithium', amount: 1, target: 'self' }] },
     ] },
   { id: 'terra-zenon', name: 'Zenon', people: 'animod', planet: 'terra', cost: 1,
     effects: [
@@ -468,16 +464,15 @@ export const TERRA_CARDS: CardDef[] = [
       { k: 'influence', amount: 1, on: 'choice' },
       { k: 'takeLeader', side: 'silver' },
     ] },
-  { // Planète de bandeau NON confirmée (classée Terra par défaut).
-    // TODO(rules): "exiler 1 carte d'une couleur donnée → influence sur cette même couleur" ×4 :
-    // même limite d'expressivité que L0v3cr4ft (couleur exacte non épinglable). Encodé best-effort.
+  { // Planète de bandeau NON confirmée (classée Terra par défaut). 4 couleurs = Mercure/Venus/Mars/Jupiter.
+    // "exiler 1 carte d'une couleur donnee -> +1 influence sur cette meme couleur" (thenInfluence : uniquement si une carte est exilee).
     id: 'terra-h3rb3rt', name: 'H3rb3rt', people: 'robot', planet: 'terra', cost: 6,
     effects: [
       { k: 'influence', amount: 1, on: 'terra' },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
-      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'mercure', thenInfluence: true }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'venus', thenInfluence: true }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'mars', thenInfluence: true }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1, color: 'jupiter', thenInfluence: true }] },
     ] },
   { // Planète de bandeau NON confirmée (classée Terra par défaut).
     id: 'terra-sir-sam', name: 'Sir Sam', people: 'humain', planet: 'terra', cost: 7,
@@ -585,11 +580,11 @@ export const JUPITER_CARDS: CardDef[] = [
       { k: 'influence', amount: 1, on: 'jupiter' },
       { k: 'creditsPerCardColors', zone: 'opponent', per: 2 },
     ] },
-  { // TODO(rules): "exiler X cartes de la MAIN adverse → gagner X crédits" non exprimable
-    // (pas d'exil de la main adverse ; X = nombre choisi, crédits = X et non la valeur des cartes). Transcrit avec le seul 1er effet.
+  { // Clarifié (cf. cartes-todo.md, scan 23.02_40) : exiler 1 carte adverse (plateau) -> gagner sa valeur en credits.
     id: 'jupiter-bajazet', name: 'Bajazet', people: 'animod', planet: 'jupiter', cost: 3,
     effects: [
       { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'creditsFromCardValue', source: 'exileOpponent' },
     ] },
   { id: 'jupiter-geta', name: 'Geta', people: 'animod', planet: 'jupiter', cost: 3,
     effects: [
