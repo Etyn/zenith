@@ -199,3 +199,29 @@ test('influenceDifferent exclut la planète déjà choisie dans la même résolu
   expect(out.pending).toBeNull();
   expect(out.resolution).toBeNull();
 });
+
+test('resolve propage resolution.chosen à travers un atome sans choix intercalé (invariant N3)', () => {
+  const base = createGame(CONFIG, 1);
+  const s = {
+    ...base,
+    resolution: {
+      queue: [
+        { k: 'influence', on: 'choice', amount: 2 } as const,
+        { k: 'credits', amount: 3, target: 'self' } as const,
+        { k: 'influenceDifferent', amount: 1 } as const,
+      ],
+      ctx: { player: 0 as const, planet: 'terra' as const },
+    },
+  };
+  const p1 = resolve(s); // 1er choix (amount 2)
+  expect(p1.pending).toEqual({ kind: 'choosePlanet', amount: 2 });
+  // choisit terra ; enchaîne sur 'credits' (sans choix) puis sur influenceDifferent
+  const p2 = decide(p1, 'terra');
+  expect(p2.pending).toEqual({ kind: 'choosePlanet', amount: 1, exclude: ['terra'] });
+  // rechoisir terra est interdit : le suivi de 'chosen' n'a pas été perdu par l'atome intercalé
+  expect(() => decide(p2, 'terra')).toThrow();
+  // une autre planète est acceptée et clôt la résolution
+  const out = decide(p2, 'mars');
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+});

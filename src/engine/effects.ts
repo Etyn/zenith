@@ -110,7 +110,7 @@ export function resolve(state: GameState): GameState {
       break;
     }
     s = applyEffect(s, head, ctx);
-    s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
+    s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
   }
   if (s.resolution && (s.resolution.queue.length === 0 || s.winner !== null)) s = { ...s, resolution: null };
   return s;
