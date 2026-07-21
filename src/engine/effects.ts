@@ -74,6 +74,8 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       throw new Error("applyEffect: 'transfer' passe par resolve/decide");
     case 'exile':
       throw new Error("applyEffect: 'exile' passe par resolve/decide");
+    case 'exileForInfluence':
+      throw new Error("applyEffect: 'exileForInfluence' passe par resolve/decide");
   }
 }
 
@@ -125,6 +127,16 @@ export function resolve(state: GameState): GameState {
       s = { ...s, pending: { kind: 'chooseColumn', owner, purpose: head.k, remaining: head.count } };
       break;
     }
+    if (head.k === 'exileForInfluence') {
+      const me = ctx.player;
+      const hasEligible = PLANETS.some((p) => s.players[me].columns[p].length > 0);
+      if (head.count <= 0 || !hasEligible) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      s = { ...s, pending: { kind: 'chooseColumn', owner: 'self', purpose: 'exileInfluence', remaining: head.count, amount: head.amount, exclude: [] } };
+      break;
+    }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
   }
@@ -156,6 +168,9 @@ export function decide(state: GameState, planet: Planet): GameState {
     if (column.length === 0) {
       throw new Error('decide: colonne vide (choix invalide)');
     }
+    if (pending.purpose === 'exileInfluence' && (pending.exclude ?? []).includes(planet)) {
+      throw new Error('decide: couleur déjà choisie (doit être différente)');
+    }
     const card = column[column.length - 1]!;
     const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
     players[ownerIndex] = {
@@ -171,14 +186,22 @@ export function decide(state: GameState, planet: Planet): GameState {
       };
       moved = { ...state, players };
     } else {
-      // exile → défausse
+      // exile ET exileInfluence : la carte part à la défausse
       moved = { ...state, players, discard: [...state.discard, card] };
+      if (pending.purpose === 'exileInfluence') {
+        moved = gainInfluence(moved, planet, active, pending.amount ?? 0);
+      }
     }
     const remaining = pending.remaining - 1;
-    const stillEligible = PLANETS.some((p) => moved.players[ownerIndex].columns[p].length > 0);
-    if (remaining > 0 && stillEligible) {
-      // atome maintenu en tête de file ; on re-pose la décision avec remaining décrémenté
-      return { ...moved, pending: { kind: 'chooseColumn', owner: pending.owner, purpose: pending.purpose, remaining } };
+    const nextExclude = pending.purpose === 'exileInfluence' ? [...(pending.exclude ?? []), planet] : pending.exclude;
+    const stillEligible = PLANETS.some(
+      (p) => moved.players[ownerIndex].columns[p].length > 0 && !(nextExclude ?? []).includes(p),
+    );
+    if (remaining > 0 && stillEligible && moved.winner === null) {
+      return {
+        ...moved,
+        pending: { kind: 'chooseColumn', owner: pending.owner, purpose: pending.purpose, remaining, amount: pending.amount, exclude: nextExclude },
+      };
     }
     const done: GameState = {
       ...moved,

@@ -37,14 +37,22 @@ export type Effect =
   | { k: 'influenceNeighbors'; count: number; amount: number }
   | { k: 'influenceDifferent'; amount: number }
   | { k: 'transfer'; count: number }
-  | { k: 'exile'; side: Side; count: number };
+  | { k: 'exile'; side: Side; count: number }
+  | { k: 'exileForInfluence'; count: number; amount: number };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
 export type PendingDecision =
   | { kind: 'choosePlanet'; amount: number; exclude?: Planet[] }
   | { kind: 'chooseSegment'; count: number; amount: number }
-  | { kind: 'chooseColumn'; owner: 'self' | 'opponent'; purpose: 'transfer' | 'exile'; remaining: number };
+  | {
+      kind: 'chooseColumn';
+      owner: 'self' | 'opponent';
+      purpose: 'transfer' | 'exile' | 'exileInfluence';
+      remaining: number;
+      amount?: number;
+      exclude?: Planet[];
+    };
 
 export type GameState = {
   config: GameConfig;

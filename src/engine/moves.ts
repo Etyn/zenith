@@ -143,7 +143,10 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
       candidates = PLANETS.filter((_, i) => i + pending.count <= PLANETS.length);
     } else if (pending.kind === 'chooseColumn') {
       const ownerIndex: PlayerIndex = pending.owner === 'self' ? player : player === 0 ? 1 : 0;
-      candidates = PLANETS.filter((planet) => state.players[ownerIndex].columns[planet].length > 0);
+      const exclude = pending.exclude ?? [];
+      candidates = PLANETS.filter(
+        (planet) => state.players[ownerIndex].columns[planet].length > 0 && !exclude.includes(planet),
+      );
     } else {
       const exclude = pending.exclude ?? [];
       candidates = PLANETS.filter((planet) => !exclude.includes(planet));

@@ -369,3 +369,58 @@ test("transfer est ignoré quand l'adversaire n'a aucune colonne non vide", () =
   expect(out.resolution).toBeNull();
   expect(out.players[0].credits).toBe(base.players[0].credits + 2);
 });
+
+test('exileForInfluence : exile 2 cartes de couleurs DIFFÉRENTES + 2 influence sur chaque planète', () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['t1'], mars: ['m1'] });
+  const before = { terra: seeded.planets.terra.discPos, mars: seeded.planets.mars.discPos };
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exileForInfluence', count: 2, amount: 2 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const p1 = resolve(s);
+  expect(p1.pending).toEqual({ kind: 'chooseColumn', owner: 'self', purpose: 'exileInfluence', remaining: 2, amount: 2, exclude: [] });
+  const p2 = decide(p1, 'terra'); // exile t1, +2 influence terra
+  expect(p2.pending).toEqual({ kind: 'chooseColumn', owner: 'self', purpose: 'exileInfluence', remaining: 1, amount: 2, exclude: ['terra'] });
+  expect(() => decide(p2, 'terra')).toThrow(); // même couleur interdite
+  const out = decide(p2, 'mars'); // exile m1, +2 influence mars
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].columns.terra).toEqual([]);
+  expect(out.players[0].columns.mars).toEqual([]);
+  expect(out.discard).toEqual(expect.arrayContaining(['t1', 'm1']));
+  expect(out.planets.terra.discPos).toBe(before.terra - 2); // joueur 0, dir -1, amount 2
+  expect(out.planets.mars.discPos).toBe(before.mars - 2);
+});
+
+test('exileForInfluence : une seule couleur non vide → application partielle (1 exil, perte de la 2e influence)', () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['t1'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exileForInfluence', count: 2, amount: 2 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const p1 = resolve(s);
+  const out = decide(p1, 'terra'); // seule couleur → s'arrête après 1
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].columns.terra).toEqual([]);
+});
+
+test('exileForInfluence : aucune colonne → atome ignoré (skip)', () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    resolution: {
+      queue: [
+        { k: 'exileForInfluence', count: 2, amount: 2 } as const,
+        { k: 'credits', amount: 3, target: 'self' } as const,
+      ],
+      ctx: { player: 0 as const, planet: 'terra' as const },
+    },
+  };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].credits).toBe(base.players[0].credits + 3);
+});
