@@ -302,3 +302,24 @@ test("exile exceptColor : pose chooseColumn en excluant la couleur bannie ; deci
   const out = decide(paused, 'mars'); // choix valide
   expect(out.players[0].columns.mars).toEqual([]);
 });
+
+test("exil adverse x3 + thenInfluence : +1 influence sur la couleur de chaque carte exilee (mecanique Lady Moore)", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 1, { mars: ['m'], venus: ['v'], jupiter: ['j'] });
+  const marsBefore = seeded.planets.mars.discPos;
+  const venusBefore = seeded.planets.venus.discPos;
+  const jupBefore = seeded.planets.jupiter.discPos;
+  const s: GameState = { ...seeded, resolution: { queue: [{ k: 'exile', side: 'opponent', count: 3, thenInfluence: true }], ctx: { player: 0, planet: 'mars' } } };
+  let cur = resolve(s);
+  expect(cur.pending).toMatchObject({ kind: 'chooseColumn', owner: 'opponent', purpose: 'exile', remaining: 3, thenInfluence: true });
+  cur = decide(cur, 'mars');    // exile la carte mars adverse -> +1 influence mars (joueur 0)
+  cur = decide(cur, 'venus');   // -> +1 influence venus
+  cur = decide(cur, 'jupiter'); // -> +1 influence jupiter
+  expect(cur.pending).toBeNull();
+  expect(cur.players[1].columns.mars).toEqual([]);
+  expect(cur.players[1].columns.venus).toEqual([]);
+  expect(cur.players[1].columns.jupiter).toEqual([]);
+  expect(cur.planets.mars.discPos).not.toBe(marsBefore);
+  expect(cur.planets.venus.discPos).not.toBe(venusBefore);
+  expect(cur.planets.jupiter.discPos).not.toBe(jupBefore);
+});
