@@ -31,7 +31,8 @@ export type Effect =
   | { k: 'credits'; amount: number; target: Side }
   | { k: 'zenithium'; amount: number; target: Side }
   | { k: 'mobilize'; count: number; thenInfluence: boolean }
-  | { k: 'takeLeader'; side: 'silver' | 'gold' };
+  | { k: 'takeLeader'; side: 'silver' | 'gold' }
+  | { k: 'steal'; resource: 'credits' | 'zenithium'; amount: number };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx };

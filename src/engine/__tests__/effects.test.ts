@@ -122,3 +122,20 @@ test('takeLeader gold : prend directement le badge cote Or', () => {
   const s1 = applyEffect(s0, { k: 'takeLeader', side: 'gold' }, { player: 1, planet: 'mars' });
   expect(s1.diplomacy).toEqual({ leader: 1, side: 'gold' });
 });
+
+test("steal retire la ressource à l'adversaire et la donne au joueur (borné)", () => {
+  const base = createGame(CONFIG, 1);
+  const ctx = { player: 0 as const, planet: 'terra' as const };
+  // adversaire (joueur 1) : on fixe 2 crédits pour tester le plafonnement à son stock
+  const s: GameState = {
+    ...base,
+    players: [
+      { ...base.players[0], credits: 5 },
+      { ...base.players[1], credits: 2 },
+    ],
+  };
+  const out = applyEffect(s, { k: 'steal', resource: 'credits', amount: 3 }, ctx);
+  // l'adversaire n'a que 2 : on vole 2, pas 3
+  expect(out.players[1].credits).toBe(0);
+  expect(out.players[0].credits).toBe(5 + 2);
+});

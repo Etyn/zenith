@@ -45,6 +45,16 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     }
     case 'mobilize':
       return applyMobilize(state, effect.count, effect.thenInfluence, ctx.player);
+    case 'steal': {
+      const thief = ctx.player;
+      const victim: PlayerIndex = thief === 0 ? 1 : 0;
+      const avail = state.players[victim][effect.resource];
+      const taken = Math.min(effect.amount, avail);
+      const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+      players[victim] = { ...players[victim], [effect.resource]: avail - taken };
+      players[thief] = { ...players[thief], [effect.resource]: players[thief][effect.resource] + taken };
+      return { ...state, players };
+    }
   }
 }
 
