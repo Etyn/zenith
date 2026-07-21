@@ -2,10 +2,12 @@ import { gainInfluence } from './influence';
 import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
 import { PLANETS, PEOPLES } from './types';
-import type { Condition, Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState, Side } from './types';
+import type { Condition, Effect, EffectCtx, GameState, People, Planet, PlayerIndex, PlayerState, Side } from './types';
 import { shuffle } from './rng';
 import { tokenOf } from '../data/tokens';
 import { CENTER } from './setup';
+import { developTech } from './develop';
+import { activeFace } from '../data/tech';
 
 // Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
 const CARDS: Record<string, CardDef> = Object.fromEntries(FIXTURE_CARDS.map((c) => [c.id, c]));
@@ -135,6 +137,9 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'giveInfluenceOpponent':
     case 'moveDiscToCenter':
       throw new Error(`applyEffect: '${effect.k}' passe par resolve/decide`);
+    case 'developDiscounted':
+    case 'developLowest':
+      throw new Error(`applyEffect: '${effect.k}' passe par resolve/decideTech`);
   }
 }
 
@@ -238,6 +243,53 @@ export function resolve(state: GameState): GameState {
         resolution: { queue: [...tokenFx, ...s.resolution!.queue.slice(1)], ctx, chosen: s.resolution!.chosen },
       };
       continue;
+    }
+    if (head.k === 'developDiscounted') {
+      const me = ctx.player;
+      if (head.which === 'cardPeople') {
+        const people = ctx.people;
+        if (!people) throw new Error("resolve: developDiscounted 'cardPeople' requiert ctx.people");
+        const lvl = s.players[me].techMarkers[people];
+        const affordable = lvl < 5 && developTech(s, me, people, Math.max(0, activeFace(people, s.config.techSetup).levels[lvl]!.zenithium - head.discount)) !== null;
+        if (!affordable) {
+          s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+          continue;
+        }
+        const cost = Math.max(0, activeFace(people, s.config.techSetup).levels[lvl]!.zenithium - head.discount);
+        const res = developTech(s, me, people, cost)!;
+        s = { ...res.state, resolution: { queue: [...res.queue, ...s.resolution!.queue.slice(1)], ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      const cands = PEOPLES.filter((pe) => {
+        const lvl = s.players[me].techMarkers[pe];
+        if (lvl >= 5) return false;
+        const cost = Math.max(0, activeFace(pe, s.config.techSetup).levels[lvl]!.zenithium - head.discount);
+        return cost <= s.players[me].zenithium;
+      });
+      if (cands.length === 0) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      s = { ...s, pending: { kind: 'chooseTech', discount: head.discount, zeroCost: false, candidates: cands } };
+      break;
+    }
+    if (head.k === 'developLowest') {
+      const me = ctx.player;
+      const markers = s.players[me].techMarkers;
+      const eligible = PEOPLES.filter((pe) => markers[pe] < 5);
+      if (eligible.length === 0) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      const min = Math.min(...eligible.map((pe) => markers[pe]));
+      const tied = eligible.filter((pe) => markers[pe] === min);
+      if (tied.length === 1) {
+        const res = developTech(s, me, tied[0]!, 0)!;
+        s = { ...res.state, resolution: { queue: [...res.queue, ...s.resolution!.queue.slice(1)], ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      s = { ...s, pending: { kind: 'chooseTech', discount: 0, zeroCost: true, candidates: tied } };
+      break;
     }
     if (head.k === 'optional') {
       s = { ...s, pending: { kind: 'confirmOptional' } };
@@ -358,6 +410,26 @@ export function decide(state: GameState, planet: Planet): GameState {
     resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: [...prevChosen, ...justChosen] },
   };
   return resolve(s);
+}
+
+export function decideTech(state: GameState, people: People): GameState {
+  if (state.pending === null || state.resolution === null || state.pending.kind !== 'chooseTech') {
+    throw new Error('decideTech: aucune décision chooseTech en attente');
+  }
+  const pending = state.pending;
+  const ctx = state.resolution.ctx;
+  const chosen = state.resolution.chosen;
+  if (!pending.candidates.includes(people)) throw new Error('decideTech: peuple non éligible');
+  const lvl = state.players[ctx.player].techMarkers[people];
+  const base = activeFace(people, state.config.techSetup).levels[lvl]!.zenithium;
+  const cost = pending.zeroCost ? 0 : Math.max(0, base - pending.discount);
+  const res = developTech(state, ctx.player, people, cost);
+  const rest = state.resolution.queue.slice(1);
+  const next =
+    res === null
+      ? { ...state, pending: null, resolution: { queue: rest, ctx, chosen } }
+      : { ...res.state, pending: null, resolution: { queue: [...res.queue, ...rest], ctx, chosen } };
+  return resolve(next);
 }
 
 export function chooseBranch(state: GameState, index: number): GameState {

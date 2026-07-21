@@ -1,9 +1,9 @@
-import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch } from './effects';
+import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch, decideTech as decideTechEffect } from './effects';
 import { activeFace } from '../data/tech';
+import { developTech } from './develop';
 import { CENTER } from './setup';
 import { DIPLOMACY } from '../data/diplomacy';
-import { tokenOf } from '../data/tokens';
-import type { Effect, GameState, People, Planet, PlayerIndex, PlayerState } from './types';
+import type { GameState, People, Planet, PlayerIndex, PlayerState } from './types';
 import { PLANETS } from './types';
 
 export type Move =
@@ -12,7 +12,8 @@ export type Move =
   | { t: 'leadership'; cardId: string }
   | { t: 'decide'; planet: Planet }
   | { t: 'choose'; index: number }
-  | { t: 'skip' };
+  | { t: 'skip' }
+  | { t: 'decideTech'; people: People };
 
 function recruitCost(state: GameState, player: PlayerIndex, planet: Planet, baseCost: number): number {
   return Math.max(0, baseCost - state.players[player].columns[planet].length);
@@ -57,6 +58,10 @@ export function applyMove(state: GameState, move: Move): GameState {
     if (state.pending === null) return state;
     return finishOrPending(skipBranch(state));
   }
+  if (move.t === 'decideTech') {
+    if (state.pending === null) return state;
+    return finishOrPending(decideTechEffect(state, move.people));
+  }
 
   if (move.t === 'develop') {
     if (state.winner !== null || state.pending !== null || state.resolution !== null) return state;
@@ -64,55 +69,16 @@ export function applyMove(state: GameState, move: Move): GameState {
     if (!state.players[player].hand.includes(move.cardId)) return state;
     const card = cardOf(move.cardId);
     if (!card || card.people !== move.people) return state;
-    const current = state.players[player].techMarkers[move.people];
-    if (current >= 5) return state;
-    const face = activeFace(move.people, state.config.techSetup);
-    const newLevel = current + 1;
-    const cost = face.levels[newLevel - 1]!.zenithium;
-    if (cost > state.players[player].zenithium) return state;
-
     const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
-    const hand = players[player].hand.filter((id) => id !== move.cardId);
-    const techMarkers = { ...players[player].techMarkers, [move.people]: newLevel };
-    players[player] = { ...players[player], hand, techMarkers, zenithium: players[player].zenithium - cost };
-    // Effets cumulés : niveau atteint puis tous les inférieurs (haut → bas).
-    // Jeton d'emplacement niveau 2 : intercalé entre le niveau 2 et le niveau 1 (pris par le 1er joueur).
-    const queue: Effect[] = [];
-    let techBonus = state.techBonus;
-    let bonusDiscard = state.bonusDiscard;
-    for (let lvl = newLevel; lvl >= 1; lvl--) {
-      queue.push(...face.levels[lvl - 1]!.effects);
-      if (lvl === 2 && newLevel === 2 && techBonus[move.people] !== null) {
-        const tokenId = techBonus[move.people]!;
-        queue.push(...tokenOf(tokenId).effects);
-        techBonus = { ...techBonus, [move.people]: null };
-        bonusDiscard = [...bonusDiscard, tokenId];
-      }
-    }
-
-    // Primes de ligne : 3 technos au niveau tier → +tier influence au choix (1 fois chacune).
-    // Appliquées APRÈS les effets de colonne (poussées à la suite dans la file).
-    const claimed = { ...players[player].lineBonusClaimed };
-    const markers = players[player].techMarkers;
-    for (const tier of [1, 2, 3] as const) {
-      const allReached = markers.animod >= tier && markers.humain >= tier && markers.robot >= tier;
-      if (allReached && !claimed[tier]) {
-        claimed[tier] = true;
-        queue.push({ k: 'influence', amount: tier, on: 'choice' });
-      }
-    }
-    players[player] = { ...players[player], lineBonusClaimed: claimed };
-
+    players[player] = { ...players[player], hand: players[player].hand.filter((id) => id !== move.cardId) };
+    const afterCard: GameState = { ...state, players, discard: [...state.discard, move.cardId] };
+    const res = developTech(afterCard, player, move.people);
+    if (res === null) return state; // niveau/coût invalide → move ignoré
     const started: GameState = {
-      ...state,
-      players,
-      discard: [...state.discard, move.cardId],
-      techBonus,
-      bonusDiscard,
-      resolution: { queue, ctx: { player, planet: card.planet } },
+      ...res.state,
+      resolution: { queue: res.queue, ctx: { player, planet: card.planet, people: card.people } },
     };
-    const resolved = resolve(started);
-    return finishOrPending(resolved);
+    return finishOrPending(resolve(started));
   }
 
   if (move.t === 'leadership') {
@@ -150,7 +116,7 @@ export function applyMove(state: GameState, move: Move): GameState {
   const started: GameState = {
     ...state,
     players,
-    resolution: { queue: [...card.effects], ctx: { player, planet: card.planet } },
+    resolution: { queue: [...card.effects], ctx: { player, planet: card.planet, people: card.people } },
   };
   const resolved = resolve(started);
   return finishOrPending(resolved);
@@ -173,6 +139,9 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
     }
     if (pending.kind === 'moveDiscToCenter') {
       return PLANETS.map((planet) => ({ t: 'decide', planet }));
+    }
+    if (pending.kind === 'chooseTech') {
+      return pending.candidates.map((people) => ({ t: 'decideTech', people }));
     }
     let candidates: Planet[] = [];
     if (pending.kind === 'chooseSegment') {

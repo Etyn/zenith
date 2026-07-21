@@ -55,9 +55,11 @@ export type Effect =
   | { k: 'influenceChoiceExcept'; exceptColor: Planet; amount: number }
   | { k: 'influenceChoiceAtCenter'; amount: number }
   | { k: 'giveInfluenceOpponent'; amount: number }
-  | { k: 'moveDiscToCenter' };
+  | { k: 'moveDiscToCenter' }
+  | { k: 'developDiscounted'; which: 'cardPeople' | 'choice'; discount: number }
+  | { k: 'developLowest' };
 
-export type EffectCtx = { player: PlayerIndex; planet: Planet };
+export type EffectCtx = { player: PlayerIndex; planet: Planet; people?: People };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
 export type PendingDecision =
   | { kind: 'choosePlanet'; amount: number; exclude?: Planet[]; atCenter?: boolean; beneficiary?: Side }
@@ -73,7 +75,8 @@ export type PendingDecision =
     }
   | { kind: 'confirmOptional' }
   | { kind: 'chooseOption'; count: number }
-  | { kind: 'chooseTier'; count: number };
+  | { kind: 'chooseTier'; count: number }
+  | { kind: 'chooseTech'; discount: number; zeroCost: boolean; candidates: People[] };
 
 export type GameState = {
   config: GameConfig;
