@@ -49,7 +49,9 @@ export type Effect =
   | { k: 'choice'; options: Effect[][] }
   | { k: 'scale'; tiers: { cost: Effect[]; reward: Effect[] }[] }
   | { k: 'creditsPerCardColors'; zone: Side; per: number }
-  | { k: 'creditsPerTechLevels'; tiers: number[] };
+  | { k: 'creditsPerTechLevels'; tiers: number[] }
+  | { k: 'giveOpponent'; resource: 'credits' | 'zenithium'; amount: number }
+  | { k: 'giveLeaderBadge' };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };

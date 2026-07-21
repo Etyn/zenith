@@ -115,6 +115,20 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       const gain = n === 0 ? 0 : effect.tiers[Math.min(n, effect.tiers.length) - 1]!;
       return creditPlayer(state, ctx.player, { credits: state.players[ctx.player].credits + gain });
     }
+    case 'giveOpponent': {
+      const giver = ctx.player;
+      const receiver: PlayerIndex = giver === 0 ? 1 : 0;
+      const given = Math.min(effect.amount, state.players[giver][effect.resource]);
+      const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+      players[giver] = { ...players[giver], [effect.resource]: players[giver][effect.resource] - given };
+      players[receiver] = { ...players[receiver], [effect.resource]: players[receiver][effect.resource] + given };
+      return { ...state, players };
+    }
+    case 'giveLeaderBadge': {
+      if (state.diplomacy.leader !== ctx.player) return state; // ne possède pas le badge → no-op
+      const receiver: PlayerIndex = ctx.player === 0 ? 1 : 0;
+      return { ...state, diplomacy: { leader: receiver, side: state.diplomacy.side } };
+    }
   }
 }
 

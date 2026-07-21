@@ -34,3 +34,27 @@ test("creditsPerTechLevels : 4/8/12 selon le nombre de technos niveau >= 1 (0 =>
   const out = applyEffect(seeded, { k: 'creditsPerTechLevels', tiers: [4, 8, 12] }, CTX);
   expect(out.players[0].credits).toBe(seeded.players[0].credits + 8);
 });
+
+test("giveOpponent : retire de sa réserve et donne à l'adversaire (borné au stock)", () => {
+  const base = createGame(CONFIG, 1);
+  const players: [GameState['players'][0], GameState['players'][1]] = [base.players[0], base.players[1]];
+  players[0] = { ...players[0], zenithium: 2 };
+  const seeded: GameState = { ...base, players };
+  const out = applyEffect(seeded, { k: 'giveOpponent', resource: 'zenithium', amount: 5 }, CTX);
+  expect(out.players[0].zenithium).toBe(0);                                   // borné : n'avait que 2
+  expect(out.players[1].zenithium).toBe(seeded.players[1].zenithium + 2);
+});
+
+test("giveLeaderBadge : le joueur qui le détient le donne à l'adversaire", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = { ...base, diplomacy: { leader: 0, side: 'gold' } };
+  const out = applyEffect(s, { k: 'giveLeaderBadge' }, CTX);
+  expect(out.diplomacy).toEqual({ leader: 1, side: 'gold' }); // côté conservé
+});
+
+test("giveLeaderBadge : no-op si le joueur actif ne détient pas le badge", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = { ...base, diplomacy: { leader: 1, side: 'silver' } };
+  const out = applyEffect(s, { k: 'giveLeaderBadge' }, CTX);
+  expect(out.diplomacy).toEqual({ leader: 1, side: 'silver' });
+});
