@@ -97,3 +97,53 @@ test("moveDiscToCenter : repositionne au centre le disque choisi", () => {
   expect(out.planets.terra.discPos).toBe(CENTER);
   expect(out.resolution).toBeNull();
 });
+
+test("transfer corresponding : prend la dernière carte adverse de la colonne de ctx.planet, sans choix", () => {
+  const base = createGame(CONFIG, 1);
+  let s0 = withColumns(base, 1, { terra: ['e1', 'e2'] });
+  s0 = withColumns(s0, 0, { terra: ['m1'] });
+  const s: GameState = { ...s0, resolution: { queue: [{ k: 'transfer', count: 1, from: 'corresponding' }], ctx: { player: 0, planet: 'terra' } } };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();                       // aucun choix : colonne imposée
+  expect(out.players[1].columns.terra).toEqual(['e1']);
+  expect(out.players[0].columns.terra).toEqual(['m1', 'e2']);
+});
+
+test("transfer corresponding + thenInfluence : +1 influence sur ctx.planet", () => {
+  const base = createGame(CONFIG, 1);
+  const s0 = withColumns(base, 1, { terra: ['e1'] });
+  const before = s0.planets.terra.discPos;
+  const s: GameState = { ...s0, resolution: { queue: [{ k: 'transfer', count: 1, from: 'corresponding', thenInfluence: true }], ctx: { player: 0, planet: 'terra' } } };
+  const out = resolve(s);
+  expect(out.planets.terra.discPos).toBe(before - 1);   // joueur 0, dir -1
+});
+
+test("exile ownCorresponding : défausse la dernière carte de MA colonne ctx.planet, sans choix", () => {
+  const base = createGame(CONFIG, 1);
+  const s0 = withColumns(base, 0, { mars: ['a', 'b'] });
+  const s: GameState = { ...s0, resolution: { queue: [{ k: 'exile', side: 'self', count: 1, corresponding: true }], ctx: { player: 0, planet: 'mars' } } };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.players[0].columns.mars).toEqual(['a']);
+  expect(out.discard).toContain('b');
+});
+
+test("exile opponentChoice + thenInfluence : après décision, +1 influence sur la planète choisie", () => {
+  const base = createGame(CONFIG, 1);
+  const s0 = withColumns(base, 1, { venus: ['x'] });
+  const before = s0.planets.venus.discPos;
+  const s: GameState = { ...s0, resolution: { queue: [{ k: 'exile', side: 'opponent', count: 1, thenInfluence: true }], ctx: { player: 0, planet: 'mars' } } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseColumn', owner: 'opponent', purpose: 'exile', remaining: 1, thenInfluence: true });
+  const out = decide(paused, 'venus');
+  expect(out.players[1].columns.venus).toEqual([]);
+  expect(out.planets.venus.discPos).toBe(before - 1);   // influence sur la couleur de la carte exilée
+});
+
+test("discardHandAll : défausse toute la main du joueur actif", () => {
+  const base = createGame(CONFIG, 1);
+  const handBefore = [...base.players[0].hand];
+  const out = applyEffect(base, { k: 'discardHandAll' }, CTX);
+  expect(out.players[0].hand).toEqual([]);
+  handBefore.forEach((id) => expect(out.discard).toContain(id));
+});

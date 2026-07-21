@@ -140,6 +140,13 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'developDiscounted':
     case 'developLowest':
       throw new Error(`applyEffect: '${effect.k}' passe par resolve/decideTech`);
+    case 'discardHandAll': {
+      const me = ctx.player;
+      const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+      const oldHand = players[me].hand;
+      players[me] = { ...players[me], hand: [] };
+      return { ...state, players, discard: [...state.discard, ...oldHand] };
+    }
   }
 }
 
@@ -195,16 +202,46 @@ export function resolve(state: GameState): GameState {
       s = { ...s, pending: { kind: 'moveDiscToCenter' } };
       break;
     }
+    if (head.k === 'transfer' && (head.from ?? 'choice') === 'corresponding') {
+      const opp: PlayerIndex = ctx.player === 0 ? 1 : 0;
+      let ns = s;
+      for (let i = 0; i < head.count; i++) {
+        const col = ns.players[opp].columns[ctx.planet];
+        if (col.length === 0) break;
+        const card = col[col.length - 1]!;
+        const players: [PlayerState, PlayerState] = [ns.players[0], ns.players[1]];
+        players[opp] = { ...players[opp], columns: { ...players[opp].columns, [ctx.planet]: col.slice(0, -1) } };
+        players[ctx.player] = { ...players[ctx.player], columns: { ...players[ctx.player].columns, [ctx.planet]: [...players[ctx.player].columns[ctx.planet], card] } };
+        ns = { ...ns, players };
+        if (head.thenInfluence) ns = gainInfluence(ns, ctx.planet, ctx.player, 1);
+        if (ns.winner !== null) break;
+      }
+      s = { ...ns, resolution: { queue: ns.resolution!.queue.slice(1), ctx, chosen: ns.resolution!.chosen } };
+      continue;
+    }
+    if (head.k === 'exile' && head.side === 'self' && head.corresponding) {
+      let ns = s;
+      for (let i = 0; i < head.count; i++) {
+        const col = ns.players[ctx.player].columns[ctx.planet];
+        if (col.length === 0) break;
+        const card = col[col.length - 1]!;
+        const players: [PlayerState, PlayerState] = [ns.players[0], ns.players[1]];
+        players[ctx.player] = { ...players[ctx.player], columns: { ...players[ctx.player].columns, [ctx.planet]: col.slice(0, -1) } };
+        ns = { ...ns, players, discard: [...ns.discard, card] };
+        if (head.thenInfluence) ns = gainInfluence(ns, ctx.planet, ctx.player, 1);
+        if (ns.winner !== null) break;
+      }
+      s = { ...ns, resolution: { queue: ns.resolution!.queue.slice(1), ctx, chosen: ns.resolution!.chosen } };
+      continue;
+    }
     if (head.k === 'transfer' || head.k === 'exile') {
       const owner: Side = head.k === 'transfer' ? 'opponent' : head.side;
       const ownerIndex: PlayerIndex = owner === 'self' ? ctx.player : ctx.player === 0 ? 1 : 0;
-      const hasEligible = hasEligibleColumn(s, ownerIndex);
-      if (!hasEligible) {
-        // effet inapplicable → ignoré (aucun pending), on passe à l'atome suivant
+      if (!hasEligibleColumn(s, ownerIndex)) {
         s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
         continue;
       }
-      s = { ...s, pending: { kind: 'chooseColumn', owner, purpose: head.k, remaining: head.count } };
+      s = { ...s, pending: { kind: 'chooseColumn', owner, purpose: head.k, remaining: head.count, thenInfluence: head.thenInfluence } };
       break;
     }
     if (head.k === 'exileForInfluence') {
@@ -366,6 +403,9 @@ export function decide(state: GameState, planet: Planet): GameState {
         moved = gainInfluence(moved, planet, active, pending.amount ?? 0);
       }
     }
+    if (pending.thenInfluence) {
+      moved = gainInfluence(moved, planet, active, 1);
+    }
     const remaining = pending.remaining - 1;
     const nextExclude = pending.purpose === 'exileInfluence' ? [...(pending.exclude ?? []), planet] : pending.exclude;
     const stillEligible = PLANETS.some(
@@ -374,7 +414,7 @@ export function decide(state: GameState, planet: Planet): GameState {
     if (remaining > 0 && stillEligible && moved.winner === null) {
       return {
         ...moved,
-        pending: { kind: 'chooseColumn', owner: pending.owner, purpose: pending.purpose, remaining, amount: pending.amount, exclude: nextExclude },
+        pending: { kind: 'chooseColumn', owner: pending.owner, purpose: pending.purpose, remaining, amount: pending.amount, exclude: nextExclude, thenInfluence: pending.thenInfluence },
       };
     }
     const done: GameState = {

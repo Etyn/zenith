@@ -40,9 +40,10 @@ export type Effect =
   | { k: 'steal'; resource: 'credits' | 'zenithium'; amount: number }
   | { k: 'influenceNeighbors'; count: number; amount: number }
   | { k: 'influenceDifferent'; amount: number }
-  | { k: 'transfer'; count: number }
-  | { k: 'exile'; side: Side; count: number }
+  | { k: 'transfer'; count: number; from?: 'corresponding' | 'choice'; thenInfluence?: boolean }
+  | { k: 'exile'; side: Side; count: number; corresponding?: boolean; thenInfluence?: boolean }
   | { k: 'exileForInfluence'; count: number; amount: number }
+  | { k: 'discardHandAll' }
   | { k: 'optional'; effects: Effect[] }
   | { k: 'bonusToken' }
   | { k: 'conditional'; cond: Condition; effects: Effect[] }
@@ -72,6 +73,7 @@ export type PendingDecision =
       remaining: number;
       amount?: number;
       exclude?: Planet[];
+      thenInfluence?: boolean;
     }
   | { kind: 'confirmOptional' }
   | { kind: 'chooseOption'; count: number }
