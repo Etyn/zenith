@@ -147,6 +147,9 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       players[me] = { ...players[me], hand: [] };
       return { ...state, players, discard: [...state.discard, ...oldHand] };
     }
+    case 'discardHand':
+    case 'creditsFromCardValue':
+      throw new Error(`applyEffect: '${effect.k}' passe par resolve/decide/decideCard`);
   }
 }
 
@@ -242,6 +245,32 @@ export function resolve(state: GameState): GameState {
         continue;
       }
       s = { ...s, pending: { kind: 'chooseColumn', owner, purpose: head.k, remaining: head.count, thenInfluence: head.thenInfluence } };
+      break;
+    }
+    if (head.k === 'discardHand') {
+      if (head.count <= 0 || s.players[ctx.player].hand.length === 0) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      s = { ...s, pending: { kind: 'chooseHandCard', purpose: head.thenInfluence ? 'discardInfluence' : 'discard', remaining: head.count } };
+      break;
+    }
+    if (head.k === 'creditsFromCardValue') {
+      if (head.source === 'discardHand') {
+        if (s.players[ctx.player].hand.length === 0) {
+          s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+          continue;
+        }
+        s = { ...s, pending: { kind: 'chooseHandCard', purpose: 'discardValue', remaining: 1 } };
+        break;
+      }
+      const opp: PlayerIndex = ctx.player === 0 ? 1 : 0;
+      if (!hasEligibleColumn(s, opp)) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      const purpose = head.source === 'transfer' ? 'transfer' : 'exile';
+      s = { ...s, pending: { kind: 'chooseColumn', owner: 'opponent', purpose, remaining: 1, gainCreditsFromValue: true } };
       break;
     }
     if (head.k === 'exileForInfluence') {
@@ -406,6 +435,13 @@ export function decide(state: GameState, planet: Planet): GameState {
     if (pending.thenInfluence) {
       moved = gainInfluence(moved, planet, active, 1);
     }
+    if (pending.gainCreditsFromValue) {
+      const def = cardOf(card);
+      const value = def ? def.cost : 0;
+      const players2: [PlayerState, PlayerState] = [moved.players[0], moved.players[1]];
+      players2[active] = { ...players2[active], credits: players2[active].credits + value };
+      moved = { ...moved, players: players2 };
+    }
     const remaining = pending.remaining - 1;
     const nextExclude = pending.purpose === 'exileInfluence' ? [...(pending.exclude ?? []), planet] : pending.exclude;
     const stillEligible = PLANETS.some(
@@ -414,7 +450,16 @@ export function decide(state: GameState, planet: Planet): GameState {
     if (remaining > 0 && stillEligible && moved.winner === null) {
       return {
         ...moved,
-        pending: { kind: 'chooseColumn', owner: pending.owner, purpose: pending.purpose, remaining, amount: pending.amount, exclude: nextExclude, thenInfluence: pending.thenInfluence },
+        pending: {
+          kind: 'chooseColumn',
+          owner: pending.owner,
+          purpose: pending.purpose,
+          remaining,
+          amount: pending.amount,
+          exclude: nextExclude,
+          thenInfluence: pending.thenInfluence,
+          gainCreditsFromValue: pending.gainCreditsFromValue,
+        },
       };
     }
     const done: GameState = {
@@ -470,6 +515,36 @@ export function decideTech(state: GameState, people: People): GameState {
       ? { ...state, pending: null, resolution: { queue: rest, ctx, chosen } }
       : { ...res.state, pending: null, resolution: { queue: [...res.queue, ...rest], ctx, chosen } };
   return resolve(next);
+}
+
+export function decideCard(state: GameState, cardId: string): GameState {
+  if (state.pending === null || state.resolution === null || state.pending.kind !== 'chooseHandCard') {
+    throw new Error('decideCard: aucune décision chooseHandCard en attente');
+  }
+  const pending = state.pending;
+  const ctx = state.resolution.ctx;
+  const chosen = state.resolution.chosen;
+  const active = ctx.player;
+  if (!state.players[active].hand.includes(cardId)) {
+    throw new Error('decideCard: carte absente de la main');
+  }
+  const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+  players[active] = { ...players[active], hand: players[active].hand.filter((id) => id !== cardId) };
+  let moved: GameState = { ...state, players, discard: [...state.discard, cardId] };
+  const def = cardOf(cardId);
+  if (pending.purpose === 'discardInfluence' && def) {
+    moved = gainInfluence(moved, def.planet, active, 1);
+  } else if (pending.purpose === 'discardValue') {
+    const value = def ? def.cost : 0;
+    const p2: [PlayerState, PlayerState] = [moved.players[0], moved.players[1]];
+    p2[active] = { ...p2[active], credits: p2[active].credits + value };
+    moved = { ...moved, players: p2 };
+  }
+  const remaining = pending.remaining - 1;
+  if (remaining > 0 && moved.players[active].hand.length > 0 && moved.winner === null) {
+    return { ...moved, pending: { kind: 'chooseHandCard', purpose: pending.purpose, remaining } };
+  }
+  return resolve({ ...moved, pending: null, resolution: { queue: moved.resolution!.queue.slice(1), ctx, chosen } });
 }
 
 export function chooseBranch(state: GameState, index: number): GameState {

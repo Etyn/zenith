@@ -1,4 +1,4 @@
-import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch, decideTech as decideTechEffect } from './effects';
+import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch, decideTech as decideTechEffect, decideCard as decideCardEffect } from './effects';
 import { activeFace } from '../data/tech';
 import { developTech } from './develop';
 import { CENTER } from './setup';
@@ -13,7 +13,8 @@ export type Move =
   | { t: 'decide'; planet: Planet }
   | { t: 'choose'; index: number }
   | { t: 'skip' }
-  | { t: 'decideTech'; people: People };
+  | { t: 'decideTech'; people: People }
+  | { t: 'decideCard'; cardId: string };
 
 function recruitCost(state: GameState, player: PlayerIndex, planet: Planet, baseCost: number): number {
   return Math.max(0, baseCost - state.players[player].columns[planet].length);
@@ -61,6 +62,10 @@ export function applyMove(state: GameState, move: Move): GameState {
   if (move.t === 'decideTech') {
     if (state.pending === null) return state;
     return finishOrPending(decideTechEffect(state, move.people));
+  }
+  if (move.t === 'decideCard') {
+    if (state.pending === null) return state;
+    return finishOrPending(decideCardEffect(state, move.cardId));
   }
 
   if (move.t === 'develop') {
@@ -142,6 +147,9 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
     }
     if (pending.kind === 'chooseTech') {
       return pending.candidates.map((people) => ({ t: 'decideTech', people }));
+    }
+    if (pending.kind === 'chooseHandCard') {
+      return state.players[player].hand.map((cardId) => ({ t: 'decideCard', cardId }));
     }
     let candidates: Planet[] = [];
     if (pending.kind === 'chooseSegment') {

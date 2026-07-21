@@ -1,5 +1,5 @@
 import { createGame, CENTER } from '../setup';
-import { applyEffect, resolve, decide } from '../effects';
+import { applyEffect, resolve, decide, cardOf, decideCard } from '../effects';
 import type { EffectCtx, GameState, Planet } from '../types';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
@@ -146,4 +146,62 @@ test("discardHandAll : défausse toute la main du joueur actif", () => {
   const out = applyEffect(base, { k: 'discardHandAll' }, CTX);
   expect(out.players[0].hand).toEqual([]);
   handBefore.forEach((id) => expect(out.discard).toContain(id));
+});
+
+test("discardHand : pose chooseHandCard ; decideCard défausse la carte choisie", () => {
+  const base = createGame(CONFIG, 1);
+  const card = base.players[0].hand[0]!;
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'discardHand', count: 1 }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseHandCard', purpose: 'discard', remaining: 1 });
+  const out = decideCard(paused, card);
+  expect(out.pending).toBeNull();
+  expect(out.players[0].hand).not.toContain(card);
+  expect(out.discard).toContain(card);
+});
+
+test("discardHand + thenInfluence : +1 influence sur la couleur de la carte défaussée", () => {
+  const base = createGame(CONFIG, 1);
+  const card = base.players[0].hand[0]!;
+  const planet = cardOf(card)!.planet;
+  const before = base.planets[planet].discPos;
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'discardHand', count: 1, thenInfluence: true }], ctx: CTX } };
+  const out = decideCard(resolve(s), card);
+  expect(out.planets[planet].discPos).toBe(before - 1); // joueur 0, dir -1
+});
+
+test("creditsFromCardValue source=discardHand : défausse une carte de la main => crédits = son coût", () => {
+  const base = createGame(CONFIG, 1);
+  const card = base.players[0].hand[0]!;
+  const value = cardOf(card)!.cost;
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'creditsFromCardValue', source: 'discardHand' }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseHandCard', purpose: 'discardValue', remaining: 1 });
+  const out = decideCard(paused, card);
+  expect(out.players[0].credits).toBe(base.players[0].credits + value);
+  expect(out.discard).toContain(card);
+});
+
+test("creditsFromCardValue source=transfer : transfère une carte adverse => crédits = son coût", () => {
+  const base = createGame(CONFIG, 1);
+  const value = cardOf('FIX_terra_0')!.cost;
+  const seeded = withColumns(base, 1, { terra: ['FIX_terra_0'] });
+  const s: GameState = { ...seeded, resolution: { queue: [{ k: 'creditsFromCardValue', source: 'transfer' }], ctx: { player: 0, planet: 'mars' } } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseColumn', owner: 'opponent', purpose: 'transfer', remaining: 1, gainCreditsFromValue: true });
+  const out = decide(paused, 'terra');
+  expect(out.players[0].credits).toBe(seeded.players[0].credits + value);
+  expect(out.players[0].columns.terra).toContain('FIX_terra_0'); // transférée chez soi
+});
+
+test("creditsFromCardValue source=exileOpponent : exile une carte adverse => crédits = son coût", () => {
+  const base = createGame(CONFIG, 1);
+  const value = cardOf('FIX_mars_0')!.cost;
+  const seeded = withColumns(base, 1, { mars: ['FIX_mars_0'] });
+  const s: GameState = { ...seeded, resolution: { queue: [{ k: 'creditsFromCardValue', source: 'exileOpponent' }], ctx: { player: 0, planet: 'mars' } } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseColumn', owner: 'opponent', purpose: 'exile', remaining: 1, gainCreditsFromValue: true });
+  const out = decide(paused, 'mars');
+  expect(out.players[0].credits).toBe(seeded.players[0].credits + value);
+  expect(out.discard).toContain('FIX_mars_0');
 });

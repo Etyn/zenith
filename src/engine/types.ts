@@ -58,7 +58,9 @@ export type Effect =
   | { k: 'giveInfluenceOpponent'; amount: number }
   | { k: 'moveDiscToCenter' }
   | { k: 'developDiscounted'; which: 'cardPeople' | 'choice'; discount: number }
-  | { k: 'developLowest' };
+  | { k: 'developLowest' }
+  | { k: 'discardHand'; count: number; thenInfluence?: boolean }
+  | { k: 'creditsFromCardValue'; source: 'transfer' | 'exileOpponent' | 'discardHand' };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet; people?: People };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
@@ -74,11 +76,13 @@ export type PendingDecision =
       amount?: number;
       exclude?: Planet[];
       thenInfluence?: boolean;
+      gainCreditsFromValue?: boolean;
     }
   | { kind: 'confirmOptional' }
   | { kind: 'chooseOption'; count: number }
   | { kind: 'chooseTier'; count: number }
-  | { kind: 'chooseTech'; discount: number; zeroCost: boolean; candidates: People[] };
+  | { kind: 'chooseTech'; discount: number; zeroCost: boolean; candidates: People[] }
+  | { kind: 'chooseHandCard'; purpose: 'discard' | 'discardInfluence' | 'discardValue'; remaining: number };
 
 export type GameState = {
   config: GameConfig;
