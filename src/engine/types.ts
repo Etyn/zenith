@@ -41,7 +41,7 @@ export type Effect =
   | { k: 'influenceNeighbors'; count: number; amount: number }
   | { k: 'influenceDifferent'; amount: number }
   | { k: 'transfer'; count: number; from?: 'corresponding' | 'choice'; thenInfluence?: boolean }
-  | { k: 'exile'; side: Side; count: number; corresponding?: boolean; thenInfluence?: boolean }
+  | { k: 'exile'; side: Side; count: number; corresponding?: boolean; color?: Planet; exceptColor?: Planet; thenInfluence?: boolean }
   | { k: 'exileForInfluence'; count: number; amount: number }
   | { k: 'discardHandAll' }
   | { k: 'optional'; effects: Effect[] }

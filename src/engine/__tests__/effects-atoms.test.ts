@@ -267,3 +267,38 @@ test("creditsPerTechLevels resource='zenithium' : gagne du zénithium selon le n
   expect(out.players[0].zenithium).toBe(seeded.players[0].zenithium + 3); // 3 technos -> tiers[2] = 3
   expect(out.players[0].credits).toBe(seeded.players[0].credits);         // aucun crédit gagné
 });
+
+test("exile color : exile la couleur fixée sans choix, +1 influence sur cette couleur si thenInfluence", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { mars: ['a', 'b'] });
+  const marsBefore = seeded.planets.mars.discPos;
+  const venusBefore = seeded.planets.venus.discPos;
+  // ctx.planet = venus pour prouver que l'influence suit `color` (mars), pas ctx.planet
+  const s: GameState = { ...seeded, resolution: { queue: [{ k: 'exile', side: 'self', count: 1, color: 'mars', thenInfluence: true }], ctx: { player: 0, planet: 'venus' } } };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.players[0].columns.mars).toEqual(['a']); // dernière carte 'b' exilée
+  expect(out.discard).toContain('b');
+  expect(out.planets.mars.discPos).not.toBe(marsBefore); // influence gagnée sur mars
+  expect(out.planets.venus.discPos).toBe(venusBefore);   // rien sur venus
+});
+
+test("exile color : colonne vide -> no-op (pas de crash, pas d'influence)", () => {
+  const base = createGame(CONFIG, 1);
+  const jupBefore = base.planets.jupiter.discPos;
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'exile', side: 'self', count: 2, color: 'jupiter', thenInfluence: true }], ctx: { player: 0, planet: 'mars' } } };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.planets.jupiter.discPos).toBe(jupBefore);
+});
+
+test("exile exceptColor : pose chooseColumn en excluant la couleur bannie ; decide sur cette couleur est refusé", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { mercure: ['m'], mars: ['x'], venus: ['v'] });
+  const s: GameState = { ...seeded, resolution: { queue: [{ k: 'exile', side: 'self', count: 1, exceptColor: 'mercure' }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseColumn', owner: 'self', purpose: 'exile', remaining: 1, exclude: ['mercure'] });
+  expect(() => decide(paused, 'mercure')).toThrow(); // couleur exclue
+  const out = decide(paused, 'mars'); // choix valide
+  expect(out.players[0].columns.mars).toEqual([]);
+});

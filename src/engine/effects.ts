@@ -244,14 +244,31 @@ export function resolve(state: GameState): GameState {
       s = { ...ns, resolution: { queue: ns.resolution!.queue.slice(1), ctx, chosen: ns.resolution!.chosen } };
       continue;
     }
+    if (head.k === 'exile' && head.side === 'self' && head.color) {
+      let ns = s;
+      for (let i = 0; i < head.count; i++) {
+        const col = ns.players[ctx.player].columns[head.color];
+        if (col.length === 0) break;
+        const card = col[col.length - 1]!;
+        const players: [PlayerState, PlayerState] = [ns.players[0], ns.players[1]];
+        players[ctx.player] = { ...players[ctx.player], columns: { ...players[ctx.player].columns, [head.color]: col.slice(0, -1) } };
+        ns = { ...ns, players, discard: [...ns.discard, card] };
+        if (head.thenInfluence) ns = gainInfluence(ns, head.color, ctx.player, 1);
+        if (ns.winner !== null) break;
+      }
+      s = { ...ns, resolution: { queue: ns.resolution!.queue.slice(1), ctx, chosen: ns.resolution!.chosen } };
+      continue;
+    }
     if (head.k === 'transfer' || head.k === 'exile') {
       const owner: Side = head.k === 'transfer' ? 'opponent' : head.side;
       const ownerIndex: PlayerIndex = owner === 'self' ? ctx.player : ctx.player === 0 ? 1 : 0;
-      if (!hasEligibleColumn(s, ownerIndex)) {
+      const exclude = head.k === 'exile' && head.exceptColor ? [head.exceptColor] : undefined;
+      const eligible = PLANETS.some((p) => s.players[ownerIndex].columns[p].length > 0 && !(exclude ?? []).includes(p));
+      if (!eligible) {
         s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
         continue;
       }
-      s = { ...s, pending: { kind: 'chooseColumn', owner, purpose: head.k, remaining: head.count, thenInfluence: head.thenInfluence } };
+      s = { ...s, pending: { kind: 'chooseColumn', owner, purpose: head.k, remaining: head.count, thenInfluence: head.thenInfluence, exclude } };
       break;
     }
     if (head.k === 'discardHand') {
@@ -434,8 +451,8 @@ export function decide(state: GameState, planet: Planet): GameState {
     if (column.length === 0) {
       throw new Error('decide: colonne vide (choix invalide)');
     }
-    if (pending.purpose === 'exileInfluence' && (pending.exclude ?? []).includes(planet)) {
-      throw new Error('decide: couleur déjà choisie (doit être différente)');
+    if ((pending.exclude ?? []).includes(planet)) {
+      throw new Error('decide: couleur exclue (choix invalide)');
     }
     const card = column[column.length - 1]!;
     const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
