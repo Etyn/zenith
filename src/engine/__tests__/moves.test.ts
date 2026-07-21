@@ -94,6 +94,33 @@ test('legalMoves pendant un pending propose une décision par planète, réserv�
   expect(legalMoves(s, 1)).toEqual([]);
 });
 
+test('legalMoves sous un chooseSegment ne propose que les débuts de segment valides (pas de débordement)', () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    resolution: { queue: [], ctx: { player: 0, planet: 'terra' } },
+    pending: { kind: 'chooseSegment', count: 2, amount: 1 },
+  };
+  const moves = legalMoves(s, 0);
+  const planets = moves.map((m) => (m as { t: 'decide'; planet: string }).planet);
+  expect(planets).not.toContain('jupiter'); // jupiter + 2 déborderait de la rangée
+  expect(planets).toEqual(expect.arrayContaining(['mercure', 'venus', 'terra', 'mars']));
+  expect(planets).toHaveLength(4);
+});
+
+test('legalMoves sous un choosePlanet avec exclude ne propose pas les planètes exclues', () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    resolution: { queue: [], ctx: { player: 0, planet: 'terra' } },
+    pending: { kind: 'choosePlanet', amount: 1, exclude: ['terra'] },
+  };
+  const moves = legalMoves(s, 0);
+  const planets = moves.map((m) => (m as { t: 'decide'; planet: string }).planet);
+  expect(planets).not.toContain('terra');
+  expect(planets).toHaveLength(4);
+});
+
 test('une victoire en cours de résolution ne repioche pas et ne passe pas la main', () => {
   const base = createGame(CONFIG, 1);
   const id = base.players[0].hand.find((cid) => cardOf(cid)!.planet === 'mars');

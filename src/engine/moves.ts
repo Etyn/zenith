@@ -136,7 +136,16 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
   if (state.pending !== null) {
     // décision en attente : le joueur en cours de résolution choisit une planète
     if (state.resolution === null || state.resolution.ctx.player !== player) return [];
-    return PLANETS.map((planet) => ({ t: 'decide', planet }));
+    const pending = state.pending;
+    let candidates: Planet[];
+    if (pending.kind === 'chooseSegment') {
+      // seuls les débuts de segment valides (pas d'enroulement en fin de rangée)
+      candidates = PLANETS.filter((_, i) => i + pending.count <= PLANETS.length);
+    } else {
+      const exclude = pending.exclude ?? [];
+      candidates = PLANETS.filter((planet) => !exclude.includes(planet));
+    }
+    return candidates.map((planet) => ({ t: 'decide', planet }));
   }
   if (state.resolution !== null || player !== state.current) return [];
   const recruits: Move[] = state.players[player].hand

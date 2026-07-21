@@ -175,3 +175,27 @@ test('influenceNeighbors rejette un segment qui dépasse la rangée (pas d’enr
   // 'jupiter' est la dernière : un segment de 2 déborderait → erreur
   expect(() => decide(paused, 'jupiter')).toThrow();
 });
+
+test('influenceDifferent exclut la planète déjà choisie dans la même résolution (N3)', () => {
+  const base = createGame(CONFIG, 1);
+  const s = {
+    ...base,
+    resolution: {
+      queue: [
+        { k: 'influence', on: 'choice', amount: 2 } as const,
+        { k: 'influenceDifferent', amount: 1 } as const,
+      ],
+      ctx: { player: 0 as const, planet: 'terra' as const },
+    },
+  };
+  const p1 = resolve(s); // 1er choix (amount 2)
+  expect(p1.pending).toEqual({ kind: 'choosePlanet', amount: 2 });
+  const p2 = decide(p1, 'terra'); // choisit terra ; enchaîne sur influenceDifferent
+  expect(p2.pending).toEqual({ kind: 'choosePlanet', amount: 1, exclude: ['terra'] });
+  // rechoisir terra est interdit
+  expect(() => decide(p2, 'terra')).toThrow();
+  // une autre planète est acceptée et clôt la résolution
+  const out = decide(p2, 'mars');
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+});

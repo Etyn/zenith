@@ -67,6 +67,9 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'influenceNeighbors':
       // Toujours intercepté par resolve/decide (pose un pending 'chooseSegment') ; jamais appliqué directement.
       throw new Error("applyEffect: 'influenceNeighbors' passe par resolve/decide");
+    case 'influenceDifferent':
+      // Toujours intercepté par resolve/decide (pose un pending 'choosePlanet' avec exclusion) ; jamais appliqué directement.
+      throw new Error("applyEffect: 'influenceDifferent' passe par resolve/decide");
   }
 }
 
@@ -101,6 +104,11 @@ export function resolve(state: GameState): GameState {
       s = { ...s, pending: { kind: 'chooseSegment', count: head.count, amount: head.amount } };
       break;
     }
+    if (head.k === 'influenceDifferent') {
+      const chosen = s.resolution!.chosen ?? [];
+      s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, exclude: chosen } };
+      break;
+    }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
   }
@@ -132,6 +140,15 @@ export function decide(state: GameState, planet: Planet): GameState {
     }
     s = gainInfluence(state, planet, ctx.player, pending.amount);
   }
-  s = { ...s, pending: null, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
+  const prevChosen = state.resolution.chosen ?? [];
+  const justChosen: Planet[] =
+    pending.kind === 'chooseSegment'
+      ? PLANETS.slice(PLANETS.indexOf(planet), PLANETS.indexOf(planet) + pending.count)
+      : [planet];
+  s = {
+    ...s,
+    pending: null,
+    resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: [...prevChosen, ...justChosen] },
+  };
   return resolve(s);
 }
