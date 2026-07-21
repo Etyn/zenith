@@ -33,11 +33,14 @@ export type Effect =
   | { k: 'zenithium'; amount: number; target: Side }
   | { k: 'mobilize'; count: number; thenInfluence: boolean }
   | { k: 'takeLeader'; side: 'silver' | 'gold' }
-  | { k: 'steal'; resource: 'credits' | 'zenithium'; amount: number };
+  | { k: 'steal'; resource: 'credits' | 'zenithium'; amount: number }
+  | { k: 'influenceNeighbors'; count: number; amount: number };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx };
-export type PendingDecision = { kind: 'choosePlanet'; amount: number };
+export type PendingDecision =
+  | { kind: 'choosePlanet'; amount: number; exclude?: Planet[] }
+  | { kind: 'chooseSegment'; count: number; amount: number };
 
 export type GameState = {
   config: GameConfig;

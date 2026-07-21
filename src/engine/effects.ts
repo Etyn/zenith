@@ -64,6 +64,9 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       players[thief] = { ...players[thief], [effect.resource]: players[thief][effect.resource] + taken };
       return { ...state, players };
     }
+    case 'influenceNeighbors':
+      // Toujours intercepté par resolve/decide (pose un pending 'chooseSegment') ; jamais appliqué directement.
+      throw new Error("applyEffect: 'influenceNeighbors' passe par resolve/decide");
   }
 }
 
@@ -94,6 +97,10 @@ export function resolve(state: GameState): GameState {
       s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount } };
       break; // en attente d'une décision ; l'atome reste en tête de file
     }
+    if (head.k === 'influenceNeighbors') {
+      s = { ...s, pending: { kind: 'chooseSegment', count: head.count, amount: head.amount } };
+      break;
+    }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
   }
@@ -105,9 +112,26 @@ export function decide(state: GameState, planet: Planet): GameState {
   if (state.pending === null || state.resolution === null) {
     throw new Error('decide: aucune décision en attente');
   }
-  const { amount } = state.pending;
   const ctx = state.resolution.ctx;
-  let s = gainInfluence(state, planet, ctx.player, amount);
+  const pending = state.pending;
+  let s: GameState;
+  if (pending.kind === 'chooseSegment') {
+    const start = PLANETS.indexOf(planet);
+    if (start < 0 || start + pending.count > PLANETS.length) {
+      throw new Error('decide: segment invalide (débordement de la rangée)');
+    }
+    s = state;
+    for (let i = 0; i < pending.count; i++) {
+      s = gainInfluence(s, PLANETS[start + i]!, ctx.player, pending.amount);
+      if (s.winner !== null) break;
+    }
+  } else {
+    // choosePlanet
+    if (pending.exclude && pending.exclude.includes(planet)) {
+      throw new Error('decide: planète exclue (doit être différente)');
+    }
+    s = gainInfluence(state, planet, ctx.player, pending.amount);
+  }
   s = { ...s, pending: null, resolution: { queue: s.resolution!.queue.slice(1), ctx } };
   return resolve(s);
 }

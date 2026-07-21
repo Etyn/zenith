@@ -148,3 +148,30 @@ test('influenceEach déplace le disque de chaque planète pour le joueur', () =>
   // joueur 0 pousse vers sa zone (dir -1) : chaque disque diminue de 1 (aucune capture ici)
   PLANETS.forEach((p, i) => expect(out.planets[p].discPos).toBe(before[i]! - 1));
 });
+
+test('influenceNeighbors met en attente un chooseSegment puis applique amount sur count planètes contiguës', () => {
+  const base = createGame(CONFIG, 1);
+  const s = {
+    ...base,
+    resolution: { queue: [{ k: 'influenceNeighbors', count: 2, amount: 1 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseSegment', count: 2, amount: 1 });
+  // segment commençant à 'venus' → venus + terra reçoivent chacune 1 (dir -1 pour joueur 0)
+  const before = { venus: base.planets.venus.discPos, terra: base.planets.terra.discPos };
+  const out = decide(paused, 'venus');
+  expect(out.pending).toBeNull();
+  expect(out.planets.venus.discPos).toBe(before.venus - 1);
+  expect(out.planets.terra.discPos).toBe(before.terra - 1);
+});
+
+test('influenceNeighbors rejette un segment qui dépasse la rangée (pas d’enroulement)', () => {
+  const base = createGame(CONFIG, 1);
+  const s = {
+    ...base,
+    resolution: { queue: [{ k: 'influenceNeighbors', count: 2, amount: 1 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const paused = resolve(s);
+  // 'jupiter' est la dernière : un segment de 2 déborderait → erreur
+  expect(() => decide(paused, 'jupiter')).toThrow();
+});
