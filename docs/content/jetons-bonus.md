@@ -58,5 +58,17 @@ Total : 3+2+2+4+1+1+1+2 = **16** ✓.
 - Un jeton **utilisé** (plateau ou réserve) → **défausse de jetons** (pas de conservation). Réserve vide +
   gain → recharger depuis la défausse.
 
-## ❓ SEULE QUESTION RESTANTE : placement des 8 jetons de départ
-Voir la section plus haut. Hypothèse : 5 planètes + 3 emplacements techno niveau 2 = 8. **À confirmer.**
+## ✅ Placement confirmé (2026-07-22)
+**1 jeton sur chacune des 5 planètes + 1 sur chacun des 3 emplacements « niveau 2 » des technos = 8 sur le
+plateau**, les 8 autres en réserve (tirage aléatoire à la mise en place).
+
+**Déclencheurs de jetons du plateau** (confirmés) :
+- **planète capturée** → appliquer d'abord le jeton posé sur cette planète (s'il y en a un) ;
+- **1er joueur (des deux) à atteindre le niveau 2** d'une techno → il prend le jeton de cet emplacement
+  (intercalé : niveau 2 → jeton → niveau 1) ;
+- plus les jetons **gagnés depuis la réserve** (effets O1/D3).
+
+## 📌 Note pour la phase CARTES (futur, à ne pas oublier)
+Certaines **cartes agent** pourront, comme action, **piocher un jeton bonus depuis la réserve** OU **prendre
+un jeton bonus visible sur le plateau, au choix**. → prévoir un atome/décision supportant ce choix
+(réserve vs plateau) lors de la transcription des cartes.
