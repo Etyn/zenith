@@ -46,6 +46,10 @@ function evalCondition(state: GameState, cond: Condition, ctx: EffectCtx): boole
   }
 }
 
+export function canPayTier(state: GameState, player: PlayerIndex, cost: Effect[]): boolean {
+  return cost.every((e) => (e.k === 'spend' ? state.players[player][e.resource] >= e.amount : true));
+}
+
 export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): GameState {
   const target: PlayerIndex = 'target' in effect && effect.target === 'opponent' ? (ctx.player === 0 ? 1 : 0) : ctx.player;
   switch (effect.k) {
@@ -53,6 +57,12 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       return creditPlayer(state, target, { credits: state.players[target].credits + effect.amount });
     case 'zenithium':
       return creditPlayer(state, target, { zenithium: state.players[target].zenithium + effect.amount });
+    case 'spend': {
+      const cur = state.players[ctx.player][effect.resource];
+      const players: [PlayerState, PlayerState] = [state.players[0], state.players[1]];
+      players[ctx.player] = { ...players[ctx.player], [effect.resource]: Math.max(0, cur - effect.amount) };
+      return { ...state, players };
+    }
     case 'influence':
       // Seul le cas planète précise est appliqué directement ; 'choice' est géré par resolve/decide.
       if (effect.on === 'choice') throw new Error("applyEffect: 'influence choice' passe par resolve/decide");
@@ -617,6 +627,7 @@ export function chooseBranch(state: GameState, index: number): GameState {
     if (head.k !== 'scale') throw new Error('chooseBranch: atome de tête inattendu');
     if (index < 0 || index >= head.tiers.length) throw new Error('chooseBranch: palier hors bornes');
     const tier = head.tiers[index]!;
+    if (!canPayTier(state, ctx.player, tier.cost)) throw new Error('chooseBranch: palier non payable');
     const s: GameState = { ...state, pending: null, resolution: { queue: [...tier.cost, ...tier.reward, ...rest], ctx, chosen } };
     return resolve(s);
   }

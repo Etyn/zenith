@@ -307,9 +307,9 @@ export const VENUS_CARDS: CardDef[] = [
     effects: [
       { k: 'influence', amount: 1, on: 'venus' },
       { k: 'scale', tiers: [
-        { cost: [{ k: 'zenithium', amount: -1, target: 'self' }], reward: [{ k: 'credits', amount: 4, target: 'self' }] },
-        { cost: [{ k: 'zenithium', amount: -2, target: 'self' }], reward: [{ k: 'credits', amount: 8, target: 'self' }] },
-        { cost: [{ k: 'zenithium', amount: -3, target: 'self' }], reward: [{ k: 'credits', amount: 12, target: 'self' }] },
+        { cost: [{ k: 'spend', resource: 'zenithium', amount: 1 }], reward: [{ k: 'credits', amount: 4, target: 'self' }] },
+        { cost: [{ k: 'spend', resource: 'zenithium', amount: 2 }], reward: [{ k: 'credits', amount: 8, target: 'self' }] },
+        { cost: [{ k: 'spend', resource: 'zenithium', amount: 3 }], reward: [{ k: 'credits', amount: 12, target: 'self' }] },
       ] },
     ] },
   { id: 'venus-v4n-vogt', name: 'V4n Vøgt', people: 'robot', planet: 'venus', cost: 6,
@@ -321,9 +321,9 @@ export const VENUS_CARDS: CardDef[] = [
     effects: [
       { k: 'influence', amount: 1, on: 'venus' },
       { k: 'scale', tiers: [
-        { cost: [{ k: 'zenithium', amount: -1, target: 'self' }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 1 }] },
-        { cost: [{ k: 'zenithium', amount: -2, target: 'self' }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 2 }] },
-        { cost: [{ k: 'zenithium', amount: -4, target: 'self' }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 3 }] },
+        { cost: [{ k: 'spend', resource: 'zenithium', amount: 1 }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 1 }] },
+        { cost: [{ k: 'spend', resource: 'zenithium', amount: 2 }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 2 }] },
+        { cost: [{ k: 'spend', resource: 'zenithium', amount: 4 }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 3 }] },
       ] },
     ] },
   { id: 'venus-br4dbury', name: 'Br4dbury', people: 'robot', planet: 'venus', cost: 6,

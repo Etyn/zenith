@@ -1,4 +1,4 @@
-import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch, decideTech as decideTechEffect, decideCard as decideCardEffect } from './effects';
+import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch, decideTech as decideTechEffect, decideCard as decideCardEffect, canPayTier } from './effects';
 import { activeFace } from '../data/tech';
 import { developTech } from './develop';
 import { CENTER } from './setup';
@@ -140,7 +140,13 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
       return Array.from({ length: pending.count }, (_, i) => ({ t: 'choose', index: i }));
     }
     if (pending.kind === 'chooseTier') {
-      return [...Array.from({ length: pending.count }, (_, i) => ({ t: 'choose' as const, index: i })), { t: 'skip' as const }];
+      const head = state.resolution.queue[0];
+      const tiers = head && head.k === 'scale' ? head.tiers : [];
+      const affordable = tiers
+        .map((tier, i) => ({ tier, i }))
+        .filter(({ tier }) => canPayTier(state, player, tier.cost))
+        .map(({ i }) => ({ t: 'choose' as const, index: i }));
+      return [...affordable, { t: 'skip' as const }];
     }
     if (pending.kind === 'moveDiscToCenter') {
       return PLANETS.map((planet) => ({ t: 'decide', planet }));

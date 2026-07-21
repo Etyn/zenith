@@ -35,6 +35,7 @@ export type Effect =
   | { k: 'influenceEach'; amount: number }
   | { k: 'credits'; amount: number; target: Side }
   | { k: 'zenithium'; amount: number; target: Side }
+  | { k: 'spend'; resource: 'credits' | 'zenithium'; amount: number }
   | { k: 'mobilize'; count: number; thenInfluence: boolean }
   | { k: 'takeLeader'; side: 'silver' | 'gold' }
   | { k: 'steal'; resource: 'credits' | 'zenithium'; amount: number }

@@ -414,3 +414,17 @@ test('legalMoves/applyMove sous pending confirmOptional : accepter applique, ren
   expect(skipResult.pending).toBeNull();
   expect(skipResult.resolution).toBeNull();
 });
+
+test("legalMoves : seuls les paliers d'echelle payables sont proposes (skip toujours possible)", () => {
+  const base = createGame(CONFIG, 1); // 1 zenithium au depart
+  const scale = {
+    k: 'scale' as const,
+    tiers: [
+      { cost: [{ k: 'spend' as const, resource: 'zenithium' as const, amount: 1 }], reward: [{ k: 'credits' as const, amount: 4, target: 'self' as const }] },
+      { cost: [{ k: 'spend' as const, resource: 'zenithium' as const, amount: 5 }], reward: [{ k: 'credits' as const, amount: 20, target: 'self' as const }] },
+    ],
+  };
+  const s: GameState = { ...base, resolution: { queue: [scale], ctx: { player: 0, planet: 'mars' } }, pending: { kind: 'chooseTier', count: 2 } };
+  const moves = legalMoves(s, 0);
+  expect(moves).toEqual([{ t: 'choose', index: 0 }, { t: 'skip' }]); // palier 1 payable (1 zen), palier 2 non (5 zen)
+});

@@ -118,24 +118,31 @@ test("choice : un index hors bornes est rejeté", () => {
   expect(() => chooseBranch(paused, 5)).toThrow();
 });
 
-test("scale : choisir un palier applique cost puis reward ; renoncer n'applique rien", () => {
-  const base = createGame(CONFIG, 1);
+test("scale : un palier payable applique spend puis reward ; renoncer n'applique rien", () => {
+  const base = createGame(CONFIG, 1); // 12 credits, 1 zenithium au depart
   const scale = {
     k: 'scale' as const,
     tiers: [
-      { cost: [{ k: 'credits' as const, amount: -3, target: 'self' as const }], reward: [{ k: 'zenithium' as const, amount: 1, target: 'self' as const }] },
-      { cost: [{ k: 'credits' as const, amount: -7, target: 'self' as const }], reward: [{ k: 'zenithium' as const, amount: 2, target: 'self' as const }] },
+      { cost: [{ k: 'spend' as const, resource: 'credits' as const, amount: 3 }], reward: [{ k: 'zenithium' as const, amount: 1, target: 'self' as const }] },
+      { cost: [{ k: 'spend' as const, resource: 'credits' as const, amount: 7 }], reward: [{ k: 'zenithium' as const, amount: 2, target: 'self' as const }] },
     ],
   };
   const s: GameState = { ...base, resolution: { queue: [scale], ctx: CTX } };
   const paused = resolve(s);
   expect(paused.pending).toEqual({ kind: 'chooseTier', count: 2 });
 
-  const done = chooseBranch(paused, 1); // palier 2 : -7 crédits → +2 zénithium
+  const done = chooseBranch(paused, 1); // palier 2 : depense 7 credits -> +2 zenithium
   expect(done.players[0].credits).toBe(base.players[0].credits - 7);
   expect(done.players[0].zenithium).toBe(base.players[0].zenithium + 2);
 
   const renounced = skipBranch(resolve({ ...base, resolution: { queue: [scale], ctx: CTX } }));
   expect(renounced.players[0].credits).toBe(base.players[0].credits);
   expect(renounced.players[0].zenithium).toBe(base.players[0].zenithium);
+});
+
+test("spend : borne a 0, ne rend jamais une reserve negative", () => {
+  const base = createGame(CONFIG, 1); // 1 zenithium
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'spend', resource: 'zenithium', amount: 5 }], ctx: CTX } };
+  const out = resolve(s);
+  expect(out.players[0].zenithium).toBe(0); // 1 - 5 borne a 0
 });
