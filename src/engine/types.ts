@@ -55,7 +55,7 @@ export type Effect =
   | { k: 'giveLeaderBadge' }
   | { k: 'influenceChoiceExcept'; exceptColor: Planet; amount: number }
   | { k: 'influenceChoiceAtCenter'; amount: number }
-  | { k: 'giveInfluenceOpponent'; amount: number }
+  | { k: 'giveInfluenceOpponent'; amount: number; exceptColor?: Planet }
   | { k: 'moveDiscToCenter' }
   | { k: 'developDiscounted'; which: 'cardPeople' | 'choice'; discount: number }
   | { k: 'developLowest' }

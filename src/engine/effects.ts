@@ -205,7 +205,7 @@ export function resolve(state: GameState): GameState {
       break;
     }
     if (head.k === 'giveInfluenceOpponent') {
-      s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, beneficiary: 'opponent' } };
+      s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, beneficiary: 'opponent', exclude: head.exceptColor ? [head.exceptColor] : undefined } };
       break;
     }
     if (head.k === 'moveDiscToCenter') {

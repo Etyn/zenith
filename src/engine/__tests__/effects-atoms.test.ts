@@ -323,3 +323,15 @@ test("exil adverse x3 + thenInfluence : +1 influence sur la couleur de chaque ca
   expect(cur.planets.venus.discPos).not.toBe(venusBefore);
   expect(cur.planets.jupiter.discPos).not.toBe(jupBefore);
 });
+
+test("giveInfluenceOpponent exceptColor : l'adversaire gagne l'influence, couleur bannie exclue du choix", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'giveInfluenceOpponent', amount: 1, exceptColor: 'mars' }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'choosePlanet', amount: 1, beneficiary: 'opponent', exclude: ['mars'] });
+  expect(() => decide(paused, 'mars')).toThrow(); // mars exclue
+  const venusBefore = base.planets.venus.discPos;
+  const out = decide(paused, 'venus');            // influence donnee a l'adversaire (joueur 1) sur venus
+  expect(out.pending).toBeNull();
+  expect(out.planets.venus.discPos).not.toBe(venusBefore);
+});
