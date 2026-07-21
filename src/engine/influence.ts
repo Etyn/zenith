@@ -25,6 +25,10 @@ export function gainInfluence(
     pos = CENTER; // nouveau disque au centre (simplifié ; remise en fin de tour affinée plus tard)
     if (bonusToken !== null) {
       // Le jeton de la planète se déclenche AVANT les effets restants.
+      // ATTENTION : si `resolution === null` (capture hors résolution, ex. une influence
+      // « gratuite » future), le jeton est retiré/défaussé mais son effet n'est PAS mis en
+      // file (aucune file où l'enfiler). Non atteignable aujourd'hui (toute capture passe par
+      // resolve/decide) ; à revoir si un appelant capture hors résolution.
       if (state.resolution !== null) {
         const tokenFx = tokenOf(bonusToken).effects;
         const q = state.resolution.queue;
