@@ -266,4 +266,118 @@ export const MERCURE_CARDS: CardDef[] = [
     ] },
 ];
 
-export const CARDS: CardDef[] = [...MARS_CARDS, ...MERCURE_CARDS];
+export const VENUS_CARDS: CardDef[] = [
+  { id: 'venus-hiroshi-sun', name: 'Hiroshi Sun', people: 'humain', planet: 'venus', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'credits', amount: 4, target: 'self' },
+      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influence', amount: 1, on: 'mars' }] },
+    ] },
+  { id: 'venus-geronimo', name: 'Geronimo', people: 'animod', planet: 'venus', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'creditsPerCardColors', zone: 'self', per: 2 },
+    ] },
+  { id: 'venus-luc4s', name: 'Luc4s', people: 'robot', planet: 'venus', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'zenithium', amount: 2, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'zenithium', amount: 4, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'zenithium', amount: 7, target: 'self' }] },
+      ] },
+    ] },
+  { id: 'venus-as1mov', name: 'As1møv', people: 'robot', planet: 'venus', cost: 10,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'optional', effects: [{ k: 'developDiscounted', which: 'choice', discount: 2 }] },
+    ] },
+  { id: 'venus-c1x1n', name: 'C1x1n', people: 'robot', planet: 'venus', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'influence', amount: 1, on: 'venus' }] },
+    ] },
+  { id: 'venus-felis', name: 'Felis', people: 'animod', planet: 'venus', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'zenithium', amount: 3, target: 'self' },
+      { k: 'zenithium', amount: 1, target: 'opponent' },
+    ] },
+  { id: 'venus-moussa', name: 'Moussa', people: 'animod', planet: 'venus', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'zenithium', amount: -1, target: 'self' }], reward: [{ k: 'credits', amount: 4, target: 'self' }] },
+        { cost: [{ k: 'zenithium', amount: -2, target: 'self' }], reward: [{ k: 'credits', amount: 8, target: 'self' }] },
+        { cost: [{ k: 'zenithium', amount: -3, target: 'self' }], reward: [{ k: 'credits', amount: 12, target: 'self' }] },
+      ] },
+    ] },
+  { id: 'venus-v4n-vogt', name: 'V4n Vøgt', people: 'robot', planet: 'venus', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'zenithium', amount: 2, target: 'opponent' },
+    ] },
+  { id: 'venus-stessy-power', name: 'Stessy Power', people: 'humain', planet: 'venus', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'zenithium', amount: -1, target: 'self' }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 1 }] },
+        { cost: [{ k: 'zenithium', amount: -2, target: 'self' }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 2 }] },
+        { cost: [{ k: 'zenithium', amount: -4, target: 'self' }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'venus', amount: 3 }] },
+      ] },
+    ] },
+  { id: 'venus-br4dbury', name: 'Br4dbury', people: 'robot', planet: 'venus', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'optional', effects: [{ k: 'developDiscounted', which: 'cardPeople', discount: 1 }] },
+    ] },
+  { id: 'venus-doc-wissen', name: 'Doc Wissen', people: 'humain', planet: 'venus', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'optional', effects: [{ k: 'developDiscounted', which: 'cardPeople', discount: 1 }] },
+    ] },
+  { id: 'venus-cresus', name: 'Cresus', people: 'animod', planet: 'venus', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'credits', amount: 6, target: 'self' },
+    ] },
+  { id: 'venus-pachacuti', name: 'Pachacuti', people: 'animod', planet: 'venus', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'influence', amount: 1, on: 'venus' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'influence', amount: 2, on: 'venus' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'influence', amount: 3, on: 'venus' }] },
+      ] },
+    ] },
+  { // TODO(rules): "gagner du ZÉNITHIUM selon le nb de technos ≥ niv.1" non exprimable :
+    // creditsPerTechLevels donne des CRÉDITS, pas du zénithium ; aucun atome zenithiumPerTechLevels.
+    // Montant exact de la récompense également à confirmer (feuille). Transcrit avec le seul 1er effet.
+    id: 'venus-ilda-flores', name: 'Ilda Flores', people: 'humain', planet: 'venus', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+    ] },
+  { id: 'venus-professor-zed', name: 'Professor Zed', people: 'humain', planet: 'venus', cost: 9,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'zenithium', amount: 4, target: 'self' },
+    ] },
+  { id: 'venus-king-harold', name: 'King Harold', people: 'humain', planet: 'venus', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'takeLeader', side: 'silver' },
+    ] },
+  { id: 'venus-bujold', name: 'Bujøld', people: 'robot', planet: 'venus', cost: 7,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'optional', effects: [{ k: 'developLowest' }] },
+    ] },
+  { id: 'venus-archimedes', name: 'Archimedes', people: 'animod', planet: 'venus', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'venus' },
+      { k: 'optional', effects: [{ k: 'developDiscounted', which: 'cardPeople', discount: 1 }] },
+    ] },
+];
+
+export const CARDS: CardDef[] = [...MARS_CARDS, ...MERCURE_CARDS, ...VENUS_CARDS];
