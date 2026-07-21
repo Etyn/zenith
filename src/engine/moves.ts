@@ -151,6 +151,9 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
     if (pending.kind === 'chooseHandCard') {
       return state.players[player].hand.map((cardId) => ({ t: 'decideCard', cardId }));
     }
+    if (pending.kind === 'chooseBoardToken') {
+      return pending.slots.map((_, i) => ({ t: 'choose', index: i }));
+    }
     let candidates: Planet[] = [];
     if (pending.kind === 'chooseSegment') {
       // seuls les débuts de segment valides (pas d'enroulement en fin de rangée)

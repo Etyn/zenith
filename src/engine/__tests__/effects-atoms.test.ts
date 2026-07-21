@@ -1,6 +1,7 @@
 import { createGame, CENTER } from '../setup';
-import { applyEffect, resolve, decide, cardOf, decideCard } from '../effects';
+import { applyEffect, resolve, decide, cardOf, decideCard, chooseBranch } from '../effects';
 import type { EffectCtx, GameState, Planet } from '../types';
+import { PLANETS } from '../types';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
 const CTX: EffectCtx = { player: 0, planet: 'mars' };
@@ -204,4 +205,55 @@ test("creditsFromCardValue source=exileOpponent : exile une carte adverse => cr�
   const out = decide(paused, 'mars');
   expect(out.players[0].credits).toBe(seeded.players[0].credits + value);
   expect(out.discard).toContain('FIX_mars_0');
+});
+
+test("takeBoardBonusToken : choisit un jeton de planète visible, applique et défausse", () => {
+  const base = createGame(CONFIG, 1);
+  const planets = { ...base.planets };
+  for (const p of PLANETS) planets[p] = { ...planets[p], bonusToken: p === 'terra' ? 'tok-cred3-1' : null };
+  const s: GameState = {
+    ...base,
+    planets,
+    techBonus: { animod: null, humain: null, robot: null },
+    resolution: { queue: [{ k: 'takeBoardBonusToken' }], ctx: CTX },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseBoardToken', slots: [{ kind: 'planet', planet: 'terra' }] });
+  const out = chooseBranch(paused, 0);
+  expect(out.players[0].credits).toBe(base.players[0].credits + 3);
+  expect(out.planets.terra.bonusToken).toBeNull();
+  expect(out.bonusDiscard).toContain('tok-cred3-1');
+});
+
+test("takeBoardBonusToken : jeton d'emplacement techno", () => {
+  const base = createGame(CONFIG, 1);
+  const planets = { ...base.planets };
+  for (const p of PLANETS) planets[p] = { ...planets[p], bonusToken: null };
+  const s: GameState = {
+    ...base,
+    planets,
+    techBonus: { animod: 'tok-zen1-1', humain: null, robot: null },
+    resolution: { queue: [{ k: 'takeBoardBonusToken' }], ctx: CTX },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseBoardToken', slots: [{ kind: 'tech', people: 'animod' }] });
+  const out = chooseBranch(paused, 0);
+  expect(out.players[0].zenithium).toBe(base.players[0].zenithium + 1);
+  expect(out.techBonus.animod).toBeNull();
+});
+
+test("takeBoardBonusToken : aucun jeton visible => atome sauté", () => {
+  const base = createGame(CONFIG, 1);
+  const planets = { ...base.planets };
+  for (const p of PLANETS) planets[p] = { ...planets[p], bonusToken: null };
+  const s: GameState = {
+    ...base,
+    planets,
+    techBonus: { animod: null, humain: null, robot: null },
+    resolution: { queue: [{ k: 'takeBoardBonusToken' }, { k: 'credits', amount: 2, target: 'self' }], ctx: CTX },
+  };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].credits).toBe(base.players[0].credits + 2);
 });

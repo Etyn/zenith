@@ -2,7 +2,7 @@ import { gainInfluence } from './influence';
 import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
 import { PLANETS, PEOPLES } from './types';
-import type { Condition, Effect, EffectCtx, GameState, People, Planet, PlayerIndex, PlayerState, Side } from './types';
+import type { BoardTokenSlot, Condition, Effect, EffectCtx, GameState, People, Planet, PlayerIndex, PlayerState, Side } from './types';
 import { shuffle } from './rng';
 import { tokenOf } from '../data/tokens';
 import { CENTER } from './setup';
@@ -150,6 +150,8 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'discardHand':
     case 'creditsFromCardValue':
       throw new Error(`applyEffect: '${effect.k}' passe par resolve/decide/decideCard`);
+    case 'takeBoardBonusToken':
+      throw new Error("applyEffect: 'takeBoardBonusToken' passe par resolve/chooseBranch");
   }
 }
 
@@ -309,6 +311,18 @@ export function resolve(state: GameState): GameState {
         resolution: { queue: [...tokenFx, ...s.resolution!.queue.slice(1)], ctx, chosen: s.resolution!.chosen },
       };
       continue;
+    }
+    if (head.k === 'takeBoardBonusToken') {
+      const slots: BoardTokenSlot[] = [
+        ...PLANETS.filter((p) => s.planets[p].bonusToken !== null).map((p) => ({ kind: 'planet' as const, planet: p })),
+        ...PEOPLES.filter((pe) => s.techBonus[pe] !== null).map((pe) => ({ kind: 'tech' as const, people: pe })),
+      ];
+      if (slots.length === 0) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      s = { ...s, pending: { kind: 'chooseBoardToken', slots } };
+      break;
     }
     if (head.k === 'developDiscounted') {
       const me = ctx.player;
@@ -575,6 +589,23 @@ export function chooseBranch(state: GameState, index: number): GameState {
     if (index < 0 || index >= head.tiers.length) throw new Error('chooseBranch: palier hors bornes');
     const tier = head.tiers[index]!;
     const s: GameState = { ...state, pending: null, resolution: { queue: [...tier.cost, ...tier.reward, ...rest], ctx, chosen } };
+    return resolve(s);
+  }
+  if (pending.kind === 'chooseBoardToken') {
+    if (head.k !== 'takeBoardBonusToken') throw new Error('chooseBranch: atome de tête inattendu');
+    const slot = pending.slots[index];
+    if (!slot) throw new Error('chooseBranch: jeton hors bornes');
+    let tokenId: string;
+    let ns: GameState;
+    if (slot.kind === 'planet') {
+      tokenId = state.planets[slot.planet].bonusToken!;
+      ns = { ...state, planets: { ...state.planets, [slot.planet]: { ...state.planets[slot.planet], bonusToken: null } } };
+    } else {
+      tokenId = state.techBonus[slot.people]!;
+      ns = { ...state, techBonus: { ...state.techBonus, [slot.people]: null } };
+    }
+    const fx = tokenOf(tokenId).effects;
+    const s: GameState = { ...ns, bonusDiscard: [...ns.bonusDiscard, tokenId], pending: null, resolution: { queue: [...fx, ...rest], ctx, chosen } };
     return resolve(s);
   }
   throw new Error('chooseBranch: décision non compatible');
