@@ -2,7 +2,7 @@ import { gainInfluence } from './influence';
 import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
 import { PLANETS } from './types';
-import type { Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState, Side } from './types';
+import type { Condition, Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState, Side } from './types';
 import { shuffle } from './rng';
 import { tokenOf } from '../data/tokens';
 
@@ -24,6 +24,19 @@ function creditPlayer(
 
 function hasEligibleColumn(state: GameState, ownerIndex: PlayerIndex): boolean {
   return PLANETS.some((p) => state.players[ownerIndex].columns[p].length > 0);
+}
+
+function evalCondition(state: GameState, cond: Condition, ctx: EffectCtx): boolean {
+  switch (cond.c) {
+    case 'hasLeaderBadge': {
+      const holdsBadge = state.diplomacy.leader === ctx.player;
+      if (!holdsBadge) return false;
+      // badge argent OU or : sans `side` précisé, la simple possession suffit.
+      return cond.side === undefined || cond.side === 'silver' || state.diplomacy.side === 'gold';
+    }
+    case 'creditsAtLeast':
+      return state.players[ctx.player].credits >= cond.amount;
+  }
 }
 
 export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): GameState {
@@ -86,6 +99,8 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       throw new Error("applyEffect: 'optional' passe par resolve/chooseBranch");
     case 'bonusToken':
       throw new Error("applyEffect: 'bonusToken' passe par resolve (interception)");
+    case 'conditional':
+      throw new Error("applyEffect: 'conditional' passe par resolve/chooseBranch");
   }
 }
 
@@ -177,6 +192,14 @@ export function resolve(state: GameState): GameState {
     if (head.k === 'optional') {
       s = { ...s, pending: { kind: 'confirmOptional' } };
       break;
+    }
+    if (head.k === 'conditional') {
+      if (!evalCondition(s, head.cond, ctx)) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue; // condition fausse → atome sauté
+      }
+      s = { ...s, pending: { kind: 'confirmOptional' } };
+      break; // condition vraie → reste facultatif
     }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
@@ -282,7 +305,9 @@ export function chooseBranch(state: GameState, index: number): GameState {
   const pending = state.pending;
   if (pending.kind === 'confirmOptional') {
     if (index !== 0) throw new Error("chooseBranch: seule l'option 0 (accepter) est valide");
-    if (head.k !== 'optional') throw new Error('chooseBranch: atome de tête inattendu');
+    if (head.k !== 'optional' && head.k !== 'conditional') {
+      throw new Error('chooseBranch: atome de tête inattendu');
+    }
     const s: GameState = { ...state, pending: null, resolution: { queue: [...head.effects, ...rest], ctx, chosen } };
     return resolve(s);
   }

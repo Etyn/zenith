@@ -26,6 +26,10 @@ export type GameConfig = { techSetup: TechSetup; firstPlayer: PlayerIndex };
 export type Side = 'self' | 'opponent';
 export type PlanetSelector = Planet | 'choice';
 
+export type Condition =
+  | { c: 'hasLeaderBadge'; side?: 'silver' | 'gold' }
+  | { c: 'creditsAtLeast'; amount: number };
+
 export type Effect =
   | { k: 'influence'; amount: number; on: PlanetSelector }
   | { k: 'influenceEach'; amount: number }
@@ -40,7 +44,8 @@ export type Effect =
   | { k: 'exile'; side: Side; count: number }
   | { k: 'exileForInfluence'; count: number; amount: number }
   | { k: 'optional'; effects: Effect[] }
-  | { k: 'bonusToken' };
+  | { k: 'bonusToken' }
+  | { k: 'conditional'; cond: Condition; effects: Effect[] };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
