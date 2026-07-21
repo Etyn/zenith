@@ -380,4 +380,132 @@ export const VENUS_CARDS: CardDef[] = [
     ] },
 ];
 
-export const CARDS: CardDef[] = [...MARS_CARDS, ...MERCURE_CARDS, ...VENUS_CARDS];
+export const TERRA_CARDS: CardDef[] = [
+  { id: 'terra-charlemagne', name: 'Charlemagne', people: 'animod', planet: 'terra', cost: 8,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'influenceDifferent', amount: 1 },
+      { k: 'influenceDifferent', amount: 1 },
+    ] },
+  { id: 'terra-v3rn3', name: 'V3rn3', people: 'robot', planet: 'terra', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'zenithium', amount: 2, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'zenithium', amount: 4, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'zenithium', amount: 7, target: 'self' }] },
+      ] },
+    ] },
+  { id: 'terra-gilgamesh', name: 'Gilgamesh', people: 'animod', planet: 'terra', cost: 9,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'influence', amount: 1, on: 'choice' },
+    ] },
+  { id: 'terra-brussolo', name: 'Brussoløc', people: 'robot', planet: 'terra', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'zenithium', amount: 1, target: 'self' },
+    ] },
+  { id: 'terra-ice-june', name: 'Ice June', people: 'humain', planet: 'terra', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'discardHand', count: 1, thenInfluence: true },
+    ] },
+  { id: 'terra-m4th3son', name: 'M4th3søn', people: 'robot', planet: 'terra', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'influence', amount: 1, on: 'terra' }] },
+    ] },
+  { // effet 2 FACULTATIF (give-* enveloppé), effet 3 OBLIGATOIRE.
+    // TODO(rules): "≠ Terra" côté adversaire non exprimable (giveInfluenceOpponent sans exclusion). Mineur.
+    id: 'terra-baron-goro', name: 'Baron Goro', people: 'humain', planet: 'terra', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'optional', effects: [{ k: 'giveInfluenceOpponent', amount: 1 }] },
+      { k: 'zenithium', amount: 3, target: 'self' },
+    ] },
+  { id: 'terra-elisabeth', name: 'Elisabeth', people: 'animod', planet: 'terra', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'exile', side: 'self', count: 1, corresponding: true },
+      { k: 'zenithium', amount: 1, target: 'self' },
+    ] },
+  { id: 'terra-augustus', name: 'Augustus', people: 'animod', planet: 'terra', cost: 10,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'influence', amount: 1, on: 'choice' },
+    ] },
+  { id: 'terra-sneaky-jules', name: 'Sneaky Jules', people: 'humain', planet: 'terra', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'credits', amount: 4, target: 'self' },
+      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influence', amount: 2, on: 'choice' }] },
+    ] },
+  { // TODO(rules): "exiler 1 carte d'une couleur PRÉCISE (Mercure/Vénus/Mars/Jupiter) → 1 zén" par couleur :
+    // l'atome exile ne peut pas épingler une colonne d'une couleur donnée (soit correspondant à ctx.planet, soit choix libre).
+    // Encodé en 4 optionals "exile self (choix libre) → 1 zén" ; la contrainte de couleur exacte n'est pas garantie.
+    id: 'terra-l0v3cr4ft', name: 'L0v3cr4ft', people: 'robot', planet: 'terra', cost: 5,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'zenithium', amount: 1, target: 'self' }] },
+    ] },
+  { id: 'terra-zenon', name: 'Zenon', people: 'animod', planet: 'terra', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'credits', amount: 8, target: 'self' },
+      { k: 'credits', amount: 2, target: 'opponent' },
+    ] },
+  { id: 'terra-lord-creep', name: 'Lord Creep', people: 'humain', planet: 'terra', cost: 5,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'takeLeader', side: 'silver' },
+    ] },
+  { // Planète de bandeau NON confirmée (classée Terra par défaut).
+    // TODO(rules): "exiler 1 carte d'une couleur donnée → influence sur cette même couleur" ×4 :
+    // même limite d'expressivité que L0v3cr4ft (couleur exacte non épinglable). Encodé best-effort.
+    id: 'terra-h3rb3rt', name: 'H3rb3rt', people: 'robot', planet: 'terra', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
+      { k: 'optional', effects: [{ k: 'exile', side: 'self', count: 1 }, { k: 'influence', amount: 1, on: 'choice' }] },
+    ] },
+  { // Planète de bandeau NON confirmée (classée Terra par défaut).
+    id: 'terra-sir-sam', name: 'Sir Sam', people: 'humain', planet: 'terra', cost: 7,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'moveDiscToCenter' },
+    ] },
+  { // Planète de bandeau NON confirmée (classée Terra par défaut). exceptColor = couleur du bandeau (terra par défaut).
+    id: 'terra-helena-kerr', name: 'Helena Kerr', people: 'humain', planet: 'terra', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'influenceChoiceExcept', exceptColor: 'terra', amount: 1 },
+    ] },
+  { id: 'terra-f4rm3r', name: 'F4rm3r', people: 'robot', planet: 'terra', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'influenceDifferent', amount: 1 },
+    ] },
+  { id: 'terra-tiberius', name: 'Tiberius', people: 'animod', planet: 'terra', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'influence', amount: 1, on: 'terra' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'influence', amount: 2, on: 'terra' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'influence', amount: 3, on: 'terra' }] },
+      ] },
+    ] },
+];
+
+export const CARDS: CardDef[] = [...MARS_CARDS, ...MERCURE_CARDS, ...VENUS_CARDS, ...TERRA_CARDS];
