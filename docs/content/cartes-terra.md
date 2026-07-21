@@ -14,11 +14,11 @@
 
 **Colonne « Réel »** : à remplir/corriger par l'utilisateur après vérification sur les cartes physiques.
 
-23 cartes dans cette feuille (sur 90 au total, toutes planètes confondues) — **dont 4 cartes à planète non confirmée** (H3RB3RT, Sir Sam, Donald Smooth, Helena Kerr, cf. note ⚠️ ci-dessous).
+18 cartes dans cette feuille (sur 90 au total, toutes planètes confondues) — **dont 3 cartes à planète non confirmée** (H3RB3RT, Sir Sam, Helena Kerr, cf. note ⚠️ ci-dessous).
 
-> ⚠️ **Note sur 4 cartes (scans 23.02_46 à _49)** : le brouillon B6 signale que ce petit groupe de cartes a un
+> ⚠️ **Note sur 3 cartes (scans 23.02_46, _47, _49)** : le brouillon B6 signale que ce petit groupe de cartes a un
 > bandeau **bleu-acier/gris**, visuellement distinct du bleu franc « Terra » des autres cartes, avec des noms de
-> personnages « normaux » (H3RB3RT, Sir Sam, Donald Smooth, Helena Kerr) plutôt que des noms de dirigeants/savants,
+> personnages « normaux » (H3RB3RT, Sir Sam, Helena Kerr) plutôt que des noms de dirigeants/savants,
 > et des icônes d'effet **jamais vues ailleurs**. Le brouillon se demande si ces 15 cartes (46 à 60) forment un
 > **sous-type de carte différent** (« Personnages/Célébrités » ou extension) avec ses propres règles, plutôt que
 > de vraies cartes « agent planète ». Elles sont classées ici dans Terra par défaut (hypothèse la plus proche
@@ -104,40 +104,12 @@
 
 ---
 
-### Lisa Charity  (scan 23.02_18, coût 2, peuple Humain)
-| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
-|---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Gagner 2 zénithium | OBLIG | ✓ | |
-| 3 | Silhouette blanche (« chez l'adversaire ») + plaquette grise « 3 », SANS flèche. Hypothèse : l'adversaire gagne 3 crédits (don, cohérent avec le thème « Charity ») | OBLIG | ❓ | |
-
----
-
-### Agent Ezra  (scan 23.02_20, coût 1, peuple Humain)
-| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
-|---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Gagner 4 crédits | OBLIG | ✓ | |
-| 3 | Payer 1 zénithium (flèche rouge ↑) → chevron ▶ → +1 influence sur Vénus | FACUL | ❓ | |
-
----
-
 ### Sneaky Jules  (scan 23.02_23, coût 1, peuple Humain)
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
 | 2 | Gagner 4 crédits | OBLIG | ✓ | |
 | 3 | Payer 1 zénithium (flèche rouge ↑) → chevron ▶ → gagner 2 influence sur une même planète au choix (disque gris, double flèche ↓↓ — conforme au lexique) | FACUL | ❓ (coût) / ✓ (récompense) | |
-
----
-
-### Queen Suzanne  (scan 23.02_24, coût 10, peuple Humain)
-| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
-|---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Gagner 2 influence sur une même planète au choix (disque gris, double flèche ↓↓) | OBLIG | ✓ | |
-| 3 | Gagner 2 zénithium | OBLIG | ✓ | |
-| 4 | Prendre le badge Leader — version dorée uniquement (icône ailée tout or, contrairement au badge bicolore vu ailleurs). Hypothèse : il existe deux badges Leader distincts, argent et or | OBLIG | ❓ | |
 
 ---
 
@@ -151,15 +123,6 @@
 | 5 | Exiler 1 carte Jupiter → chevron ▶ → gagner 1 zénithium | FACUL | ✓ | |
 
 *Note : cette carte sert de référence — elle confirme que l'icône « chevron/carte déchirée coloré » = exiler 1 carte de cette planète (utile pour réinterpréter Chaka et Stessy Power, cf. `cartes-questions.md`).*
-
----
-
-### Milady Jones  (scan 23.02_26, coût 6, peuple Humain)
-| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
-|---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | +1 influence sur Terra (2e disque bleu, même planète, pas de « ≠ ») | OBLIG | ✓ | |
-| 3 | Prendre le badge Leader (sans « ! » — action inconditionnelle) | OBLIG | ✓ | |
 
 ---
 
@@ -197,14 +160,6 @@
 
 ---
 
-### Donald Smooth  (scan 23.02_48, coût 2, peuple Humain) — ⚠️ planète non confirmée
-| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
-|---|---|---|---|---|
-| 1 | +1 influence sur la planète du bandeau (disque uni gris-bleu clair, couleur peu contrastée, planète non confirmée) | OBLIG | ❓ | |
-| 2 | Étiquette grise « X » au-dessus d'un pictogramme de poing/gant noir refermé sur un objet sombre → chevron ▶ → étiquette grise « X ». Hypothèse : échelle algébrique « exiler/défausser X cartes (montant au choix) → gagner X [ressource non précisée] », mais X est une variable libre (inédit) | FACUL | ❓❓ | |
-
----
-
 ### Helena Kerr  (scan 23.02_49, coût 6, peuple Humain) — ⚠️ planète non confirmée
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
@@ -230,5 +185,5 @@
 
 ---
 
-## Récapitulatif — 23 cartes Terra
-Charlemagne, V3rn3, Gilgamesh, Brussoløc, Ice June, Mathesøn, Baron Goro, Elisabeth, Augustus, Lisa Charity, Agent Ezra, Sneaky Jules, Queen Suzanne, L0v3cr4ft, Milady Jones, Zenon, Lord Creep, F4rm3r, Tiberius (19 cartes de planète confirmée) + H3rb3rt, Sir Sam, Donald Smooth, Helena Kerr (4 cartes de planète ⚠️ non confirmée, classées ici par défaut).
+## Récapitulatif — 18 cartes Terra
+Charlemagne, V3rn3, Gilgamesh, Brussoløc, Ice June, Mathesøn, Baron Goro, Elisabeth, Augustus, Sneaky Jules, L0v3cr4ft, Zenon, Lord Creep, F4rm3r, Tiberius (15 cartes de planète confirmée) + H3rb3rt, Sir Sam, Helena Kerr (3 cartes de planète ⚠️ non confirmée, classées ici par défaut).

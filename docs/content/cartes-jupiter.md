@@ -14,7 +14,7 @@
 
 **Colonne « Réel »** : à remplir/corriger par l'utilisateur après vérification sur les cartes physiques.
 
-13 cartes dans cette feuille (sur 90 au total, toutes planètes confondues).
+18 cartes dans cette feuille (sur 90 au total, toutes planètes confondues).
 
 > ⚠️ **Note générale sur la couleur** : le vert Jupiter peut sembler « bleu-teal » selon l'éclairage du scan
 > (cf. guide de décodage), ce qui rend la couleur de bandeau incertaine sur la quasi-totalité des cartes de
@@ -74,6 +74,43 @@
 
 ---
 
+### Lisa Charity  (scan 23.02_18, coût 2, peuple Humain)
+| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
+|---|---|---|---|---|
+| 1 | +1 influence sur Terra | OBLIG | ✓ | |
+| 2 | Gagner 2 zénithium | OBLIG | ✓ | |
+| 3 | Silhouette blanche (« chez l'adversaire ») + plaquette grise « 3 », SANS flèche. Hypothèse : l'adversaire gagne 3 crédits (don, cohérent avec le thème « Charity ») | OBLIG | ❓ | |
+
+---
+
+### Agent Ezra  (scan 23.02_20, coût 1, peuple Humain)
+| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
+|---|---|---|---|---|
+| 1 | +1 influence sur Terra | OBLIG | ✓ | |
+| 2 | Gagner 4 crédits | OBLIG | ✓ | |
+| 3 | Payer 1 zénithium (flèche rouge ↑) → chevron ▶ → +1 influence sur Vénus | FACUL | ❓ | |
+
+---
+
+### Queen Suzanne  (scan 23.02_24, coût 10, peuple Humain)
+| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
+|---|---|---|---|---|
+| 1 | +1 influence sur Terra | OBLIG | ✓ | |
+| 2 | Gagner 2 influence sur une même planète au choix (disque gris, double flèche ↓↓) | OBLIG | ✓ | |
+| 3 | Gagner 2 zénithium | OBLIG | ✓ | |
+| 4 | Prendre le badge Leader — version dorée uniquement (icône ailée tout or, contrairement au badge bicolore vu ailleurs). Hypothèse : il existe deux badges Leader distincts, argent et or | OBLIG | ❓ | |
+
+---
+
+### Milady Jones  (scan 23.02_26, coût 6, peuple Humain)
+| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
+|---|---|---|---|---|
+| 1 | +1 influence sur Terra | OBLIG | ✓ | |
+| 2 | +1 influence sur Terra (2e disque bleu, même planète, pas de « ≠ ») | OBLIG | ✓ | |
+| 3 | Prendre le badge Leader (sans « ! » — action inconditionnelle) | OBLIG | ✓ | |
+
+---
+
 ### B4RJ4V3L  (scan 23.02_38, coût 2, peuple Robot)
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
@@ -106,6 +143,14 @@
 
 ---
 
+### Donald Smooth  (scan 23.02_48, coût 2, peuple Humain) — ⚠️ planète non confirmée
+| # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
+|---|---|---|---|---|
+| 1 | +1 influence sur la planète du bandeau (disque uni gris-bleu clair, couleur peu contrastée, planète non confirmée) | OBLIG | ❓ | |
+| 2 | Étiquette grise « X » au-dessus d'un pictogramme de poing/gant noir refermé sur un objet sombre → chevron ▶ → étiquette grise « X ». Hypothèse : échelle algébrique « exiler/défausser X cartes (montant au choix) → gagner X [ressource non précisée] », mais X est une variable libre (inédit) | FACUL | ❓❓ | |
+
+---
+
 ### Suleiman  (scan 23.40_01, coût 1, peuple Animod)
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
@@ -132,7 +177,9 @@
 
 ---
 
-## Récapitulatif — 13 cartes Jupiter
-Ch4mbers, Arnulf, Gibsøn, Annie, Captain Andreev, M4rt1n, B4rjav3l, Ivan, Bajazet, Geta, Suleiman, P.K.Dick, Thømpsøn.
+## Récapitulatif — 18 cartes Jupiter
+Ch4mbers, Arnulf, Gibsøn, Annie, Captain Andreev, M4rt1n, Lisa Charity, Agent Ezra, Queen Suzanne, Milady Jones, B4rjav3l, Ivan, Bajazet, Geta, Donald Smooth, Suleiman, P.K.Dick, Thømpsøn.
 
-**Sur ces 13 cartes, 9 ont une couleur de bandeau explicitement marquée ❓ (à confirmer visuellement comme Jupiter et non Terra/Mercure)** : Ch4mbers, Arnulf, Gibsøn, Annie, Captain Andreev, M4rt1n, P.K.Dick, Thømpsøn (+ teinte « gris-teal/bleu-teal terne » générale, cf. note en tête de fichier).
+**Sur ces 18 cartes, 9 ont une couleur de bandeau explicitement marquée ❓ (à confirmer visuellement comme Jupiter et non Terra/Mercure)** : Ch4mbers, Arnulf, Gibsøn, Annie, Captain Andreev, M4rt1n, P.K.Dick, Thømpsøn (+ teinte « gris-teal/bleu-teal terne » générale, cf. note en tête de fichier).
+
+**Note** : Lisa Charity, Agent Ezra, Queen Suzanne, Milady Jones et Donald Smooth ont été déplacées ici depuis `cartes-terra.md` suite à la reclassification définitive Terra/Jupiter — leurs blocs d'effets sont conservés tels quels (déplacement fidèle), y compris les mentions littérales « Terra » dans le texte des effets décodés, qui restent à corriger séparément si besoin.
