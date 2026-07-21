@@ -5,6 +5,7 @@ import { PLANETS, PEOPLES } from './types';
 import type { Condition, Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState, Side } from './types';
 import { shuffle } from './rng';
 import { tokenOf } from '../data/tokens';
+import { CENTER } from './setup';
 
 // Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
 const CARDS: Record<string, CardDef> = Object.fromEntries(FIXTURE_CARDS.map((c) => [c.id, c]));
@@ -129,6 +130,11 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       const receiver: PlayerIndex = ctx.player === 0 ? 1 : 0;
       return { ...state, diplomacy: { leader: receiver, side: state.diplomacy.side } };
     }
+    case 'influenceChoiceExcept':
+    case 'influenceChoiceAtCenter':
+    case 'giveInfluenceOpponent':
+    case 'moveDiscToCenter':
+      throw new Error(`applyEffect: '${effect.k}' passe par resolve/decide`);
   }
 }
 
@@ -166,6 +172,22 @@ export function resolve(state: GameState): GameState {
     if (head.k === 'influenceDifferent') {
       const chosen = s.resolution!.chosen ?? [];
       s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, exclude: chosen } };
+      break;
+    }
+    if (head.k === 'influenceChoiceExcept') {
+      s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, exclude: [head.exceptColor] } };
+      break;
+    }
+    if (head.k === 'influenceChoiceAtCenter') {
+      s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, atCenter: true } };
+      break;
+    }
+    if (head.k === 'giveInfluenceOpponent') {
+      s = { ...s, pending: { kind: 'choosePlanet', amount: head.amount, beneficiary: 'opponent' } };
+      break;
+    }
+    if (head.k === 'moveDiscToCenter') {
+      s = { ...s, pending: { kind: 'moveDiscToCenter' } };
       break;
     }
     if (head.k === 'transfer' || head.k === 'exile') {
@@ -309,11 +331,19 @@ export function decide(state: GameState, planet: Planet): GameState {
       resolution: { queue: moved.resolution!.queue.slice(1), ctx, chosen: moved.resolution!.chosen },
     };
     return resolve(done);
+  } else if (pending.kind === 'moveDiscToCenter') {
+    const track = state.planets[planet];
+    s = { ...state, planets: { ...state.planets, [planet]: { ...track, discPos: CENTER } } };
   } else if (pending.kind === 'choosePlanet') {
+    // choosePlanet (+ variantes exclude / atCenter / beneficiary)
     if (pending.exclude && pending.exclude.includes(planet)) {
       throw new Error('decide: planète exclue (doit être différente)');
     }
-    s = gainInfluence(state, planet, ctx.player, pending.amount);
+    if (pending.atCenter && state.planets[planet].discPos !== CENTER) {
+      throw new Error('decide: planète non centrale');
+    }
+    const beneficiary: PlayerIndex = pending.beneficiary === 'opponent' ? (ctx.player === 0 ? 1 : 0) : ctx.player;
+    s = gainInfluence(state, planet, beneficiary, pending.amount);
   } else {
     throw new Error('decide: décision non compatible (planète attendue)');
   }

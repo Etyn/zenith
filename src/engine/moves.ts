@@ -1,5 +1,6 @@
 import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch } from './effects';
 import { activeFace } from '../data/tech';
+import { CENTER } from './setup';
 import { DIPLOMACY } from '../data/diplomacy';
 import { tokenOf } from '../data/tokens';
 import type { Effect, GameState, People, Planet, PlayerIndex, PlayerState } from './types';
@@ -170,7 +171,10 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
     if (pending.kind === 'chooseTier') {
       return [...Array.from({ length: pending.count }, (_, i) => ({ t: 'choose' as const, index: i })), { t: 'skip' as const }];
     }
-    let candidates: Planet[];
+    if (pending.kind === 'moveDiscToCenter') {
+      return PLANETS.map((planet) => ({ t: 'decide', planet }));
+    }
+    let candidates: Planet[] = [];
     if (pending.kind === 'chooseSegment') {
       // seuls les débuts de segment valides (pas d'enroulement en fin de rangée)
       candidates = PLANETS.filter((_, i) => i + pending.count <= PLANETS.length);
@@ -180,9 +184,11 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
       candidates = PLANETS.filter(
         (planet) => state.players[ownerIndex].columns[planet].length > 0 && !exclude.includes(planet),
       );
-    } else {
+    } else if (pending.kind === 'choosePlanet') {
       const exclude = pending.exclude ?? [];
-      candidates = PLANETS.filter((planet) => !exclude.includes(planet));
+      candidates = PLANETS.filter(
+        (planet) => !exclude.includes(planet) && (!pending.atCenter || state.planets[planet].discPos === CENTER),
+      );
     }
     return candidates.map((planet) => ({ t: 'decide', planet }));
   }

@@ -1,5 +1,5 @@
-import { createGame } from '../setup';
-import { applyEffect } from '../effects';
+import { createGame, CENTER } from '../setup';
+import { applyEffect, resolve, decide } from '../effects';
 import type { EffectCtx, GameState, Planet } from '../types';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
@@ -57,4 +57,43 @@ test("giveLeaderBadge : no-op si le joueur actif ne détient pas le badge", () =
   const s: GameState = { ...base, diplomacy: { leader: 1, side: 'silver' } };
   const out = applyEffect(s, { k: 'giveLeaderBadge' }, CTX);
   expect(out.diplomacy).toEqual({ leader: 1, side: 'silver' });
+});
+
+test("influenceChoiceExcept : la planète barrée n'est pas proposée et rechoisie => throw", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'influenceChoiceExcept', exceptColor: 'mars', amount: 1 }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'choosePlanet', amount: 1, exclude: ['mars'] });
+  expect(() => decide(paused, 'mars')).toThrow();
+  const out = decide(paused, 'venus');
+  expect(out.planets.venus.discPos).toBe(base.planets.venus.discPos - 1); // joueur 0, dir -1
+});
+
+test("influenceChoiceAtCenter : seules les planètes au centre sont éligibles", () => {
+  const base = createGame(CONFIG, 1); // 2e joueur = 1 => terra décalée (pos 5), les autres au centre (4)
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'influenceChoiceAtCenter', amount: 2 }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'choosePlanet', amount: 2, atCenter: true });
+  expect(() => decide(paused, 'terra')).toThrow();      // terra n'est pas au centre
+  const out = decide(paused, 'mars');                   // mars est au centre
+  expect(out.planets.mars.discPos).toBe(CENTER - 2);
+});
+
+test("giveInfluenceOpponent : l'influence choisie va à l'adversaire", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'giveInfluenceOpponent', amount: 1 }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'choosePlanet', amount: 1, beneficiary: 'opponent' });
+  const out = decide(paused, 'venus');
+  expect(out.planets.venus.discPos).toBe(base.planets.venus.discPos + 1); // joueur 1, dir +1
+});
+
+test("moveDiscToCenter : repositionne au centre le disque choisi", () => {
+  const base = createGame(CONFIG, 1); // terra à 5
+  const s: GameState = { ...base, resolution: { queue: [{ k: 'moveDiscToCenter' }], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'moveDiscToCenter' });
+  const out = decide(paused, 'terra');
+  expect(out.planets.terra.discPos).toBe(CENTER);
+  expect(out.resolution).toBeNull();
 });

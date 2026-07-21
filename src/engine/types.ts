@@ -51,12 +51,17 @@ export type Effect =
   | { k: 'creditsPerCardColors'; zone: Side; per: number }
   | { k: 'creditsPerTechLevels'; tiers: number[] }
   | { k: 'giveOpponent'; resource: 'credits' | 'zenithium'; amount: number }
-  | { k: 'giveLeaderBadge' };
+  | { k: 'giveLeaderBadge' }
+  | { k: 'influenceChoiceExcept'; exceptColor: Planet; amount: number }
+  | { k: 'influenceChoiceAtCenter'; amount: number }
+  | { k: 'giveInfluenceOpponent'; amount: number }
+  | { k: 'moveDiscToCenter' };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
 export type PendingDecision =
-  | { kind: 'choosePlanet'; amount: number; exclude?: Planet[] }
+  | { kind: 'choosePlanet'; amount: number; exclude?: Planet[]; atCenter?: boolean; beneficiary?: Side }
+  | { kind: 'moveDiscToCenter' }
   | { kind: 'chooseSegment'; count: number; amount: number }
   | {
       kind: 'chooseColumn';
