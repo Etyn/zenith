@@ -1,6 +1,9 @@
 import { selfPlay, activePlayer } from '../sim';
 import { createGame } from '../setup';
 import { winnerOf } from '../influence';
+import { pickMove } from '../bot';
+import { applyMove } from '../moves';
+import { makeRng } from '../rng';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
 
@@ -25,6 +28,15 @@ test('selfPlay ne mute pas l\'état initial de createGame', () => {
   const snapshot = JSON.stringify(initial);
   selfPlay(CONFIG, 5, 11, 200);
   expect(JSON.stringify(createGame(CONFIG, 5))).toBe(snapshot);
+});
+
+test('pickMove et applyMove ne mutent pas l\'état qu\'on leur passe', () => {
+  const s = createGame(CONFIG, 5);
+  const frozen = JSON.stringify(s);
+  const [move] = pickMove(s, s.current, makeRng(3));
+  expect(move).not.toBeNull();
+  applyMove(s, move!);
+  expect(JSON.stringify(s)).toBe(frozen); // s inchangé après pickMove + applyMove
 });
 
 test('activePlayer renvoie current hors décision et null à la victoire', () => {

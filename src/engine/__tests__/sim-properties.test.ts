@@ -25,10 +25,11 @@ test('aucune partie ne lève d’exception et toutes terminent dans le plafond',
 // (2 x 4 cartes) — il ne reste que 2 cartes à piocher. Les 50 parties se
 // terminent toutes en `stuck` après seulement 8 à 10 coups, faute de cartes
 // jouables. Ce n'est pas un défaut du moteur mais une limite du fixture non
-// canonique ; à revérifier avec le vrai contenu du jeu. En attendant, on
-// vérifie une propriété plus faible mais toujours significative : l'issue de
-// chaque partie est bien l'une des trois valeurs attendues, et on consigne la
-// ventilation observée pour diagnostic.
+// canonique ; à revérifier avec le vrai contenu du jeu. L'appartenance de
+// `outcome` à l'une des trois valeurs est déjà garantie par le typage : la
+// valeur réelle de ce test est donc plus modeste — vérifier qu'aucune des
+// 50 graines supplémentaires (mapping botSeed distinct de l'autre test) ne
+// lève d'exception — et on consigne la ventilation observée pour diagnostic.
 test('chaque partie se termine par une issue valide (winner, stuck ou maxSteps)', () => {
   const outcomes: Record<SelfPlayResult['outcome'], number> = { winner: 0, stuck: 0, maxSteps: 0 };
   for (const seed of SEEDS) {

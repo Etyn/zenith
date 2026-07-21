@@ -6,8 +6,8 @@ import type { GameConfig, GameState, PlayerIndex } from './types';
 
 export function activePlayer(state: GameState): PlayerIndex | null {
   if (state.winner !== null) return null;
-  if (state.pending !== null) return state.resolution ? state.resolution.ctx.player : null;
-  return state.current;
+  // Invariant du moteur : pending non nul ⇒ resolution non nulle. Le `!` s'appuie dessus.
+  return state.pending !== null ? state.resolution!.ctx.player : state.current;
 }
 
 export type SelfPlayResult = {
@@ -36,8 +36,7 @@ export function selfPlay(
     }
     const p = activePlayer(state);
     if (p === null) {
-      outcome = 'winner'; // winner !== null déjà traité ; défensif
-      break;
+      throw new Error('selfPlay: invariant rompu — aucun joueur actif alors que winner est null');
     }
     const [move, nextRng] = pickMove(state, p, rng);
     rng = nextRng;
