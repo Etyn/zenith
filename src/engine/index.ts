@@ -6,3 +6,4 @@ export * from './effects';
 export * from './moves';
 export * from './bot';
 export * from './sim';
+export * from './playerView';
