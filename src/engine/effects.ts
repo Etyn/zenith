@@ -1,6 +1,7 @@
 import { gainInfluence } from './influence';
 import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
+import { PLANETS } from './types';
 import type { Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState } from './types';
 
 // Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
@@ -30,6 +31,14 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       // Seul le cas planète précise est appliqué directement ; 'choice' est géré par resolve/decide.
       if (effect.on === 'choice') throw new Error("applyEffect: 'influence choice' passe par resolve/decide");
       return gainInfluence(state, effect.on, ctx.player, effect.amount);
+    case 'influenceEach': {
+      let s = state;
+      for (const p of PLANETS) {
+        s = gainInfluence(s, p, ctx.player, effect.amount);
+        if (s.winner !== null) break;
+      }
+      return s;
+    }
     case 'takeLeader': {
       const me = ctx.player;
       const d = state.diplomacy;

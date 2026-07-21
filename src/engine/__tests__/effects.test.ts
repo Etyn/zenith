@@ -1,6 +1,7 @@
 import { createGame } from '../setup';
 import { applyEffect, resolve, decide } from '../effects';
 import { CENTER } from '../setup';
+import { PLANETS } from '../types';
 import type { EffectCtx, GameState } from '../types';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
@@ -138,4 +139,12 @@ test("steal retire la ressource à l'adversaire et la donne au joueur (borné)",
   // l'adversaire n'a que 2 : on vole 2, pas 3
   expect(out.players[1].credits).toBe(0);
   expect(out.players[0].credits).toBe(5 + 2);
+});
+
+test('influenceEach déplace le disque de chaque planète pour le joueur', () => {
+  const base = createGame(CONFIG, 1);
+  const before = PLANETS.map((p) => base.planets[p].discPos);
+  const out = applyEffect(base, { k: 'influenceEach', amount: 1 }, { player: 0, planet: 'terra' });
+  // joueur 0 pousse vers sa zone (dir -1) : chaque disque diminue de 1 (aucune capture ici)
+  PLANETS.forEach((p, i) => expect(out.planets[p].discPos).toBe(before[i]! - 1));
 });

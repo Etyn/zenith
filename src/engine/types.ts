@@ -28,6 +28,7 @@ export type PlanetSelector = Planet | 'choice';
 
 export type Effect =
   | { k: 'influence'; amount: number; on: PlanetSelector }
+  | { k: 'influenceEach'; amount: number }
   | { k: 'credits'; amount: number; target: Side }
   | { k: 'zenithium'; amount: number; target: Side }
   | { k: 'mobilize'; count: number; thenInfluence: boolean }
