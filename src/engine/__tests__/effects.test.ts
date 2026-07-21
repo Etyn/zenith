@@ -1,5 +1,5 @@
 import { createGame } from '../setup';
-import { applyEffect, resolve, decide } from '../effects';
+import { applyEffect, resolve, decide, cardOf } from '../effects';
 import { CENTER } from '../setup';
 import { PLANETS } from '../types';
 import type { EffectCtx, GameState } from '../types';
@@ -27,6 +27,13 @@ test("applyEffect ne mute pas l'état d'entrée", () => {
   const before = s.players[0].credits;
   applyEffect(s, { k: 'credits', amount: 5, target: 'self' }, CTX);
   expect(s.players[0].credits).toBe(before);
+});
+
+test('cardOf résout les ids réels ET les ids fixture', () => {
+  expect(cardOf('mars-caesar')?.planet).toBe('mars');
+  expect(cardOf('jupiter-queen-suzanne')?.people).toBe('humain');
+  expect(cardOf('FIX_mars_0')?.planet).toBe('mars'); // fixtures toujours résolues
+  expect(cardOf('id-inexistant')).toBeUndefined();
 });
 
 test("resolve dépile toute la file d'atomes sans choix puis remet resolution à null", () => {

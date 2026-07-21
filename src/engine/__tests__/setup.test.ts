@@ -40,7 +40,7 @@ test('mélange déterministe : même seed → mêmes mains', () => {
 test('aucune carte perdue : main0 + main1 + deck = tout le paquet', () => {
   const s = createGame(CONFIG, 5);
   const total = s.players[0].hand.length + s.players[1].hand.length + s.deck.length;
-  expect(total).toBe(10); // FIXTURE_CARDS
+  expect(total).toBe(90); // catalogue réel CARDS (5 x 18)
 });
 
 test('une nouvelle partie n’a ni résolution ni décision en attente', () => {

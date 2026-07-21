@@ -9,7 +9,7 @@ import {
   type PlayerIndex,
   type PlayerState,
 } from './types';
-import { FIXTURE_CARDS } from '../data/fixtures';
+import { CARDS } from '../data/cards';
 import type { CardDef } from '../data/types';
 import { TOKENS } from '../data/tokens';
 
@@ -33,7 +33,7 @@ function newPlayer(hand: string[]): PlayerState {
   };
 }
 
-export function createGame(config: GameConfig, seed: number, deck: CardDef[] = FIXTURE_CARDS): GameState {
+export function createGame(config: GameConfig, seed: number, deck: CardDef[] = CARDS): GameState {
   const [shuffled, rngAfterDeck] = shuffle(deck.map((c) => c.id), makeRng(seed));
   const hand0 = shuffled.slice(0, START_HAND);
   const hand1 = shuffled.slice(START_HAND, START_HAND * 2);

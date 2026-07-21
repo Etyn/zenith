@@ -15,11 +15,17 @@ function withColumns(base: GameState, index: 0 | 1, cols: Partial<Record<Planet,
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
 
 function firstAffordableFixedInfluenceCard(s: GameState): string {
-  // Une carte de la main du joueur courant dont le 1er effet influence est sur une planète précise
-  // (les fixtures le sont toutes) et abordable.
+  // Une carte abordable de la main du joueur courant dont le recrutement résout tout son effet
+  // SANS décision en attente (contrairement aux fixtures, le catalogue réel mélange des effets
+  // déterministes et des effets à choix — ex. influenceChoiceExcept — qui posent un pending et
+  // suspendent la fin de tour). On sélectionne donc défensivement par simulation plutôt que par
+  // supposition sur la forme de la carte.
   for (const id of s.players[s.current].hand) {
     const c = cardOf(id)!;
-    if (c.cost <= s.players[s.current].credits) return id;
+    if (c.cost <= s.players[s.current].credits) {
+      const out = applyMove(s, { t: 'recruit', cardId: id });
+      if (out.pending === null) return id;
+    }
   }
   return s.players[s.current].hand[0]!;
 }

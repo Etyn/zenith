@@ -1,6 +1,7 @@
 import { gainInfluence } from './influence';
 import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
+import { CARDS as REAL_CARDS } from '../data/cards';
 import { PLANETS, PEOPLES } from './types';
 import type { BoardTokenSlot, Condition, Effect, EffectCtx, GameState, People, Planet, PlayerIndex, PlayerState, Side } from './types';
 import { shuffle } from './rng';
@@ -9,10 +10,13 @@ import { CENTER } from './setup';
 import { developTech } from './develop';
 import { activeFace } from '../data/tech';
 
-// Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
-const CARDS: Record<string, CardDef> = Object.fromEntries(FIXTURE_CARDS.map((c) => [c.id, c]));
+// Catalogue = fusion des fixtures (doublures de test) et du contenu réel : les ids réels ET
+// les ids FIX_* résolvent. Les ids sont disjoints par convention, aucune collision attendue.
+const CATALOG: Record<string, CardDef> = Object.fromEntries(
+  [...FIXTURE_CARDS, ...REAL_CARDS].map((c) => [c.id, c]),
+);
 export function cardOf(id: string): CardDef | undefined {
-  return CARDS[id];
+  return CATALOG[id];
 }
 
 function creditPlayer(
@@ -364,7 +368,14 @@ export function resolve(state: GameState): GameState {
       const min = Math.min(...eligible.map((pe) => markers[pe]));
       const tied = eligible.filter((pe) => markers[pe] === min);
       if (tied.length === 1) {
-        const res = developTech(s, me, tied[0]!, 0)!;
+        // Coût forcé à 0, mais developTech renvoie tout de même null si le zénithium du joueur
+        // est déjà négatif (cf. autres effets non bornés) : on retombe alors sur le skip, comme
+        // pour eligible.length === 0 ci-dessus, plutôt que de forcer un état inexistant.
+        const res = developTech(s, me, tied[0]!, 0);
+        if (res === null) {
+          s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+          continue;
+        }
         s = { ...res.state, resolution: { queue: [...res.queue, ...s.resolution!.queue.slice(1)], ctx, chosen: s.resolution!.chosen } };
         continue;
       }
