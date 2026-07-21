@@ -1,7 +1,7 @@
 import { gainInfluence } from './influence';
 import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
-import { PLANETS } from './types';
+import { PLANETS, PEOPLES } from './types';
 import type { Condition, Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState, Side } from './types';
 import { shuffle } from './rng';
 import { tokenOf } from '../data/tokens';
@@ -105,6 +105,16 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       throw new Error("applyEffect: 'choice' passe par resolve/chooseBranch");
     case 'scale':
       throw new Error("applyEffect: 'scale' passe par resolve/chooseBranch");
+    case 'creditsPerCardColors': {
+      const zoneIndex: PlayerIndex = effect.zone === 'opponent' ? (ctx.player === 0 ? 1 : 0) : ctx.player;
+      const colors = PLANETS.filter((p) => state.players[zoneIndex].columns[p].length > 0).length;
+      return creditPlayer(state, ctx.player, { credits: state.players[ctx.player].credits + effect.per * colors });
+    }
+    case 'creditsPerTechLevels': {
+      const n = PEOPLES.filter((pe) => state.players[ctx.player].techMarkers[pe] >= 1).length;
+      const gain = n === 0 ? 0 : effect.tiers[Math.min(n, effect.tiers.length) - 1]!;
+      return creditPlayer(state, ctx.player, { credits: state.players[ctx.player].credits + gain });
+    }
   }
 }
 
