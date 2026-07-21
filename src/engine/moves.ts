@@ -1,4 +1,4 @@
-import { cardOf, resolve, decide as decideEffect } from './effects';
+import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch } from './effects';
 import { activeFace } from '../data/tech';
 import { DIPLOMACY } from '../data/diplomacy';
 import { tokenOf } from '../data/tokens';
@@ -9,7 +9,9 @@ export type Move =
   | { t: 'recruit'; cardId: string }
   | { t: 'develop'; cardId: string; people: People }
   | { t: 'leadership'; cardId: string }
-  | { t: 'decide'; planet: Planet };
+  | { t: 'decide'; planet: Planet }
+  | { t: 'choose'; index: number }
+  | { t: 'skip' };
 
 function recruitCost(state: GameState, player: PlayerIndex, planet: Planet, baseCost: number): number {
   return Math.max(0, baseCost - state.players[player].columns[planet].length);
@@ -45,6 +47,14 @@ export function applyMove(state: GameState, move: Move): GameState {
     if (state.pending === null) return state;
     const afterDecide = decideEffect(state, move.planet);
     return finishOrPending(afterDecide);
+  }
+  if (move.t === 'choose') {
+    if (state.pending === null) return state;
+    return finishOrPending(chooseBranch(state, move.index));
+  }
+  if (move.t === 'skip') {
+    if (state.pending === null) return state;
+    return finishOrPending(skipBranch(state));
   }
 
   if (move.t === 'develop') {
@@ -151,6 +161,9 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
     // décision en attente : le joueur en cours de résolution choisit une planète
     if (state.resolution === null || state.resolution.ctx.player !== player) return [];
     const pending = state.pending;
+    if (pending.kind === 'confirmOptional') {
+      return [{ t: 'choose', index: 0 }, { t: 'skip' }];
+    }
     let candidates: Planet[];
     if (pending.kind === 'chooseSegment') {
       // seuls les débuts de segment valides (pas d'enroulement en fin de rangée)

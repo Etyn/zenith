@@ -39,6 +39,7 @@ export type Effect =
   | { k: 'transfer'; count: number }
   | { k: 'exile'; side: Side; count: number }
   | { k: 'exileForInfluence'; count: number; amount: number }
+  | { k: 'optional'; effects: Effect[] }
   | { k: 'bonusToken' };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
@@ -53,7 +54,8 @@ export type PendingDecision =
       remaining: number;
       amount?: number;
       exclude?: Planet[];
-    };
+    }
+  | { kind: 'confirmOptional' };
 
 export type GameState = {
   config: GameConfig;

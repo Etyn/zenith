@@ -82,6 +82,8 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       throw new Error("applyEffect: 'exile' passe par resolve/decide");
     case 'exileForInfluence':
       throw new Error("applyEffect: 'exileForInfluence' passe par resolve/decide");
+    case 'optional':
+      throw new Error("applyEffect: 'optional' passe par resolve/chooseBranch");
     case 'bonusToken':
       throw new Error("applyEffect: 'bonusToken' passe par resolve (interception)");
   }
@@ -172,6 +174,10 @@ export function resolve(state: GameState): GameState {
       };
       continue;
     }
+    if (head.k === 'optional') {
+      s = { ...s, pending: { kind: 'confirmOptional' } };
+      break;
+    }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
   }
@@ -244,12 +250,13 @@ export function decide(state: GameState, planet: Planet): GameState {
       resolution: { queue: moved.resolution!.queue.slice(1), ctx, chosen: moved.resolution!.chosen },
     };
     return resolve(done);
-  } else {
-    // choosePlanet
+  } else if (pending.kind === 'choosePlanet') {
     if (pending.exclude && pending.exclude.includes(planet)) {
       throw new Error('decide: planète exclue (doit être différente)');
     }
     s = gainInfluence(state, planet, ctx.player, pending.amount);
+  } else {
+    throw new Error('decide: décision non compatible (planète attendue)');
   }
   const prevChosen = state.resolution.chosen ?? [];
   const justChosen: Planet[] =
@@ -261,5 +268,38 @@ export function decide(state: GameState, planet: Planet): GameState {
     pending: null,
     resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: [...prevChosen, ...justChosen] },
   };
+  return resolve(s);
+}
+
+export function chooseBranch(state: GameState, index: number): GameState {
+  if (state.pending === null || state.resolution === null) {
+    throw new Error('chooseBranch: aucune décision en attente');
+  }
+  const ctx = state.resolution.ctx;
+  const chosen = state.resolution.chosen;
+  const head = state.resolution.queue[0]!;
+  const rest = state.resolution.queue.slice(1);
+  const pending = state.pending;
+  if (pending.kind === 'confirmOptional') {
+    if (index !== 0) throw new Error("chooseBranch: seule l'option 0 (accepter) est valide");
+    if (head.k !== 'optional') throw new Error('chooseBranch: atome de tête inattendu');
+    const s: GameState = { ...state, pending: null, resolution: { queue: [...head.effects, ...rest], ctx, chosen } };
+    return resolve(s);
+  }
+  throw new Error('chooseBranch: décision non compatible');
+}
+
+export function skipBranch(state: GameState): GameState {
+  if (state.pending === null || state.resolution === null) {
+    throw new Error('skipBranch: aucune décision en attente');
+  }
+  const pending = state.pending;
+  if (pending.kind !== 'confirmOptional') {
+    throw new Error("skipBranch: cette décision n'est pas facultative");
+  }
+  const ctx = state.resolution.ctx;
+  const chosen = state.resolution.chosen;
+  const rest = state.resolution.queue.slice(1);
+  const s: GameState = { ...state, pending: null, resolution: { queue: rest, ctx, chosen } };
   return resolve(s);
 }
