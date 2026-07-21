@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Zenith",
+    "slug": "zenith",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "zenith",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router"],
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.zenith.app" },
+    "android": { "package": "com.zenith.app" }
+  }
+}
