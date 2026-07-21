@@ -1,9 +1,16 @@
 import { createGame } from '../setup';
 import { applyMove, legalMoves } from '../moves';
-import { cardOf } from '../effects';
-import type { GameState } from '../types';
+import { cardOf, resolve } from '../effects';
+import type { GameState, Planet } from '../types';
 import { activeFace } from '../../data/tech';
 import { FIXTURE_CARDS } from '../../data/fixtures';
+
+// Fabrique un état avec des colonnes préremplies pour le joueur donné.
+function withColumns(base: GameState, index: 0 | 1, cols: Partial<Record<Planet, string[]>>): GameState {
+  const players: [GameState['players'][0], GameState['players'][1]] = [base.players[0], base.players[1]];
+  players[index] = { ...players[index], columns: { ...players[index].columns, ...cols } };
+  return { ...base, players };
+}
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
 
@@ -264,4 +271,45 @@ test('leadership animod : défausse la carte, prend le badge (Argent) et mobilis
   expect(out.deck).toHaveLength(0); // les 2 cartes du deck ont été mobilisées
   expect(out.players[0].columns.venus).toContain('FIX_venus_0');
   expect(out.players[0].columns.terra).toContain('FIX_terra_1');
+});
+
+test('legalMoves sous chooseColumn(owner:self) ne propose que les colonnes non vides du joueur', () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['a'], venus: ['b'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exile', side: 'self', count: 1 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const paused = resolve(s);
+  const moves = legalMoves(paused, 0);
+  const planets = moves.map((m) => (m.t === 'decide' ? m.planet : null)).sort();
+  expect(moves.every((m) => m.t === 'decide')).toBe(true);
+  expect(planets).toEqual(['terra', 'venus']); // mercure/mars/jupiter vides → exclues
+});
+
+test('legalMoves sous chooseColumn(owner:opponent) cible les colonnes non vides de l\'adversaire', () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 1, { mars: ['x'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'transfer', count: 1 } as const], ctx: { player: 0 as const, planet: 'mars' as const } },
+  };
+  const paused = resolve(s);
+  const moves = legalMoves(paused, 0);
+  expect(moves).toEqual([{ t: 'decide', planet: 'mars' }]);
+});
+
+test('applyMove enchaîne un decide de chooseColumn (exile) puis termine la résolution', () => {
+  const base = createGame(CONFIG, 1);
+  const seeded = withColumns(base, 0, { terra: ['a', 'b'] });
+  const s: GameState = {
+    ...seeded,
+    resolution: { queue: [{ k: 'exile', side: 'self', count: 1 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const paused = resolve(s);
+  const out = applyMove(paused, { t: 'decide', planet: 'terra' });
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].columns.terra).toEqual(['a']);
+  expect(out.discard).toContain('b');
 });

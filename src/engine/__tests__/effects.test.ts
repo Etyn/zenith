@@ -314,3 +314,58 @@ test("exile est ignoré (skip sans pending) quand aucune colonne du côté visé
   expect(out.resolution).toBeNull(); // exile skippé, credits appliqué, file vidée
   expect(out.players[0].credits).toBe(base.players[0].credits + 3);
 });
+
+test("transfer déplace la dernière carte d'une colonne adverse vers la même colonne du joueur actif", () => {
+  const base = createGame(CONFIG, 1);
+  // joueur 0 = actif (destinataire), joueur 1 = adversaire (source)
+  let s0 = withColumns(base, 1, { terra: ['e1', 'e2'] });
+  s0 = withColumns(s0, 0, { terra: ['m1'] });
+  const s: GameState = {
+    ...s0,
+    resolution: { queue: [{ k: 'transfer', count: 1 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseColumn', owner: 'opponent', purpose: 'transfer', remaining: 1 });
+  const out = decide(paused, 'terra');
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[1].columns.terra).toEqual(['e1']); // dernière carte adverse retirée
+  expect(out.players[0].columns.terra).toEqual(['m1', 'e2']); // ajoutée à MA colonne même planète
+  expect(out.discard).not.toContain('e2'); // pas de défausse : c'est un transfert
+});
+
+test('transfer count=2 depuis deux colonnes adverses différentes', () => {
+  const base = createGame(CONFIG, 1);
+  const s0 = withColumns(base, 1, { terra: ['t1'], mars: ['m1'] });
+  const s: GameState = {
+    ...s0,
+    resolution: { queue: [{ k: 'transfer', count: 2 } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const p1 = resolve(s);
+  const p2 = decide(p1, 'terra'); // prend t1
+  expect(p2.pending).toEqual({ kind: 'chooseColumn', owner: 'opponent', purpose: 'transfer', remaining: 1 });
+  const out = decide(p2, 'mars'); // prend m1
+  expect(out.pending).toBeNull();
+  expect(out.players[0].columns.terra).toEqual(['t1']);
+  expect(out.players[0].columns.mars).toEqual(['m1']);
+  expect(out.players[1].columns.terra).toEqual([]);
+  expect(out.players[1].columns.mars).toEqual([]);
+});
+
+test("transfer est ignoré quand l'adversaire n'a aucune colonne non vide", () => {
+  const base = createGame(CONFIG, 1); // colonnes adverses vides
+  const s: GameState = {
+    ...base,
+    resolution: {
+      queue: [
+        { k: 'transfer', count: 1 } as const,
+        { k: 'credits', amount: 2, target: 'self' } as const,
+      ],
+      ctx: { player: 0 as const, planet: 'terra' as const },
+    },
+  };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].credits).toBe(base.players[0].credits + 2);
+});
