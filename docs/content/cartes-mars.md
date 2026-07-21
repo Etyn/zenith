@@ -30,7 +30,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Rectangle arrondi sombre (façon plaquette) avec flèche ↓ blanche à l'intérieur, posé au-dessus d'un disque circulaire sombre également marqué d'une flèche ↓. Aucun chiffre visible ; icône non mappée (ni crédits, ni vol, ni zénithium, ni planète) | OBLIG | ❓❓ | |
+| 2 | Voler 1 carte à l'adversaire + 1 influence sur une planète au choix (deux icônes empilées : carte + flèche blanche ↓ = voler, lexique confirmé, superposée à un disque gris/noir uni + flèche ↓ = influence au choix — combo analogue à « Transférer + disque », ici avec « voler » à la place de « transférer ») | OBLIG | ✓ | |
 
 ---
 
@@ -38,8 +38,8 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Deux plaquettes sombres identiques, chacune avec une flèche blanche vers le bas à l'intérieur (aucun autre symbole ni chiffre). Hypothèse : « piocher 2 cartes » (non couvert par le lexique) | ❓ (type incertain, cf. « / » ci-dessous) | ❓❓ | |
-| 3 | Séparateur « / » puis plaquette grise « 8 ». Le « / » signifie-t-il un choix exclusif entre l'effet 2 et ce gain de 8 (crédits ?), ou un cumul ? | ❓ (type incertain, séparateur « / » non documenté) | ❓❓ | |
+| 2 | FACULTATIF — choix exclusif avec l'effet 3 (B4 « / ») : voler 2 cartes à l'adversaire (deux icônes identiques carte + flèche blanche ↓ = voler, lexique confirmé) | FACUL | ✓ | |
+| 3 | FACULTATIF — choix exclusif avec l'effet 2 (B4 « / », résolu : choix exclusif, pas cumul) : gagner 8 crédits (plaquette grise « 8 », confirmé sur le scan) au lieu de l'effet 2 | FACUL | ✓ | |
 
 ---
 
@@ -47,7 +47,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Disque gris foncé surmonté d'une flèche rouge vers le haut, avec un symbole d'interdiction (cercle rouge barré) apposé sur le disque, puis plaquette grise « 10 ». Icône non mappée (unique parmi les 18 premiers scans) ; hypothèse prudente : coût lié à un jeton/malus « bloqué » → gain de 10 (crédits ?) | FACUL (flèche présente) | ❓❓ | |
+| 2 | FACULTATIF : donner à l'adversaire 1 influence sur une planète ≠ Mars (flèche rouge ↑ + disque barré, lexique confirmé : « flèche ROUGE ↑ + disque = donner 1 influence à l'adversaire, facultatif ») → gagner 10 crédits | FACUL | ✓ | |
 
 ---
 
@@ -56,7 +56,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
 | 2 | « + » sur plaquette sombre = mobiliser | OBLIG | ✓ | |
-| 3 | Gagner 5 crédits. Effet distinct de « mobiliser », ou le « 5 » qualifie-t-il un plafond de coût pour l'action de mobilisation (ex. « mobiliser une carte de coût ≤ 5 ») ? | OBLIG | ❓ | |
+| 3 | Gagner 5 crédits (plaquette grise « 5 » juxtaposée au « + » de mobiliser, sans chevron/flèche de liaison entre les deux : ce sont 2 effets OBLIGATOIRES distincts et indépendants, pas un plafond de coût) | OBLIG | ✓ | |
 
 ---
 
@@ -64,8 +64,8 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Gagner 1 zénithium | OBLIG | ✓ | |
-| 3 | Séparateur « / » puis gagner 7 crédits (icône grise façon plaquette/papier déchiré). Choix exclusif (1 zénithium OU 7 crédits) ou cumul ? | ❓ (type incertain, séparateur « / » non documenté) | ❓ | |
+| 2 | FACULTATIF — choix exclusif avec l'effet 3 (B4 « / ») : gagner 1 zénithium | FACUL | ✓ | |
+| 3 | FACULTATIF — choix exclusif avec l'effet 2 (B4 « / ») : gagner 7 crédits (au lieu du zénithium) | FACUL | ✓ | |
 
 ---
 
@@ -73,8 +73,8 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Rectangle gris (façon carte) avec flèche blanche vers le bas à l'intérieur. Pourrait être « carte + flèche = transférer » du lexique, mais sans carte visible ni destination, ni chiffre | ❓ (type incertain, cf. « / ») | ❓❓ | |
-| 3 | Séparateur « / » puis gagner 1 zénithium | ❓ (type incertain, séparateur « / » non documenté) | ✓ (pour le zénithium seul) | |
+| 2 | FACULTATIF — choix exclusif avec l'effet 3 (B4 « / ») : voler 1 carte à l'adversaire (rectangle carte + flèche blanche ↓ à l'intérieur = voler, lexique confirmé — PAS « transférer ») | FACUL | ✓ | |
+| 3 | FACULTATIF — choix exclusif avec l'effet 2 (B4 « / ») : gagner 1 zénithium (au lieu de l'effet carte) | FACUL | ✓ | |
 
 ---
 
@@ -83,8 +83,8 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
 | 2 | Mobiliser (icône carré sombre « + ») | OBLIG | ✓ | |
-| 3 | Carré sombre avec flèche blanche vers le bas à l'intérieur. Hypothèse : transférer (cf. lexique « carte + flèche = transférer ») | OBLIG (pas de chevron/flèche de liaison entre les icônes 2/3/4) | ❓ | |
-| 4 | Icône silhouette blanche (tête ronde) au-dessus d'une forme sombre anguleuse (façon épaulette/montagne). Hypothèse : marqueur « chez l'adversaire » qualifiant les effets 2 et 3 | OBLIG | ❓❓ | |
+| 3 | Voler 1 carte à l'adversaire (carré sombre + flèche blanche ↓ à l'intérieur = voler, lexique confirmé — PAS « transférer ») | OBLIG (pas de chevron/flèche de liaison entre les icônes 2/3/4) | ✓ | |
+| 4 | Silhouette blanche (= « concerne l'adversaire », lexique confirmé) qualifiant les effets 2 et 3 : le mobiliser cible ici la colonne ADVERSE (exception à la règle habituelle « chez soi ») et confirme que la carte volée en 3 provient bien de l'adversaire | OBLIG | ✓ | |
 
 ---
 
@@ -100,7 +100,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2/4/7 cartes (icône pile de cartes + pictogramme document/tampon) → chevron ▶ → gagner 2/4/7 zénithium (ratio 1:1, même icône que Wul) | FACUL | ❓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Mars (rouge, couleur de la carte) → gagner 2/4/7 zénithium (échelle confirmée B2, ratio 1:1) | FACUL | ✓ | |
 
 ---
 
@@ -108,7 +108,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2 cartes → gagner 1 influence sur Mars ; exiler 4 → 2 ; exiler 7 → 3 | FACUL | ✓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Mars (rouge, couleur de la carte) → gagner 1/2/3 influence sur Mars (échelle confirmée B2) | FACUL | ✓ | |
 
 ---
 
@@ -116,7 +116,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Disque sombre surmonté d'un petit cercle rouge contenant un glyphe façon « main humaine barrée » d'un trait diagonal, puis flèche blanche vers le bas. Icône la plus incertaine du lot — condition liée à un peuple ≠ Humain, ou tout autre mécanisme (vol, malus) non couvert par le lexique | OBLIG | ❓❓ | |
+| 2 | +1 influence sur une planète ≠ Mars (rond barré, B5 confirmé = comme B3 : influence sur planète ≠ couleur de la carte — PAS un « ≠ peuple » malgré l'apparence du glyphe « main Humaine ») | OBLIG | ✓ | |
 
 ---
 
@@ -134,7 +134,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
 | 2 | Gagner 4 crédits | OBLIG | ✓ | |
-| 3 | Payer/perdre 1 zénithium (hexagone jaune « 1 » surmonté d'une flèche ROUGE vers le haut) → chevron ▶ → +1 influence sur Mercure (disque violet, planète précise) | FACUL | ❓❓ | |
+| 3 | FACULTATIF : donner 1 zénithium à l'adversaire (flèche rouge ↑, B1) → chevron ▶ → +1 influence sur Mercure (disque violet, planète précise) | FACUL | ✓ | |
 
 ---
 
@@ -158,7 +158,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Icône composite : étoile jaune 5 branches (= jeton bonus, conforme au lexique) directement accolée à une pastille grise/blanche ovale contenant un œil (silhouette style virgule/« C »). Sens de l'œil non mappé (regarder/piocher ? condition liée à la vue ?) | OBLIG (aucune flèche visible) | ❓❓ | |
+| 2 | Choisir un jeton bonus visible sur le plateau et appliquer ses effets (œil + jeton bonus = atome takeBoardBonusToken, confirmé) | OBLIG | ✓ | |
 
 ---
 
@@ -166,7 +166,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mars | OBLIG | ✓ | |
-| 2 | Trois icônes identiques empilées : disque gris/sombre (planète au choix) → silhouette blanche de personnage (« chez l'adversaire » selon le lexique). Lecture littérale x3. Sens exact incertain : qui gagne l'influence (moi ou l'adversaire) ? Les 3 copies sont-elles fixes ou liées au nombre d'adversaires en partie ? | OBLIG (pas de chevron entre les 3 lignes) | ❓❓ | |
+| 2 | Exiler 3 cartes de la main de l'adversaire → gagner 1 influence sur la couleur de la carte exilée (répété pour chacune des 3 cartes) — EXCEPTION confirmée B2 (Lady Moore : cartes ADVERSES exilées, pas les siennes) | OBLIG | ✓ | |
 
 ---
 

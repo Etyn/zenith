@@ -23,7 +23,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
 | 2 | Gagner 4 crédits | OBLIG | ✓ | |
-| 3 | Hexagone jaune « 1 » surmonté d'une flèche rouge vers le haut, puis « ▶ », puis disque rouge (Mars) flèche blanche vers le bas, sans chiffre. Hypothèse : payer 1 zénithium → gagner 1 influence sur Mars | FACUL | ❓ | |
+| 3 | FACULTATIF : donner 1 zénithium à l'adversaire (flèche rouge ↑, B1) → chevron ▶ → +1 influence sur Mars | FACUL | ✓ | |
 
 ---
 
@@ -31,7 +31,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Plaquette grise « 2 », puis « x », puis icône losange/carte divisée en 4 couleurs de planète avec « ≠ » au centre — aucune flèche ni récompense visible à la suite. Pourrait être une condition de score plutôt qu'un effet immédiat | OBLIG (aucune flèche visible) | ❓❓ | |
+| 2 | Gagner 2 crédits par couleur de carte différente dans SA zone (plaquette grise « 2 » × disque 4 couleurs marqué « ≠ », lexique confirmé : `2 × [couleurs]` — 2/4/6/8/10 crédits selon 1 à 5 couleurs différentes chez soi) | OBLIG (aucune flèche visible) | ✓ | |
 
 ---
 
@@ -39,7 +39,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2 cartes → gagner 2 zénithium ; exiler 4 → 4 ; exiler 7 → 7 | FACUL | ✓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Vénus (orange, couleur de la carte) → gagner 2/4/7 zénithium (échelle confirmée B2, ratio 1:1) | FACUL | ✓ | |
 
 ---
 
@@ -47,7 +47,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Échelle à un seul palier : hexagone jaune « X-2 » → chevron ▶ → icône composite (triangle noir ▲ sur fond jaune, empilé sur un hexagone blanc contenant « ? »). Sens du coût « X-2 » et de la récompense (jeton/piste de progression ?) non identifiés | FACUL | ❓❓ | |
+| 2 | FACULTATIF : développer une technologie au choix, coût −2 zénithium (hexagone jaune « X-2 » → chevron ▶ → jeton triangle/hexagone « ? » = jeton de progression technologique, lexique confirmé : `X-2 ⟋ [dévelop. au choix]`) | FACUL | ✓ | |
 
 ---
 
@@ -64,7 +64,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
 | 2 | Gagner 3 zénithium | OBLIG | ✓ | |
-| 3 | Icône silhouette blanche (petit personnage) + chevron dessous, suivie d'un hexagone jaune « 1 ». Hypothèse : voler 1 zénithium à l'adversaire (par analogie avec le vol de crédits, mais ici pas de pastille rouge) | OBLIG | ❓❓ | |
+| 3 | L'adversaire gagne 1 zénithium (silhouette blanche + hexagone zénithium « 1 » SANS flèche rouge = gain pour l'adversaire, lexique confirmé — même construction que Zenon/Lisa Charity) | OBLIG | ✓ | |
 
 ---
 
@@ -80,8 +80,8 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Icône répétée x2 (silhouette blanche/tête ronde surmontant un chevron gris, lui-même au-dessus d'une forme en escalier/épaulette). Sens exact incertain (peut-être « chez l'adversaire », mais sans action explicite l'accompagnant) | OBLIG | ❓❓ | |
-| 3 | Gagner 2 zénithium (même bloc que l'effet 2) | OBLIG | ✓ | |
+| 2 | L'adversaire gagne 2 zénithium (icône silhouette blanche = « concerne l'adversaire », lexique confirmé ; le pictogramme est dessiné deux fois côte à côte, probablement une redondance stylistique — un seul hexagone « 2 » visible, rattaché aux deux silhouettes) | OBLIG | ✓ | |
+| 3 | Effet 3 = même bloc / même gain que l'effet 2 ci-dessus (un seul hexagone « 2 » zénithium sur le scan, pas un gain « moi » distinct) — ligne à fusionner avec la 2 | OBLIG | ✓ | |
 
 ---
 
@@ -89,7 +89,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Échelle : palier gauche « 1x/2x/4x » d'une icône hexagonale jaune fragmentée (dépenser N zénithium ?) → chevron ▶ → palier droit « 1x/2x/3x » d'un disque sombre + petit cercle orange (texture Vénus) barré d'une diagonale (influence sur planète ≠ Vénus ?), flèche blanche vers le bas | FACUL | ❓❓ | |
+| 2 | FACULTATIF : payer 1×/2×/4× zénithium → chevron ▶ → gagner 1×/2×/3× influence sur une planète ≠ Vénus (disque orange barré — exemple explicitement cité dans la grammaire confirmée B3 ; Stessy Power n'est pas un cas de variable « X ») | FACUL | ✓ | |
 
 ---
 
@@ -97,7 +97,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Hexagone zénithium jaune « X-1 » → chevron ▶ → badge hexagonal avec glyphe peuple Robot surmonté d'un triangle noir vers le haut. Hypothèse : mobiliser/recruter un agent Robot de coût ≤ X-1 (X non défini sur la carte) | FACUL | ❓❓ | |
+| 2 | FACULTATIF : progresser d'un niveau la technologie Robot (peuple de la carte), au coût (niveau visé − 1) zénithium (developDiscounted{people: Robot, discount: 1}, B6 confirmé — PAS un recrutement d'agent) | FACUL | ✓ | |
 
 ---
 
@@ -105,7 +105,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Hexagone zénithium jaune « X-1 » → chevron ▶ → badge hexagonal avec glyphe peuple Humain surmonté d'un triangle noir vers le haut. Même mécanique que BR4dbury (Robot), hypothèse : mobiliser/recruter un agent Humain de coût ≤ X-1 | FACUL | ❓❓ | |
+| 2 | FACULTATIF : progresser d'un niveau la technologie Humain (peuple de la carte), au coût (niveau visé − 1) zénithium (developDiscounted{people: Humain, discount: 1}, B6 confirmé — ex. niv.2→niv.3 : coût normal 3, payé 2) | FACUL | ✓ | |
 
 ---
 
@@ -121,7 +121,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2/4/7 cartes → chevron ▶ → gagner 1/2/3 influence sur Vénus | FACUL | ❓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Vénus (orange, couleur de la carte) → chevron ▶ → gagner 1/2/3 influence sur Vénus (échelle confirmée B2) | FACUL | ✓ | |
 
 ---
 
@@ -129,7 +129,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Échelle (paliers 1x/2x/3x) : coût = icône composite (barre verticale jaune effilée + hexagone « 1 » fixé à sa base, non documentée) → chevron ▶ → gagner 1/2/3 zénithium (hexagone jaune sans chiffre) | FACUL | ❓❓ | |
+| 2 | Relu sur le scan : échelle 1x/2x/3x, coût = jauge/barre jaune effilée avec hexagone « 1 » à sa base (probable zénithium, 1/2/3 selon palier) → chevron ▶ → récompense 1x/2x/3x hexagone jaune « étincelant » sans chiffre imprimé. Le lexique ne documente pas cette jauge-coût précise ; un échange zénithium→zénithium au ratio 1:1 serait incohérent avec la logique des autres échelles (qui changent toujours de ressource) | FACUL | ❓❓ — **Question : Ilda Flores — la jauge de coût (barre jaune + hexagone « 1 ») paie-t-elle bien du zénithium, et la récompense (hexagone « étincelant » sans chiffre) est-elle une ressource différente du zénithium ?** | |
 
 ---
 
@@ -146,7 +146,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
 | 2 | +1 influence sur Terra (disque bleu, planète précise, flèche ↓) | OBLIG | ✓ | |
-| 3 | Prendre le badge Leader (badge bicolore, forme de main, sans « ! » ni chevron — lu comme effet direct) | OBLIG | ❓ | |
+| 3 | Prendre le badge Leader (bicolore = takeLeader silver, action inconditionnelle, sans « ! ») | OBLIG | ✓ | |
 
 ---
 
@@ -154,7 +154,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Hexagone jaune « 0 » → chevron ▶ → jeton bicolore vertical (partie haute jaune avec triangle noir ▲, partie basse hexagonale blanche/noire avec flèche ▼). Nature du jeton et sens du « 0 » (gain nul ? coût nul ?) non identifiés | FACUL | ❓❓ | |
+| 2 | FACULTATIF : 0 zénithium (gratuit) → augmenter d'un niveau la technologie la plus basse parmi les 3 (le joueur choisit laquelle en cas d'égalité) — atome developLowest, confirmé (le jeton bicolore ▲/▼ = indicateur de progression techno) | FACUL | ✓ | |
 
 ---
 
@@ -162,7 +162,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Hexagone jaune avec texte empilé « X » puis « -1 » → petit chevron ▼ → étiquette jaune pâle contenant un hexagone blanc à empreinte de patte noire (symbole Animod) + flèche ▶. Sens du coût variable « X-1 » et du lien avec le symbole Animod non identifiés | FACUL | ❓❓ | |
+| 2 | FACULTATIF : progresser d'un niveau la technologie Animod (peuple de la carte), au coût (niveau visé − 1) zénithium (developDiscounted{people: Animod, discount: 1}, B6 confirmé — même mécanique que Br4dbury/Doc Wissen) | FACUL | ✓ | |
 
 ---
 

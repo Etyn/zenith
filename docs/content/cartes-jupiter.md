@@ -35,7 +35,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | Échelle : exiler 2 cartes → gagner 1 influence sur Jupiter ; exiler 4 → 2 ; exiler 7 → 3 (icône « pile de cartes intactes », pas fragmentées) | FACUL | ❓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Jupiter (teal, couleur de la carte) → gagner 1/2/3 influence sur Jupiter (échelle confirmée B2) | FACUL | ✓ | |
 
 ---
 
@@ -43,9 +43,9 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | Deux carrés sombres identiques, chacun avec une double flèche blanche vers le bas empilée, sans disque coloré visible au-dessus. Équivalent stylisé de « +2 influence au choix » (un effet), ou deux effets distincts de +1 ? | OBLIG (aucun chevron avant) | ❓❓ | |
-| 3 | Prendre le badge Leader (flèche rouge vers le haut, sans « ! ») | FACUL | ❓ | |
-| 4 | → chevron ▶ → même icône composite qu'en 2 (deux carrés sombres à double flèche) | FACUL | ❓❓ | |
+| 2 | Voler 2 cartes à l'adversaire (deux icônes identiques carte + flèche blanche ↓ = voler, lexique confirmé — ce n'est PAS de l'influence, pas de disque coloré visible) | OBLIG (aucun chevron avant) | ✓ | |
+| 3 | FACULTATIF : donner le badge Leader à l'adversaire (flèche rouge ↑ + badge, lexique confirmé) | FACUL | ✓ | |
+| 4 | → chevron ▶ → voler 2 cartes à l'adversaire (même icône qu'en 2, carte + flèche blanche ↓, x2) | FACUL | ✓ | |
 
 ---
 
@@ -54,7 +54,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ (sous réserve couleur) | |
 | 2 | Gagner 5 crédits | OBLIG | ✓ | |
-| 3 | Flèche rouge vers le haut + badge Leader (bicolore, sans « ! ») → chevron ▶ → gagner 7 crédits. Hypothèse : prendre le badge Leader → gagner 7 crédits | FACUL | ❓ | |
+| 3 | FACULTATIF : donner le badge Leader à l'adversaire (flèche rouge ↑ + badge, lexique confirmé) → chevron ▶ → gagner 7 crédits | FACUL | ✓ | |
 
 ---
 
@@ -62,7 +62,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | Icône « X » (variable) + rectangle sombre façon carte avec flèche blanche vers le bas → chevron ▶ → icône « X » + plaquette grise façon papier/ticket. Hypothèse : transférer/défausser X cartes → gagner X crédits (X défini par une règle externe à la carte) | FACUL | ❓❓ | |
+| 2 | FACULTATIF : transférer une carte → gagner des crédits égaux à sa valeur (coût) (creditsFromCardValue{source: 'transfer'}, B8 confirmé — carte explicitement citée comme exemple) | FACUL | ✓ | |
 
 ---
 
@@ -70,44 +70,44 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | CONDITION : si je possède le badge Leader → +1 influence sur une planète (disque teal/gris, sans chiffre — Jupiter à nouveau, ou au choix ?) | FACUL | ❓ | |
+| 2 | CONDITION : si je possède le badge Leader → +1 influence sur Jupiter (disque de même texture/couleur que le disque Jupiter de l'effet 1, confirmé sur le scan — pas un disque gris uni « au choix ») | FACUL | ✓ | |
 
 ---
 
 ### Lisa Charity  (scan 23.02_18, coût 2, peuple Humain)
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
+| 1 | +1 influence sur Jupiter (carte reclassée Terra→Jupiter, cf. note de reclassification en fin de fichier) | OBLIG | ✓ | |
 | 2 | Gagner 2 zénithium | OBLIG | ✓ | |
-| 3 | Silhouette blanche (« chez l'adversaire ») + plaquette grise « 3 », SANS flèche. Hypothèse : l'adversaire gagne 3 crédits (don, cohérent avec le thème « Charity ») | OBLIG | ❓ | |
+| 3 | L'adversaire gagne 3 crédits (silhouette blanche + crédits SANS flèche = crédits pour l'adversaire, B7 confirmé — cohérent avec le thème « Charity ») | OBLIG | ✓ | |
 
 ---
 
 ### Agent Ezra  (scan 23.02_20, coût 1, peuple Humain)
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
+| 1 | +1 influence sur Jupiter (carte reclassée Terra→Jupiter, cf. note de reclassification en fin de fichier) | OBLIG | ✓ | |
 | 2 | Gagner 4 crédits | OBLIG | ✓ | |
-| 3 | Payer 1 zénithium (flèche rouge ↑) → chevron ▶ → +1 influence sur Vénus | FACUL | ❓ | |
+| 3 | FACULTATIF : donner 1 zénithium à l'adversaire (flèche rouge ↑, B1) → chevron ▶ → +1 influence sur Vénus | FACUL | ✓ | |
 
 ---
 
 ### Queen Suzanne  (scan 23.02_24, coût 10, peuple Humain)
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
+| 1 | +1 influence sur Jupiter (carte reclassée Terra→Jupiter, cf. note de reclassification en fin de fichier) | OBLIG | ✓ | |
 | 2 | Gagner 2 influence sur une même planète au choix (disque gris, double flèche ↓↓) | OBLIG | ✓ | |
 | 3 | Gagner 2 zénithium | OBLIG | ✓ | |
-| 4 | Prendre le badge Leader — version dorée uniquement (icône ailée tout or, contrairement au badge bicolore vu ailleurs). Hypothèse : il existe deux badges Leader distincts, argent et or | OBLIG | ❓ | |
+| 4 | Prendre le badge Leader en or directement (badge tout-or = takeLeader gold, confirmé — il existe bien deux badges Leader distincts, argent/bicolore et or) | OBLIG | ✓ | |
 
 ---
 
 ### Milady Jones  (scan 23.02_26, coût 6, peuple Humain)
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
-| 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | +1 influence sur Terra (2e disque bleu, même planète, pas de « ≠ ») | OBLIG | ✓ | |
-| 3 | Prendre le badge Leader (sans « ! » — action inconditionnelle) | OBLIG | ✓ | |
+| 1 | +1 influence sur Jupiter (carte reclassée Terra→Jupiter, cf. note de reclassification en fin de fichier) | OBLIG | ✓ | |
+| 2 | +1 influence sur Terra (2e disque, confirmé BLEU sur le scan, visuellement distinct du disque Jupiter de l'effet 1 — la cible reste bien Terra après reclassification) | OBLIG | ✓ | |
+| 3 | Prendre le badge Leader (bicolore = takeLeader silver, action inconditionnelle, sans « ! ») | OBLIG | ✓ | |
 
 ---
 
@@ -115,7 +115,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2/4/7 cartes → chevron ▶ → gagner 2/4/7 zénithium (ratio 1:1, contrairement à Pachacuti/Amytis qui donnent 1/2/3) | FACUL | ❓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Jupiter (teal, couleur de la carte) → gagner 2/4/7 zénithium (échelle confirmée B2, ratio 1:1) | FACUL | ✓ | |
 
 ---
 
@@ -123,7 +123,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ | |
-| 2 | Gagner 2 crédits « × » un disque divisé en 4 quartiers de couleurs différentes (rouge/violet/orange/bleu) marqué « ≠ » en son centre, accompagné d'une silhouette blanche + chevron (« chez l'adversaire »). Sens exact incertain : gagner 2 crédits par planète différente sur laquelle j'ai/l'adversaire a de l'influence ? | OBLIG (aucune flèche/chevron reliant les éléments) | ❓❓ | |
+| 2 | Gagner 2 crédits par couleur de carte différente dans la zone ADVERSE (plaquette grise « 2 » × disque 4 couleurs marqué « ≠ » + silhouette blanche « chez l'adversaire », lexique confirmé : `2 × [couleurs adversaire]`) | OBLIG (aucune flèche/chevron reliant les éléments) | ✓ | |
 
 ---
 
@@ -131,7 +131,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ | |
-| 2 | Exiler X cartes de la main de l'adversaire (icône « X » + carte fragmentée + silhouette blanche) → chevron ▶ → gagner X crédits | FACUL | ❓ | |
+| 2 | Exiler X cartes de la main de l'adversaire (icône « X » + carte fragmentée + silhouette blanche « chez l'adversaire », lexique confirmé) → chevron ▶ → gagner X crédits (confirmé sur le scan : lettre « X » identique sur les deux icônes, valeur choisie par le joueur) | FACUL | ✓ | |
 
 ---
 
@@ -139,15 +139,15 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ | |
-| 2 | Prendre le badge Leader (badge ailé doré) « / » gagner 8 crédits. Le « / » signifie-t-il un choix exclusif obligatoire (soit... soit...), différent du chevron ▶ facultatif classique ? | ❓ (type incertain, séparateur « / » non documenté) | ❓❓ | |
+| 2 | FACULTATIF — choix exclusif (B4 « / », confirmé) : SOIT prendre le badge Leader en or (badge ailé doré = takeLeader gold) SOIT gagner 8 crédits | FACUL | ✓ | |
 
 ---
 
 ### Donald Smooth  (scan 23.02_48, coût 2, peuple Humain) — ⚠️ planète non confirmée
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
-| 1 | +1 influence sur la planète du bandeau (disque uni gris-bleu clair, couleur peu contrastée, planète non confirmée) | OBLIG | ❓ | |
-| 2 | Étiquette grise « X » au-dessus d'un pictogramme de poing/gant noir refermé sur un objet sombre → chevron ▶ → étiquette grise « X ». Hypothèse : échelle algébrique « exiler/défausser X cartes (montant au choix) → gagner X [ressource non précisée] », mais X est une variable libre (inédit) | FACUL | ❓❓ | |
+| 1 | +1 influence sur Jupiter (carte reclassée Terra→Jupiter, cf. note de reclassification en fin de fichier — couleur de bandeau restait peu contrastée/non confirmée avant reclassification) | OBLIG | ✓ | |
+| 2 | FACULTATIF : défausser une carte de la main (poing/gant noir refermé sur un objet sombre) → gagner des crédits égaux à sa valeur (coût) (creditsFromCardValue{source: 'discardHand'}, B8 confirmé — carte explicitement citée comme exemple) | FACUL | ✓ | |
 
 ---
 
@@ -155,7 +155,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Jupiter | OBLIG | ✓ | |
-| 2 | Échelle (paliers inhabituels 3/7/12) : exiler 3 cartes → gagner 1× ; exiler 7 → 2× ; exiler 12 → 3× [récompense = disque gris surmonté d'un petit panneau d'interdiction/cercle barré, non mappé — même icône que la carte Helena Kerr] | FACUL | ❓ (structure) / ❓❓ (récompense) | |
+| 2 | FACULTATIF : exiler 3 cartes Jupiter (teal, couleur de la carte) → gagner 1 influence sur une planète ≠ Jupiter ; exiler 7 → 2 influence(s) ; exiler 12 → 3 influence(s) (échelle confirmée B2, paliers inhabituels 3/7/12 lus tels quels ; récompense = disque barré, B3) | FACUL | ✓ | |
 
 ---
 
@@ -173,7 +173,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur la planète du bandeau (probable Jupiter) | OBLIG | ✓ | |
 | 2 | Gagner 2 influence sur une même planète au choix (disque gris, double flèche ↓↓, conforme au lexique) | OBLIG | ✓ | |
-| 3 | CONDITION : si [plaquette grise « 6+ », ressource non identifiée : crédits ? zénithium ? influence totale ?] → +1 influence sur planète différente des précédentes | FACUL | ❓ | |
+| 3 | CONDITION (creditsAtLeast 6, confirmé) : si je possède ≥ 6 crédits → +1 influence sur planète différente des précédentes (disque gris ≠) | FACUL | ✓ | |
 
 ---
 

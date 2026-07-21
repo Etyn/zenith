@@ -40,7 +40,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2 cartes → gagner 2 zénithium ; exiler 4 → 4 ; exiler 7 → 7 | FACUL | ✓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Terra (bleu, couleur de la carte) → gagner 2/4/7 zénithium (échelle confirmée B2, ratio 1:1) | FACUL | ✓ | |
 
 ---
 
@@ -65,7 +65,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Exiler [une carte, quantité non chiffrée] → chevron ▶ → disque gris marqué « = » (signe égal, non documenté), flèche ↓ | FACUL | ❓❓ | |
+| 2 | FACULTATIF : exiler 1 carte d'une colonne adverse au choix (icône carte fragmentée NOIRE = « au choix », lexique confirmé : « Exiler (icône noir) : défausse la dernière carte d'une colonne adverse au choix ») → chevron ▶ → disque gris marqué « = » (signe égal — symbole absent du lexique) | FACUL | ✓ pour l'exil / ❓❓ pour la récompense « = » — **Question : Ice June — que signifie le disque gris marqué « = » (signe non couvert par le lexique) ?** | |
 
 ---
 
@@ -81,7 +81,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Disque gris avec flèche ROUGE vers le haut, petit disque bleu barré d'une diagonale accolé en bas à droite. Hypothèse : « planète Terra exclue » (influence au choix sauf Terra) | OBLIG | ❓❓ | |
+| 2 | FACULTATIF : donner à l'adversaire 1 influence sur une planète ≠ Terra (flèche rouge ↑ + disque bleu barré, lexique confirmé : « flèche ROUGE ↑ + disque = donner 1 influence à l'adversaire, facultatif ») | FACUL | ✓ | |
 | 3 | Gagner 3 zénithium (même bloc que l'effet 2) | OBLIG | ✓ | |
 
 ---
@@ -90,7 +90,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Exiler [une carte, quantité non chiffrée, probablement 1] + gagner 1 zénithium (icône carte fragmentée puis hexagone jaune « 1 »). Origine de la carte exilée (ma main / adversaire / pioche) non précisée | OBLIG | ❓ | |
+| 2 | Exiler 1 carte Terra (bleu, couleur de la carte, cohérent avec B2) → gagner 1 zénithium | OBLIG | ✓ | |
 
 ---
 
@@ -109,7 +109,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
 | 2 | Gagner 4 crédits | OBLIG | ✓ | |
-| 3 | Payer 1 zénithium (flèche rouge ↑) → chevron ▶ → gagner 2 influence sur une même planète au choix (disque gris, double flèche ↓↓ — conforme au lexique) | FACUL | ❓ (coût) / ✓ (récompense) | |
+| 3 | FACULTATIF : donner 1 zénithium à l'adversaire (flèche rouge ↑, B1) → chevron ▶ → gagner 2 influence sur une même planète au choix (disque gris, double flèche ↓↓ — conforme au lexique) | FACUL | ✓ | |
 
 ---
 
@@ -131,7 +131,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
 | 2 | Gagner 8 crédits | OBLIG | ✓ | |
-| 3 | Silhouette blanche (« chez l'adversaire ») + chevron, suivie de gagner 2 crédits (SANS flèche ▶ de liaison entre les blocs). Rôle exact de l'adversaire entre les deux gains (8 puis 2) incertain — vol non signalé par une pastille rouge | OBLIG | ❓❓ | |
+| 3 | L'adversaire gagne 2 crédits (silhouette blanche + crédits SANS flèche = crédits pour l'adversaire — exemple de référence explicitement cité dans la grammaire confirmée B7 : « moi +8, adversaire +2 ») | OBLIG | ✓ | |
 
 ---
 
@@ -140,7 +140,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
 | 2 | +1 influence sur une planète au choix (disque gris uni, flèche ↓) | OBLIG | ✓ | |
-| 3 | Prendre le badge Leader (badge bicolore, forme de main, sans « ! » ni chevron) | OBLIG | ❓ | |
+| 3 | Prendre le badge Leader (bicolore = takeLeader silver, action inconditionnelle, sans « ! ») | OBLIG | ✓ | |
 
 ---
 
@@ -148,7 +148,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur la planète du bandeau (bleu-acier, ❓ Terra) | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | 4 jetons en forme de fanion colorés (violet, orange, rouge, vert-teal), chacun relié par sa propre flèche ↓ à un disque plein de la même couleur juste en dessous. Hypothèse : +1 influence sur chacune des 4 planètes AUTRES que celle du bandeau (aucun chevron de choix entre les 4 jetons) | OBLIG | ❓❓ | |
+| 2 | Relu sur le scan : 4 fanions colorés (violet/orange/rouge/teal), chacun avec une flèche ↓ vers un disque plein de la même couleur — probable +1 influence sur chacune des 4 planètes autres que celle du bandeau (disque+flèche = influence, lexique confirmé), mais le pictogramme « fanion » lui-même (avec sa petite icône interne) n'est documenté nulle part ailleurs dans le lexique | OBLIG | ❓❓ — **Question : H3RB3RT — les 4 fanions colorés au-dessus des disques d'influence sont-ils un simple habillage graphique (l'effet réel étant alors « +1 influence sur les 4 autres planètes »), ou portent-ils un sens additionnel non identifié ?** | |
 
 ---
 
@@ -156,7 +156,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur la planète du bandeau (bleu-acier, ❓ Terra) | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | Disque gris traversé d'une barre horizontale noire, flèche ↓, sans chiffre. Hypothèse prudente : gain nul/« rien » (carte volontairement faible), ou symbole non documenté | OBLIG | ❓❓ | |
+| 2 | Relu sur le scan : disque gris/noir traversé d'une simple barre horizontale claire (pas de badge planète, pas de couleur), flèche ↓, sans chiffre — différent du « disque barré » du lexique (qui porte un badge planète barré, pas une ligne générique). Symbole non couvert par le lexique | OBLIG | ❓❓ — **Question : Sir Sam — le disque gris traversé d'une simple barre horizontale (sans planète ni chiffre) est-il un symbole « gain nul » ou une icône non documentée ?** | |
 
 ---
 
@@ -164,7 +164,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur la planète du bandeau (bleu-acier, ❓ Terra) | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | Disque brun/gris surmonté d'un petit cercle barré d'une diagonale (panneau d'interdiction), flèche ↓ en dessous. Même icône que la carte Suleiman (Jupiter, cf. `cartes-questions.md`) | OBLIG | ❓❓ | |
+| 2 | +1 influence sur une planète au choix, sauf celle du bandeau (disque gris + petit badge planète barré, flèche ↓ — lexique confirmé : « disque gris barré = 1 influence au choix SAUF la planète barrée ») ; la couleur exacte exclue dépend de la couleur du bandeau de la carte, cf. effet 1 | OBLIG | ✓ (sous réserve couleur du bandeau, cf. effet 1) | |
 
 ---
 
@@ -181,7 +181,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2 cartes → gagner 1 influence sur Terra ; exiler 4 → 2 ; exiler 7 → 3 | FACUL | ❓ (structure ✓, nature des cartes exilées à confirmer) | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Terra (bleu, couleur de la carte) → gagner 1/2/3 influence sur Terra (échelle confirmée B2) | FACUL | ✓ | |
 
 ---
 

@@ -40,7 +40,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
 | 2 | Gagner un jeton bonus (pastille dorée à étoile, sans flèche) | OBLIG | ✓ | |
-| 3 | Badge Leader (bicolore argent+or) surmonté d'une flèche rouge vers le haut, puis flèche blanche vers le bas au-dessus d'une plaquette grise « 7 ». Hypothèse : renoncer/céder le badge Leader → gagner 7 crédits. Question : la flèche rouge ↑ signifie-t-elle « payer/perdre » ? | FACUL | ❓ | |
+| 3 | FACULTATIF : donner le badge Leader à l'adversaire (flèche rouge ↑ + badge, lexique confirmé) → chevron ▶ → gagner 7 crédits | FACUL | ✓ | |
 
 ---
 
@@ -84,7 +84,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
 | 2 | +1 influence sur une planète au choix (disque gris sans chiffre) | OBLIG | ✓ | |
-| 3 | Prendre le badge Leader (flèche rouge vers le haut pointant vers le badge bicolore, sans « ! ») | FACUL | ❓ | |
+| 3 | FACULTATIF : donner le badge Leader à l'adversaire (flèche rouge ↑ + badge, lexique confirmé) | FACUL | ✓ | |
 | 4 | → chevron ▶ → +1 influence sur planète différente des précédentes (disque gris « ≠ »). Question : le chevron relie-t-il un simple enchaînement ou une dépendance conditionnelle à la prise du badge ? | FACUL | ✓ | |
 
 ---
@@ -93,7 +93,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2 cartes → gagner 2 zénithium ; exiler 4 → 4 ; exiler 7 → 7 (icône composite carte + bulle + carte tramée) | FACUL | ❓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Mercure (violet, couleur de la carte) → gagner 2/4/7 zénithium (échelle confirmée B2, ratio 1:1) | FACUL | ✓ | |
 
 ---
 
@@ -101,7 +101,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
-| 2 | Flèche rouge vers le haut + « 3 » (plaquette grise) → chevron ▶ → disque gris barré d'une diagonale, flèche blanche vers le bas. Hypothèse : payer 3 [ressource non identifiée] → effet non identifié | FACUL | ❓❓ | |
+| 2 | FACULTATIF : donner 3 crédits à l'adversaire (flèche rouge ↑, B1) → chevron ▶ → +1 influence sur une planète ≠ Mercure (disque gris barré, B3 — couleur exclue présumée = celle de la carte) | FACUL | ✓ | |
 
 ---
 
@@ -110,7 +110,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
 | 2 | Mobiliser x2 (deux icônes « + » côte à côte) | OBLIG | ✓ | |
-| 3 | Flèche rouge vers le haut + badge Leader (bicolore, sans « ! ») → mobiliser x3 (trois icônes « + » empilées). Hypothèse : prendre le badge Leader → mobiliser 3 de plus | FACUL | ❓ | |
+| 3 | FACULTATIF : donner le badge Leader à l'adversaire (flèche rouge ↑ + badge, lexique confirmé) → chevron ▶ → mobiliser x3 (trois icônes « + » empilées) | FACUL | ✓ | |
 
 ---
 
@@ -119,7 +119,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
 | 2 | Gagner 2 zénithium | OBLIG | ✓ | |
-| 3 | Flèche rouge vers le haut + badge Leader (bicolore, sans « ! ») → chevron ▶ → gagner 2 zénithium. Hypothèse : prendre le badge Leader → gagner 2 zénithium de plus (alternative : condition « si je possède déjà le badge ») | FACUL | ❓ | |
+| 3 | FACULTATIF : donner le badge Leader à l'adversaire (flèche rouge ↑ + badge, lexique confirmé) → chevron ▶ → gagner 2 zénithium | FACUL | ✓ | |
 
 ---
 
@@ -127,7 +127,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
-| 2 | Échelle (palier unique) : exiler 2 cartes (chacune surmontée d'un petit cercle violet/texture Mercure barré d'une diagonale, probablement « ≠ Mercure ») → chevron ▶ → gagner 10 crédits | FACUL | ❓ | |
+| 2 | FACULTATIF : exiler 2 cartes ≠ Mercure (violet) → gagner 10 crédits (palier unique — exemple explicitement cité dans la grammaire confirmée B3) | FACUL | ✓ | |
 
 ---
 
@@ -137,7 +137,7 @@
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
 | 2 | +1 influence sur une planète au choix (disque gris, flèche ↓) | OBLIG | ✓ | |
 | 3 | +1 influence sur planète différente des précédentes (disque gris + « ≠ », flèche ↓) | OBLIG | ✓ | |
-| 4 | Rangée de 5 icônes : disque violet (Mercure), orange (Vénus), bleu (Terra), rouge (Mars), teal (Jupiter), chacun avec sa propre flèche ↓. Hypothèse : +1 influence sur CHACUNE des 5 planètes. Question : effet de jeu réel ou légende/rappel imprimé ? | OBLIG | ❓ | |
+| 4 | +1 influence sur chacune des 5 planètes (rangée de 5 disques, un par planète — atome influenceEach, confirmé) | OBLIG | ✓ | |
 
 ---
 
@@ -146,7 +146,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
 | 2 | Gagner 4 crédits | OBLIG | ✓ | |
-| 3 | Payer 1 zénithium (flèche rouge ↑) → chevron ▶ → gagner 1 influence sur Terra | FACUL | ❓ | |
+| 3 | FACULTATIF : donner 1 zénithium à l'adversaire (flèche rouge ↑, B1) → chevron ▶ → +1 influence sur Terra | FACUL | ✓ | |
 
 ---
 
@@ -154,7 +154,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
-| 2 | Échelle : exiler 2/4/7 cartes (icône pile de cartes + carte au coin plié) → chevron ▶ → gagner 1/2/3 influence sur Mercure | FACUL | ❓ | |
+| 2 | FACULTATIF : exiler 2/4/7 cartes Mercure (violet, couleur de la carte) → chevron ▶ → gagner 1/2/3 influence sur Mercure (échelle confirmée B2) | FACUL | ✓ | |
 
 ---
 
@@ -163,7 +163,7 @@
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
 | 2 | +1 influence sur une planète au choix (disque gris/noir uni, flèche ↓) | OBLIG | ✓ | |
-| 3 | Payer/perdre 1 zénithium (hexagone jaune « 1 » surmonté d'une flèche ROUGE vers le haut) → chevron ▶ → +1 influence sur planète différente des précédentes (disque gris « ≠ ») | FACUL | ❓❓ | |
+| 3 | FACULTATIF : donner 1 zénithium à l'adversaire (flèche rouge ↑, B1) → chevron ▶ → +1 influence sur planète différente des précédentes (disque gris « ≠ », icône déjà connue) | FACUL | ✓ | |
 
 ---
 
@@ -171,8 +171,8 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
-| 2 | 4 tuiles en losange colorées (teal et rouge empilées, bleu, orange — pas de tuile violette), placées AU-DESSUS de l'illustration, hors du panneau d'effets habituel, sans flèche visible. Effet de jeu réel (cf. hypothèse « 4 autres planètes » de H3RB3RT, carte Terra) ou simple élément décoratif ? | ❓ (position inhabituelle, statut incertain) | ❓❓ | |
-| 3 | Dans le panneau d'effets : icône « main tenant un éventail de cartes grises », puis disque gris uni, flèche ↓ | OBLIG | ❓❓ | |
+| 2 | Relu sur le scan : 4-5 tuiles en losange colorées empilées par paires (teal+rouge à gauche, bleu seule au centre, lavande/violet clair+orange à droite), dans un compartiment arrondi AU-DESSUS de l'illustration (même type de compartiment que les effets du bas, donc probablement un effet réel et non un décor). Ne correspond PAS visuellement à l'icône lexique « 2 × [couleurs] » (pas de plaquette grise « 2 », pas de « x », pas de disque unique marqué « ≠ » : ici ce sont des tuiles séparées empilées). Icône non couvertes par le lexique | OBLIG (aucune flèche visible) | ❓❓ — **Question : ce compartiment du haut de Punk Mari (4-5 tuiles en losange empilées) correspond-il à un effet de jeu (lequel ?) ou à un simple motif décoratif propre à cette carte ?** | |
+| 3 | Défausser toute sa main (icône « main tenant un éventail de cartes » = discardHandAll, confirmé) → +1 influence sur une planète au choix (disque gris uni, flèche ↓) | OBLIG | ✓ | |
 
 ---
 
