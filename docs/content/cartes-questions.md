@@ -229,3 +229,15 @@ Cartes comportant **au moins un effet marqué ❓❓** (incertitude la plus haut
 - Jupiter : Captain Andreev, Ivan, Geta, Suleiman (sur la récompense de l'échelle)
 
 *(Liste établie en comptant tel quel le marqueur ❓❓ apposé par les brouillons sur chaque effet — voir le détail et le texte exact dans les 5 feuilles par planète. Les 4 cartes ⚠️ de `cartes-terra.md`, à planète non confirmée, cumulent une incertitude supplémentaire sur la couleur du bandeau elle-même.)*
+
+---
+
+## ✅ RÉPONSES CONFIRMÉES (utilisateur, 2026-07-22)
+
+- **B1 — Flèche rouge ↑ (zénithium / crédit / badge)** = **donner à l'adversaire** ; c'est une action **facultative** (souvent le coût d'une action optionnelle, payé à l'adversaire). Cas « badge » à préciser au cas par cas (citer la carte).
+- **B2 — Échelles d'exil** : on exile des cartes **de la couleur de la carte** ; en échange, soit **influence sur la planète de la carte** (tiers), soit **zénithium 2×/4×/7×**. ~2 cartes par couleur ont cette action. **EXCEPTION — Lady Moore** : exiler **3 cartes ADVERSES** → **1 influence sur la couleur de la carte exilée**.
+- **B3 — Disque (planète) barré** = « action sur une planète de couleur **≠ celle barrée** » ; la couleur interdite est **généralement celle de la carte**. Ex. carte orange (échelle) : payer 1×/2×/4× zénithium → 1×/2×/3× influence sur une planète **non-orange**. Le disque barré peut aussi qualifier autre chose que l'influence (ex. carte violette **Chaka** : exiler 2 cartes **non-violettes** → 10 crédits).
+- **B4 — « / »** = **choix exclusif** (l'un OU l'autre, pas les deux).
+
+### En attente (B5–B8, C9–C11)
+- B5 rond barré sur un peuple (≠ peuple ?) · B6 recrutement à seuil « hexagone X-1 + peuple + triangle » (Br4dbury/Doc Wissen/Archimedes) · B7 « donner des crédits à l'adversaire » sans flèche · B8 variable « X » · jeton bicolore ▲/▼ (Bujøld/Archimedes) · rangée de 5 disques (Magellan) · icônes uniques (œil=Handy Luke, éventail=Punk Mari, jauge « +9 »=Thømpsøn, casque=P.K.Dick…).
