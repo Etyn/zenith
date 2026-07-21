@@ -40,8 +40,12 @@ Règles complètes :
 - **Application immédiate + ORDRE (capture de planète)** : quand un joueur **capture une planète** portant
   un jeton bonus, il applique **d'abord le jeton bonus**, puis continue avec les éventuels effets restants.
 - **D3 (Animod D niv.3) et O1 (Humain O niv.1)** « gagner un jeton bonus » : le jeton gagné est **appliqué
-  immédiatement** au moment où le joueur applique ce niveau de techno.
-- Les effets des 16 jetons eux-mêmes = contenu à transcrire (scans / worksheet à venir).
+  immédiatement** à la position de ce niveau dans la chaîne cumulative. Précisions confirmées 2026-07-22 :
+  activer O3 → appliquer O3, puis O2, puis **O1 (= le jeton)** ; pour D3, **d'abord l'influence, puis le jeton**.
+- Les effets des **16 jetons** sont désormais **transcrits et confirmés** — voir `docs/content/jetons-bonus.md`
+  (CATALOGUE CONFIRMÉ). Tous se mappent sur des atomes existants (zenithium/credits/influence/exile/transfer/
+  mobilize/takeLeader) : aucun nouvel atome nécessaire. Reste **1 point ouvert** : le placement exact des 8
+  jetons de départ (hypothèse 5 planètes + 3 emplacements techno niveau 2).
 
 ## R5 — Influence « voisines » : montant (O4) — ✅ CONFIRMÉ
 Double flèche blanche sur 2 voisines = **2 influences sur CHACUNE** des voisines (S2 = 1 chacune,
