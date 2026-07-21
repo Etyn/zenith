@@ -1,7 +1,8 @@
 import { createGame } from '../setup';
 import { gainInfluence, checkVictory, winnerOf } from '../influence';
 import { CENTER } from '../setup';
-import type { GameConfig } from '../types';
+import { resolve, decide } from '../effects';
+import type { GameConfig, GameState } from '../types';
 
 const CONFIG: GameConfig = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 };
 
@@ -55,4 +56,53 @@ test('victoire populaire : 5 disques au total', () => {
 test('pas de fausse victoire au départ', () => {
   const s = createGame(CONFIG, 1);
   expect(winnerOf(s)).toBeNull();
+});
+
+test("capture d'une planète portant un jeton : le jeton se résout AVANT les effets restants", () => {
+  const base = createGame(CONFIG, 1);
+  // mars à un cran de la capture pour J0 ; on force le jeton de mars = influence au choix.
+  const s: GameState = {
+    ...base,
+    planets: { ...base.planets, mars: { discPos: 4, captured: [0, 0], bonusToken: 'tok-inf1-1' } },
+    resolution: {
+      queue: [
+        { k: 'influence', amount: 4, on: 'mars' } as const, // capture mars (4 → 0)
+        { k: 'credits', amount: 5, target: 'self' } as const,
+      ],
+      ctx: { player: 0 as const, planet: 'mars' as const },
+    },
+  };
+  const out = resolve(s);
+  // le jeton (influence au choix) s'intercale et pose un pending AVANT credits
+  expect(out.pending).toEqual({ kind: 'choosePlanet', amount: 1 });
+  expect(out.players[0].credits).toBe(base.players[0].credits); // credits pas encore appliqué
+  expect(out.planets.mars.bonusToken).toBeNull();               // jeton retiré de la planète
+  expect(out.bonusDiscard).toContain('tok-inf1-1');             // défaussé
+  expect(out.planets.mars.captured[0]).toBe(1);                 // capture effective
+  // on termine : le jeton se résout (influence venus), puis credits
+  const done = decide(out, 'venus');
+  expect(done.players[0].credits).toBe(base.players[0].credits + 5);
+  expect(done.resolution).toBeNull();
+});
+
+test("capture d'une planète avec jeton immédiat : effet appliqué puis suite", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    planets: { ...base.planets, mars: { discPos: 4, captured: [0, 0], bonusToken: 'tok-zen1-1' } },
+    resolution: {
+      queue: [
+        { k: 'influence', amount: 4, on: 'mars' } as const,
+        { k: 'credits', amount: 5, target: 'self' } as const,
+      ],
+      ctx: { player: 0 as const, planet: 'mars' as const },
+    },
+  };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].zenithium).toBe(base.players[0].zenithium + 1); // jeton zénithium
+  expect(out.players[0].credits).toBe(base.players[0].credits + 5);     // puis credits
+  expect(out.planets.mars.bonusToken).toBeNull();
+  expect(out.bonusDiscard).toContain('tok-zen1-1');
 });
