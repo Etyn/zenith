@@ -117,3 +117,25 @@ test("choice : un index hors bornes est rejeté", () => {
   const paused = resolve(s);
   expect(() => chooseBranch(paused, 5)).toThrow();
 });
+
+test("scale : choisir un palier applique cost puis reward ; renoncer n'applique rien", () => {
+  const base = createGame(CONFIG, 1);
+  const scale = {
+    k: 'scale' as const,
+    tiers: [
+      { cost: [{ k: 'credits' as const, amount: -3, target: 'self' as const }], reward: [{ k: 'zenithium' as const, amount: 1, target: 'self' as const }] },
+      { cost: [{ k: 'credits' as const, amount: -7, target: 'self' as const }], reward: [{ k: 'zenithium' as const, amount: 2, target: 'self' as const }] },
+    ],
+  };
+  const s: GameState = { ...base, resolution: { queue: [scale], ctx: CTX } };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseTier', count: 2 });
+
+  const done = chooseBranch(paused, 1); // palier 2 : -7 crédits → +2 zénithium
+  expect(done.players[0].credits).toBe(base.players[0].credits - 7);
+  expect(done.players[0].zenithium).toBe(base.players[0].zenithium + 2);
+
+  const renounced = skipBranch(resolve({ ...base, resolution: { queue: [scale], ctx: CTX } }));
+  expect(renounced.players[0].credits).toBe(base.players[0].credits);
+  expect(renounced.players[0].zenithium).toBe(base.players[0].zenithium);
+});

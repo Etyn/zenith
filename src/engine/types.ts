@@ -46,7 +46,8 @@ export type Effect =
   | { k: 'optional'; effects: Effect[] }
   | { k: 'bonusToken' }
   | { k: 'conditional'; cond: Condition; effects: Effect[] }
-  | { k: 'choice'; options: Effect[][] };
+  | { k: 'choice'; options: Effect[][] }
+  | { k: 'scale'; tiers: { cost: Effect[]; reward: Effect[] }[] };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
@@ -62,7 +63,8 @@ export type PendingDecision =
       exclude?: Planet[];
     }
   | { kind: 'confirmOptional' }
-  | { kind: 'chooseOption'; count: number };
+  | { kind: 'chooseOption'; count: number }
+  | { kind: 'chooseTier'; count: number };
 
 export type GameState = {
   config: GameConfig;

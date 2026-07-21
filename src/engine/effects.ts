@@ -103,6 +103,8 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       throw new Error("applyEffect: 'conditional' passe par resolve/chooseBranch");
     case 'choice':
       throw new Error("applyEffect: 'choice' passe par resolve/chooseBranch");
+    case 'scale':
+      throw new Error("applyEffect: 'scale' passe par resolve/chooseBranch");
   }
 }
 
@@ -205,6 +207,10 @@ export function resolve(state: GameState): GameState {
     }
     if (head.k === 'choice') {
       s = { ...s, pending: { kind: 'chooseOption', count: head.options.length } };
+      break;
+    }
+    if (head.k === 'scale') {
+      s = { ...s, pending: { kind: 'chooseTier', count: head.tiers.length } };
       break;
     }
     s = applyEffect(s, head, ctx);
@@ -323,6 +329,13 @@ export function chooseBranch(state: GameState, index: number): GameState {
     const s: GameState = { ...state, pending: null, resolution: { queue: [...head.options[index]!, ...rest], ctx, chosen } };
     return resolve(s);
   }
+  if (pending.kind === 'chooseTier') {
+    if (head.k !== 'scale') throw new Error('chooseBranch: atome de tête inattendu');
+    if (index < 0 || index >= head.tiers.length) throw new Error('chooseBranch: palier hors bornes');
+    const tier = head.tiers[index]!;
+    const s: GameState = { ...state, pending: null, resolution: { queue: [...tier.cost, ...tier.reward, ...rest], ctx, chosen } };
+    return resolve(s);
+  }
   throw new Error('chooseBranch: décision non compatible');
 }
 
@@ -331,7 +344,7 @@ export function skipBranch(state: GameState): GameState {
     throw new Error('skipBranch: aucune décision en attente');
   }
   const pending = state.pending;
-  if (pending.kind !== 'confirmOptional') {
+  if (pending.kind !== 'confirmOptional' && pending.kind !== 'chooseTier') {
     throw new Error("skipBranch: cette décision n'est pas facultative");
   }
   const ctx = state.resolution.ctx;

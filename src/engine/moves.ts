@@ -167,6 +167,9 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
     if (pending.kind === 'chooseOption') {
       return Array.from({ length: pending.count }, (_, i) => ({ t: 'choose', index: i }));
     }
+    if (pending.kind === 'chooseTier') {
+      return [...Array.from({ length: pending.count }, (_, i) => ({ t: 'choose' as const, index: i })), { t: 'skip' as const }];
+    }
     let candidates: Planet[];
     if (pending.kind === 'chooseSegment') {
       // seuls les débuts de segment valides (pas d'enroulement en fin de rangée)
