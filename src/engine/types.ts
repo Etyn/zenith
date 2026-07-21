@@ -9,7 +9,7 @@ export const PEOPLES: People[] = ['animod', 'humain', 'robot'];
 export type PlayerIndex = 0 | 1;
 
 /** 9 positions : 0 = zone contrôle J0, 4 = centre, 8 = zone contrôle J1. */
-export type PlanetTrack = { discPos: number; captured: [number, number]; bonusActive: boolean };
+export type PlanetTrack = { discPos: number; captured: [number, number]; bonusToken: string | null };
 
 export type PlayerState = {
   hand: string[];
@@ -38,7 +38,8 @@ export type Effect =
   | { k: 'influenceDifferent'; amount: number }
   | { k: 'transfer'; count: number }
   | { k: 'exile'; side: Side; count: number }
-  | { k: 'exileForInfluence'; count: number; amount: number };
+  | { k: 'exileForInfluence'; count: number; amount: number }
+  | { k: 'bonusToken' };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
@@ -62,6 +63,9 @@ export type GameState = {
   deck: string[];
   discard: string[];
   planets: Record<Planet, PlanetTrack>;
+  bonusReserve: string[];
+  bonusDiscard: string[];
+  techBonus: Record<People, string | null>;
   diplomacy: { leader: PlayerIndex | null; side: 'silver' | 'gold' };
   resolution: ResolutionState | null;
   pending: PendingDecision | null;

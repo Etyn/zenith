@@ -72,7 +72,7 @@ test('resolve arrête d\'appliquer les effets restants après une victoire', () 
   const base = createGame(CONFIG, 1);
   const s: GameState = {
     ...base,
-    planets: { ...base.planets, mars: { discPos: 1, captured: [2, 0], bonusActive: false } },
+    planets: { ...base.planets, mars: { discPos: 1, captured: [2, 0], bonusToken: null } },
     resolution: {
       queue: [
         { k: 'influence', amount: 1, on: 'mars' },

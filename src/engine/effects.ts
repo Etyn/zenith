@@ -80,6 +80,9 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       throw new Error("applyEffect: 'exile' passe par resolve/decide");
     case 'exileForInfluence':
       throw new Error("applyEffect: 'exileForInfluence' passe par resolve/decide");
+    case 'bonusToken':
+      // Déclenchement de l'effet du jeton bonus : ajouté en Tâche 4 (non implémenté ici).
+      throw new Error("applyEffect: 'bonusToken' n'est pas encore implémenté (Tâche 4)");
   }
 }
 

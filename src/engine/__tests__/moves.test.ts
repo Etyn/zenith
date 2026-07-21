@@ -134,7 +134,7 @@ test('une victoire en cours de résolution ne repioche pas et ne passe pas la ma
   if (!id) return; // main sans carte mars → test trivialement ok
   const s: GameState = {
     ...base,
-    planets: { ...base.planets, mars: { discPos: 1, captured: [2, 0], bonusActive: false } },
+    planets: { ...base.planets, mars: { discPos: 1, captured: [2, 0], bonusToken: null } },
   };
   const out = applyMove(s, { t: 'recruit', cardId: id });
   expect(out.winner).toBe(0);   // 3e capture mars → victoire absolue

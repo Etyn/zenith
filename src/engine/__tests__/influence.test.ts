@@ -18,7 +18,7 @@ test('atteindre sa zone capture le disque et le renvoie au centre', () => {
   s = gainInfluence(s, 'mars', 0, 4); // de 4 à 0 → capture
   expect(s.planets.mars.captured[0]).toBe(1);
   expect(s.planets.mars.discPos).toBe(CENTER);
-  expect(s.planets.mars.bonusActive).toBe(false); // 1re capture
+  expect(s.planets.mars.bonusToken).toBeNull(); // 1re capture
 });
 
 test('ne mute pas l\'état d\'entrée', () => {
