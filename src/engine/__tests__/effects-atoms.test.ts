@@ -257,3 +257,13 @@ test("takeBoardBonusToken : aucun jeton visible => atome sauté", () => {
   expect(out.resolution).toBeNull();
   expect(out.players[0].credits).toBe(base.players[0].credits + 2);
 });
+
+test("creditsPerTechLevels resource='zenithium' : gagne du zénithium selon le nb de technos >= 1", () => {
+  const base = createGame(CONFIG, 1);
+  const players: [GameState['players'][0], GameState['players'][1]] = [base.players[0], base.players[1]];
+  players[0] = { ...players[0], techMarkers: { animod: 1, humain: 3, robot: 1 } }; // 3 technos >= 1
+  const seeded: GameState = { ...base, players };
+  const out = applyEffect(seeded, { k: 'creditsPerTechLevels', tiers: [1, 2, 3], resource: 'zenithium' }, CTX);
+  expect(out.players[0].zenithium).toBe(seeded.players[0].zenithium + 3); // 3 technos -> tiers[2] = 3
+  expect(out.players[0].credits).toBe(seeded.players[0].credits);         // aucun crédit gagné
+});

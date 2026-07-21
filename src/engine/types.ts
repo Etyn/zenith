@@ -50,7 +50,7 @@ export type Effect =
   | { k: 'choice'; options: Effect[][] }
   | { k: 'scale'; tiers: { cost: Effect[]; reward: Effect[] }[] }
   | { k: 'creditsPerCardColors'; zone: Side; per: number }
-  | { k: 'creditsPerTechLevels'; tiers: number[] }
+  | { k: 'creditsPerTechLevels'; tiers: number[]; resource?: 'credits' | 'zenithium' }
   | { k: 'giveOpponent'; resource: 'credits' | 'zenithium'; amount: number }
   | { k: 'giveLeaderBadge' }
   | { k: 'influenceChoiceExcept'; exceptColor: Planet; amount: number }

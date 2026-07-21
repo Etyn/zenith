@@ -120,7 +120,8 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'creditsPerTechLevels': {
       const n = PEOPLES.filter((pe) => state.players[ctx.player].techMarkers[pe] >= 1).length;
       const gain = n === 0 ? 0 : effect.tiers[Math.min(n, effect.tiers.length) - 1]!;
-      return creditPlayer(state, ctx.player, { credits: state.players[ctx.player].credits + gain });
+      const resource = effect.resource ?? 'credits';
+      return creditPlayer(state, ctx.player, { [resource]: state.players[ctx.player][resource] + gain });
     }
     case 'giveOpponent': {
       const giver = ctx.player;
