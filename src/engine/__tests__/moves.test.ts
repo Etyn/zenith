@@ -375,3 +375,36 @@ test('develop vers niveau 3+ : le déclencheur ne se produit que pour newLevel =
   expect(out.techBonus.robot).toBe('tok-zen1-1'); // toujours en place
   expect(out.bonusDiscard).not.toContain('tok-zen1-1');
 });
+
+test('legalMoves/applyMove sous pending confirmOptional : accepter applique, renoncer ignore', () => {
+  const base = createGame(CONFIG, 1);
+  const creditsBefore = base.players[0].credits;
+
+  // Construire un état avec un optional en queue : pendant resolve(), le pending confirmOptional
+  // sera posé quand l'atome optional sera rencontré.
+  const s: GameState = {
+    ...base,
+    resolution: {
+      queue: [{ k: 'optional', effects: [{ k: 'credits', amount: 2, target: 'self' }] }],
+      ctx: { player: 0, planet: 'terra' },
+    },
+  };
+  const withPending = resolve(s);
+
+  // Vérification 1 : legalMoves retourne exactement [choose(0), skip]
+  const moves = legalMoves(withPending, 0);
+  expect(moves).toEqual([{ t: 'choose', index: 0 }, { t: 'skip' }]);
+  expect(moves).toHaveLength(2);
+
+  // Vérification 2 : applyMove avec choose (accepter) applique les effets et clôt
+  const acceptResult = applyMove(withPending, { t: 'choose', index: 0 });
+  expect(acceptResult.players[0].credits).toBe(creditsBefore + 2);
+  expect(acceptResult.pending).toBeNull();
+  expect(acceptResult.resolution).toBeNull();
+
+  // Vérification 3 : applyMove avec skip (renoncer) ne applique pas les effets et clôt
+  const skipResult = applyMove(withPending, { t: 'skip' });
+  expect(skipResult.players[0].credits).toBe(creditsBefore);
+  expect(skipResult.pending).toBeNull();
+  expect(skipResult.resolution).toBeNull();
+});
