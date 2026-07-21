@@ -45,7 +45,8 @@ export type Effect =
   | { k: 'exileForInfluence'; count: number; amount: number }
   | { k: 'optional'; effects: Effect[] }
   | { k: 'bonusToken' }
-  | { k: 'conditional'; cond: Condition; effects: Effect[] };
+  | { k: 'conditional'; cond: Condition; effects: Effect[] }
+  | { k: 'choice'; options: Effect[][] };
 
 export type EffectCtx = { player: PlayerIndex; planet: Planet };
 export type ResolutionState = { queue: Effect[]; ctx: EffectCtx; chosen?: Planet[] };
@@ -60,7 +61,8 @@ export type PendingDecision =
       amount?: number;
       exclude?: Planet[];
     }
-  | { kind: 'confirmOptional' };
+  | { kind: 'confirmOptional' }
+  | { kind: 'chooseOption'; count: number };
 
 export type GameState = {
   config: GameConfig;

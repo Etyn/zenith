@@ -83,3 +83,37 @@ test("conditional VRAI mais le joueur RENONCE (facultatif)", () => {
   const out = skipBranch(resolve(s));
   expect(out.players[0].credits).toBe(base.players[0].credits);
 });
+
+test("choice pose un chooseOption ; choisir l'option 1 applique cette branche seule", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    resolution: {
+      queue: [{
+        k: 'choice',
+        options: [
+          [{ k: 'takeLeader', side: 'gold' }],
+          [{ k: 'credits', amount: 8, target: 'self' }],
+        ],
+      }],
+      ctx: CTX,
+    },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'chooseOption', count: 2 });
+  const done = chooseBranch(paused, 1); // branche « 8 crédits »
+  expect(done.pending).toBeNull();
+  expect(done.resolution).toBeNull();
+  expect(done.players[0].credits).toBe(base.players[0].credits + 8);
+  expect(done.diplomacy.leader).toBeNull(); // l'autre branche n'est PAS appliquée
+});
+
+test("choice : un index hors bornes est rejeté", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    resolution: { queue: [{ k: 'choice', options: [[{ k: 'credits', amount: 1, target: 'self' }]] }], ctx: CTX },
+  };
+  const paused = resolve(s);
+  expect(() => chooseBranch(paused, 5)).toThrow();
+});

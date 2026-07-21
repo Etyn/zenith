@@ -101,6 +101,8 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
       throw new Error("applyEffect: 'bonusToken' passe par resolve (interception)");
     case 'conditional':
       throw new Error("applyEffect: 'conditional' passe par resolve/chooseBranch");
+    case 'choice':
+      throw new Error("applyEffect: 'choice' passe par resolve/chooseBranch");
   }
 }
 
@@ -200,6 +202,10 @@ export function resolve(state: GameState): GameState {
       }
       s = { ...s, pending: { kind: 'confirmOptional' } };
       break; // condition vraie → reste facultatif
+    }
+    if (head.k === 'choice') {
+      s = { ...s, pending: { kind: 'chooseOption', count: head.options.length } };
+      break;
     }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
@@ -309,6 +315,12 @@ export function chooseBranch(state: GameState, index: number): GameState {
       throw new Error('chooseBranch: atome de tête inattendu');
     }
     const s: GameState = { ...state, pending: null, resolution: { queue: [...head.effects, ...rest], ctx, chosen } };
+    return resolve(s);
+  }
+  if (pending.kind === 'chooseOption') {
+    if (head.k !== 'choice') throw new Error('chooseBranch: atome de tête inattendu');
+    if (index < 0 || index >= head.options.length) throw new Error('chooseBranch: option hors bornes');
+    const s: GameState = { ...state, pending: null, resolution: { queue: [...head.options[index]!, ...rest], ctx, chosen } };
     return resolve(s);
   }
   throw new Error('chooseBranch: décision non compatible');
