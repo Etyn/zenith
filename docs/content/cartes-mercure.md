@@ -171,7 +171,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Mercure | OBLIG | ✓ | |
-| 2 | Relu sur le scan : 4-5 tuiles en losange colorées empilées par paires (teal+rouge à gauche, bleu seule au centre, lavande/violet clair+orange à droite), dans un compartiment arrondi AU-DESSUS de l'illustration (même type de compartiment que les effets du bas, donc probablement un effet réel et non un décor). Ne correspond PAS visuellement à l'icône lexique « 2 × [couleurs] » (pas de plaquette grise « 2 », pas de « x », pas de disque unique marqué « ≠ » : ici ce sont des tuiles séparées empilées). Icône non couvertes par le lexique | OBLIG (aucune flèche visible) | ❓❓ — **Question : ce compartiment du haut de Punk Mari (4-5 tuiles en losange empilées) correspond-il à un effet de jeu (lequel ?) ou à un simple motif décoratif propre à cette carte ?** | |
+| 2 | (Compartiment supérieur : tuiles en losange = **ILLUSTRATION**, aucun effet de jeu — confirmé utilisateur) | — | ✓ | |
 | 3 | Défausser toute sa main (icône « main tenant un éventail de cartes » = discardHandAll, confirmé) → +1 influence sur une planète au choix (disque gris uni, flèche ↓) | OBLIG | ✓ | |
 
 ---

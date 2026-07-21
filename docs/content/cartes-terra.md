@@ -65,7 +65,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Terra | OBLIG | ✓ | |
-| 2 | FACULTATIF : exiler 1 carte d'une colonne adverse au choix (icône carte fragmentée NOIRE = « au choix », lexique confirmé : « Exiler (icône noir) : défausse la dernière carte d'une colonne adverse au choix ») → chevron ▶ → disque gris marqué « = » (signe égal — symbole absent du lexique) | FACUL | ✓ pour l'exil / ❓❓ pour la récompense « = » — **Question : Ice June — que signifie le disque gris marqué « = » (signe non couvert par le lexique) ?** | |
+| 2 | Défausser 1 carte de SA MAIN → +1 influence sur la planète de la COULEUR de la carte défaussée (le « = » = « même couleur que la carte défaussée ») | OBLIG | ✓ (confirmé utilisateur) | |
 
 ---
 
@@ -148,7 +148,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur la planète du bandeau (bleu-acier, ❓ Terra) | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | Relu sur le scan : 4 fanions colorés (violet/orange/rouge/teal), chacun avec une flèche ↓ vers un disque plein de la même couleur — probable +1 influence sur chacune des 4 planètes autres que celle du bandeau (disque+flèche = influence, lexique confirmé), mais le pictogramme « fanion » lui-même (avec sa petite icône interne) n'est documenté nulle part ailleurs dans le lexique | OBLIG | ❓❓ — **Question : H3RB3RT — les 4 fanions colorés au-dessus des disques d'influence sont-ils un simple habillage graphique (l'effet réel étant alors « +1 influence sur les 4 autres planètes »), ou portent-ils un sens additionnel non identifié ?** | |
+| 2 | FACULTATIF (×4 couleurs, un choix indépendant par couleur) : exiler 1 carte d'une couleur donnée → +1 influence sur cette **même** couleur. Disponible pour 4 couleurs (violet, orange, + 2 autres visibles). Rien d'obligatoire. (Les « fanions » = cartes fendues = exil, confirmé utilisateur.) | FACUL | ✓ (confirmé utilisateur) | |
 
 ---
 
@@ -156,7 +156,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur la planète du bandeau (bleu-acier, ❓ Terra) | OBLIG | ✓ (sous réserve couleur) | |
-| 2 | Relu sur le scan : disque gris/noir traversé d'une simple barre horizontale claire (pas de badge planète, pas de couleur), flèche ↓, sans chiffre — différent du « disque barré » du lexique (qui porte un badge planète barré, pas une ligne générique). Symbole non couvert par le lexique | OBLIG | ❓❓ — **Question : Sir Sam — le disque gris traversé d'une simple barre horizontale (sans planète ni chiffre) est-il un symbole « gain nul » ou une icône non documentée ?** | |
+| 2 | Ramener une planète au choix sur son emplacement CENTRAL (= atome `moveDiscToCenter` ; lexique « déplacer un disque d'influence au choix sur son emplacement central ») | OBLIG | ✓ (confirmé utilisateur) | |
 
 ---
 

@@ -129,7 +129,7 @@
 | # | Effet décodé | Type | Conf. | Réel (à confirmer/corriger) |
 |---|---|---|---|---|
 | 1 | +1 influence sur Vénus | OBLIG | ✓ | |
-| 2 | Relu sur le scan : échelle 1x/2x/3x, coût = jauge/barre jaune effilée avec hexagone « 1 » à sa base (probable zénithium, 1/2/3 selon palier) → chevron ▶ → récompense 1x/2x/3x hexagone jaune « étincelant » sans chiffre imprimé. Le lexique ne documente pas cette jauge-coût précise ; un échange zénithium→zénithium au ratio 1:1 serait incohérent avec la logique des autres échelles (qui changent toujours de ressource) | FACUL | ❓❓ — **Question : Ilda Flores — la jauge de coût (barre jaune + hexagone « 1 ») paie-t-elle bien du zénithium, et la récompense (hexagone « étincelant » sans chiffre) est-elle une ressource différente du zénithium ?** | |
+| 2 | Gagner du zénithium selon le **nombre de technologies au moins au niveau 1** (récompense 1×/2×/3× hexagone selon ce compte) | OBLIG | ✓ facteur confirmé (nb technos ≥ niv.1) ; montant exact de la récompense (hexagone) à préciser à la transcription | |
 
 ---
 
