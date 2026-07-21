@@ -508,4 +508,122 @@ export const TERRA_CARDS: CardDef[] = [
     ] },
 ];
 
-export const CARDS: CardDef[] = [...MARS_CARDS, ...MERCURE_CARDS, ...VENUS_CARDS, ...TERRA_CARDS];
+export const JUPITER_CARDS: CardDef[] = [
+  { id: 'jupiter-ch4mb3rs', name: 'Ch4mb3rs', people: 'robot', planet: 'jupiter', cost: 8,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'zenithium', amount: 3, target: 'self' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'zenithium', amount: 1, target: 'self' }] },
+    ] },
+  { id: 'jupiter-arnulf', name: 'Arnulf', people: 'animod', planet: 'jupiter', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'influence', amount: 1, on: 'jupiter' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'influence', amount: 2, on: 'jupiter' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'influence', amount: 3, on: 'jupiter' }] },
+      ] },
+    ] },
+  { id: 'jupiter-gibson', name: 'Gibsøn', people: 'robot', planet: 'jupiter', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'transfer', count: 2, from: 'choice' },
+      { k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'transfer', count: 2, from: 'choice' }] },
+    ] },
+  { id: 'jupiter-annie', name: 'Annie', people: 'animod', planet: 'jupiter', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'credits', amount: 5, target: 'self' },
+      { k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'credits', amount: 7, target: 'self' }] },
+    ] },
+  { id: 'jupiter-captain-andreev', name: 'Captain Andreev', people: 'humain', planet: 'jupiter', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'optional', effects: [{ k: 'creditsFromCardValue', source: 'transfer' }] },
+    ] },
+  { id: 'jupiter-m4rt1n', name: 'M4rt1n', people: 'robot', planet: 'jupiter', cost: 4,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'influence', amount: 1, on: 'jupiter' }] },
+    ] },
+  { id: 'jupiter-lisa-charity', name: 'Lisa Charity', people: 'humain', planet: 'jupiter', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'zenithium', amount: 2, target: 'self' },
+      { k: 'credits', amount: 3, target: 'opponent' },
+    ] },
+  { id: 'jupiter-agent-ezra', name: 'Agent Ezra', people: 'humain', planet: 'jupiter', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'credits', amount: 4, target: 'self' },
+      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influence', amount: 1, on: 'venus' }] },
+    ] },
+  { id: 'jupiter-queen-suzanne', name: 'Queen Suzanne', people: 'humain', planet: 'jupiter', cost: 10,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'influence', amount: 2, on: 'choice' },
+      { k: 'zenithium', amount: 2, target: 'self' },
+      { k: 'takeLeader', side: 'gold' },
+    ] },
+  { id: 'jupiter-milady-jones', name: 'Milady Jones', people: 'humain', planet: 'jupiter', cost: 6,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'influence', amount: 1, on: 'terra' },
+      { k: 'takeLeader', side: 'silver' },
+    ] },
+  { id: 'jupiter-b4rj4v3l', name: 'B4rj4v3l', people: 'robot', planet: 'jupiter', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 2, corresponding: true }], reward: [{ k: 'zenithium', amount: 2, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 4, corresponding: true }], reward: [{ k: 'zenithium', amount: 4, target: 'self' }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'zenithium', amount: 7, target: 'self' }] },
+      ] },
+    ] },
+  { id: 'jupiter-ivan', name: 'Ivan', people: 'animod', planet: 'jupiter', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'creditsPerCardColors', zone: 'opponent', per: 2 },
+    ] },
+  { // TODO(rules): "exiler X cartes de la MAIN adverse → gagner X crédits" non exprimable
+    // (pas d'exil de la main adverse ; X = nombre choisi, crédits = X et non la valeur des cartes). Transcrit avec le seul 1er effet.
+    id: 'jupiter-bajazet', name: 'Bajazet', people: 'animod', planet: 'jupiter', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+    ] },
+  { id: 'jupiter-geta', name: 'Geta', people: 'animod', planet: 'jupiter', cost: 3,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'choice', options: [[{ k: 'takeLeader', side: 'gold' }], [{ k: 'credits', amount: 8, target: 'self' }]] },
+    ] },
+  { id: 'jupiter-donald-smooth', name: 'Donald Smooth', people: 'humain', planet: 'jupiter', cost: 2,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'optional', effects: [{ k: 'creditsFromCardValue', source: 'discardHand' }] },
+    ] },
+  { id: 'jupiter-suleiman', name: 'Suleiman', people: 'animod', planet: 'jupiter', cost: 1,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'scale', tiers: [
+        { cost: [{ k: 'exile', side: 'self', count: 3, corresponding: true }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'jupiter', amount: 1 }] },
+        { cost: [{ k: 'exile', side: 'self', count: 7, corresponding: true }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'jupiter', amount: 2 }] },
+        { cost: [{ k: 'exile', side: 'self', count: 12, corresponding: true }], reward: [{ k: 'influenceChoiceExcept', exceptColor: 'jupiter', amount: 3 }] },
+      ] },
+    ] },
+  { id: 'jupiter-pkdick', name: 'P.K.Dick', people: 'robot', planet: 'jupiter', cost: 5,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'zenithium', amount: 1, target: 'self' }] },
+    ] },
+  { id: 'jupiter-thompson', name: 'Thømpsøn', people: 'robot', planet: 'jupiter', cost: 8,
+    effects: [
+      { k: 'influence', amount: 1, on: 'jupiter' },
+      { k: 'influence', amount: 2, on: 'choice' },
+      { k: 'conditional', cond: { c: 'creditsAtLeast', amount: 6 }, effects: [{ k: 'influenceDifferent', amount: 1 }] },
+    ] },
+];
+
+export const CARDS: CardDef[] = [
+  ...MARS_CARDS, ...MERCURE_CARDS, ...VENUS_CARDS, ...TERRA_CARDS, ...JUPITER_CARDS,
+];
