@@ -21,3 +21,12 @@
 
 ## D. Refactor moteur lié (dette technique identifiée)
 9. Les coûts « **payer N zénithium** » des échelles sont encodés en **montant négatif** (`{k:'zenithium', amount:-N}`) — **non borné** : peut rendre le zénithium négatif (a causé un crash `developLowest`, neutralisé par une garde). → introduire un atome **`spend {resource, amount}` borné** + **gating** des paliers d'échelle non payables, puis remplacer les encodages négatifs.
+
+## ✅ Clarifications utilisateur (charlize-gun, bajazet) — résolubles avec l'EXISTANT
+- **mars-charlize-gun** (`scan 23.02_5`) : 3 actions après l'influence Mars = **mobiliser 1** + **transférer 1** + **exiler 1 agent adverse** → `[influence(mars,1), {k:'mobilize',count:1,thenInfluence:false}, {k:'transfer',count:1,from:'choice'}, {k:'exile',side:'opponent',count:1}]`. (Ancienne lecture « mobiliser vers l'adversaire » = FAUSSE.)
+- **jupiter-bajazet** (`scan 23.02_40`) : **exiler 1 carte adverse (plateau) → gagner sa valeur en crédits** → `[influence(jupiter,1), {k:'creditsFromCardValue', source:'exileOpponent'}]`. (Ancienne lecture « main adverse » = FAUSSE.)
+
+## 📌 RÈGLE DE VOCABULAIRE (confirmée) — à appliquer partout
+- **« Exiler »** = retirer une carte du **PLATEAU** (une colonne), **toujours la plus récente** de la colonne ; **jamais** de la main.
+- **« Défausser »** = retirer une carte de la **MAIN**.
+→ Donc `mars-lady-moore` exile des cartes des **colonnes** adverses (pas la main).
