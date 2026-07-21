@@ -241,3 +241,13 @@ Cartes comportant **au moins un effet marqué ❓❓** (incertitude la plus haut
 
 ### En attente (B5–B8, C9–C11)
 - B5 rond barré sur un peuple (≠ peuple ?) · B6 recrutement à seuil « hexagone X-1 + peuple + triangle » (Br4dbury/Doc Wissen/Archimedes) · B7 « donner des crédits à l'adversaire » sans flèche · B8 variable « X » · jeton bicolore ▲/▼ (Bujøld/Archimedes) · rangée de 5 disques (Magellan) · icônes uniques (œil=Handy Luke, éventail=Punk Mari, jauge « +9 »=Thømpsøn, casque=P.K.Dick…).
+
+## ✅ RÉPONSES CONFIRMÉES B5–B8 (utilisateur, 2026-07-22)
+
+- **B5 — rond barré sur ce qui semblait un peuple (Little Bob)** = en fait **comme B3** : influence sur une planète de couleur **≠ celle barrée** (= ≠ couleur de la carte). Pas de mécanique « ≠ peuple ».
+- **B6 — développer la techno du peuple, remise 1 (Br4dbury/Doc Wissen/Archimedes)** : l'effet fait **progresser d'un niveau la technologie correspondant au PEUPLE de la carte**, au coût **(niveau visé − 1) zénithium**. Ex. Doc Wissen (Humain), techno humaine niv.2 → niv.3 : coût normal 3, payé **2**. Déclenche normalement les effets cumulés du niveau atteint. → **nouvel atome** `developDiscounted { people, discount: 1 }` (people = peuple de la carte).
+- **B7 — silhouette + crédits SANS flèche (Zenon)** = **l'adversaire gagne** ces crédits (ex. Zenon : moi +8, adversaire +2). = `credits { amount, target: 'opponent' }` (déjà supporté). PAS un vol, PAS un « donner » (pas de flèche rouge).
+- **B8 — variable X = valeur d'une carte (Captain Andreev, Donald Smooth)** : action = **déplacer une carte (transférer / exiler / défausser de la main) → gagner des crédits égaux à la VALEUR (coût) de cette carte**. → **nouvel atome** `creditsFromCardValue { source: 'transfer' | 'exile' | 'discardHand' }`. (Stessy Power n'est PAS un « X » : simple échelle payer-zénithium → influence ≠ orange.)
+
+### Encore en attente (rares)
+- Jeton bicolore ▲/▼ (Bujøld, Archimedes) · œil (Handy Luke) · éventail de cartes (Punk Mari) · jauge « +9 » (Thømpsøn) · casque (P.K.Dick) · badge tout-or vs bicolore (Queen Suzanne).
