@@ -143,17 +143,23 @@ test('une victoire en cours de résolution ne repioche pas et ne passe pas la ma
 
 test('develop : défausse la carte, paie le coût du niveau, avance le marqueur', () => {
   const base = createGame(CONFIG, 1);
-  const id = base.players[0].hand[0]!;
-  const people = cardOf(id)!.people;
-  const s: GameState = { ...base, players: [{ ...base.players[0], zenithium: 5 }, base.players[1]] };
+  // On épingle une carte animod (FIX_mercure_0) : face S niveau 1 = [credits 2], effet NON
+  // interactif → la résolution se termine sans pending, le tour se clôt (scénario déterministe).
+  const id = 'FIX_mercure_0';
+  const people = cardOf(id)!.people; // animod
+  expect(people).toBe('animod'); // garde-fou si les fixtures changent
+  const s: GameState = {
+    ...base,
+    players: [{ ...base.players[0], hand: [id], zenithium: 5 }, base.players[1]],
+  };
   const zBefore = s.players[0].zenithium;
-  const cost = activeFace(people, s.config.techSetup).levels[0]!.zenithium; // niveau 1
+  const cost = activeFace(people, s.config.techSetup).levels[0]!.zenithium; // niveau 1 = 1
   const out = applyMove(s, { t: 'develop', cardId: id, people });
   expect(out.players[0].techMarkers[people]).toBe(1);
   expect(out.players[0].zenithium).toBe(zBefore - cost);
   expect(out.discard).toContain(id);
   expect(out.players[0].hand).not.toContain(id);
-  expect(out.current).toBe(1); // fin de tour
+  expect(out.current).toBe(1); // fin de tour (S1 = credits, pas de décision)
 });
 
 test('develop illégal si zénithium insuffisant', () => {
@@ -177,8 +183,8 @@ test('prime de ligne niveau 1 : quand les 3 technos atteignent le niveau 1, +1 i
     ],
   };
   const out = applyMove(s, { t: 'develop', cardId: robotId, people: 'robot' });
-  // develop robot niv.1 → effet niv.1 (influence choice) PUIS prime de ligne niv.1 (influence choice)
-  // les deux sont des influence 'choice' → une décision est en attente (pas de fin de tour)
+  // Contenu réel : develop robot niv.1 → effet L1 = [transfer 1] (ignoré : adversaire sans colonne),
+  // PUIS prime de ligne niv.1 = influence 'choice' (les 3 marqueurs atteignent 1) → décision en attente.
   expect(out.pending).not.toBeNull();
   expect(out.players[0].lineBonusClaimed[1]).toBe(true);
 });
@@ -331,21 +337,25 @@ test("develop niveau 2 : le 1er joueur prend le jeton de l'emplacement, intercal
   const base = createGame(CONFIG, 1);
   const seeded: GameState = { ...readyToDevelopRobotLvl2(base), techBonus: { ...base.techBonus, robot: 'tok-zen1-1' } };
   const out = applyMove(seeded, { t: 'develop', cardId: 'FIX_terra_0', people: 'robot' });
-  // fixtures : chaque niveau = +1 credit ; jeton robot = +1 zénithium.
-  // zénithium = 8 - coût(niveau2 = 2) + 1 (jeton) = 7 ; credits = start + 2 (niveaux 2 et 1).
+  // Contenu réel face N (robot) : L2 = [takeLeader silver], L1 = [transfer 1].
+  // Cumul L2→L1 avec le jeton d'emplacement (tok-zen1-1 = +1 zénithium) intercalé APRÈS L2.
+  // transfer 1 (L1) cible l'adversaire, colonnes vides au départ → ignoré (aucun pending).
+  // zénithium = 8 - coût(niv.2 = 2) + 1 (jeton) = 7 ; le +1 prouve l'intercalage du jeton.
   expect(out.players[0].zenithium).toBe(8 - 2 + 1);
-  expect(out.players[0].credits).toBe(base.players[0].credits + 2);
+  expect(out.diplomacy.leader).toBe(0); // L2 = takeLeader (silver) appliqué → cumul niveau 2 confirmé
   expect(out.techBonus.robot).toBeNull(); // jeton pris
   expect(out.bonusDiscard).toContain('tok-zen1-1');
+  expect(out.current).toBe(1); // aucun effet interactif → fin de tour
 });
 
 test("develop niveau 2 : si l'emplacement est déjà vide, aucun jeton n'est repris", () => {
   const base = createGame(CONFIG, 1);
   const seeded: GameState = { ...readyToDevelopRobotLvl2(base), techBonus: { ...base.techBonus, robot: null } };
   const out = applyMove(seeded, { t: 'develop', cardId: 'FIX_terra_0', people: 'robot' });
+  // Face N réelle : L2 = takeLeader, L1 = transfer (ignoré, adversaire vide). Pas de jeton d'emplacement.
   expect(out.players[0].zenithium).toBe(8 - 2); // pas de +1 jeton
-  expect(out.players[0].credits).toBe(base.players[0].credits + 2);
   expect(out.techBonus.robot).toBeNull();
+  expect(out.bonusDiscard).not.toContain('tok-zen1-1');
 });
 
 test('develop vers niveau 3+ : le déclencheur ne se produit que pour newLevel === 2, pas au-delà', () => {
@@ -359,7 +369,8 @@ test('develop vers niveau 3+ : le déclencheur ne se produit que pour newLevel =
   };
   const seeded: GameState = { ...base, players, techBonus: { ...base.techBonus, robot: 'tok-zen1-1' } };
   const out = applyMove(seeded, { t: 'develop', cardId: 'FIX_venus_1', people: 'robot' });
-  // niveau atteint = 3 : le jeton d'emplacement niveau 2 ne se déclenche pas.
+  // Contenu réel : L3 (robot) pose un pending (influence choice 2) — sans effet sur les champs
+  // assertés ci-dessous. Coût déduit avant résolution ; jeton d'emplacement non déclenché (newLevel=3).
   expect(out.players[0].zenithium).toBe(8 - 3); // pas de +1 jeton
   expect(out.techBonus.robot).toBe('tok-zen1-1'); // toujours en place
   expect(out.bonusDiscard).not.toContain('tok-zen1-1');
