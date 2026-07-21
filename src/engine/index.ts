@@ -4,3 +4,4 @@ export * from './setup';
 export * from './influence';
 export * from './effects';
 export * from './moves';
+export * from './bot';
