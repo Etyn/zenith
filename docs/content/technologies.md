@@ -92,3 +92,30 @@ Légende confiance : ✓ = sûr · ❓ = à confirmer.
 - D1 : l'action « chez l'adversaire » précise.
 - D3 / O1 : confirmer « gagner un jeton Bonus (réserve) ».
 - O3 / P1 : y a-t-il « + influence » en plus du mobiliser ?
+
+---
+
+## ✅ CATALOGUE CONFIRMÉ → ATOMES (2026-07-22) — spec de transcription
+
+Toutes les faces confirmées. **Coût pour atteindre le niveau N = N Zénithium.** Effets `target:'self'`
+sauf mention. Ré-application cumulative N→…→1 (déjà gérée par le moteur). Jeton d'emplacement niveau 2 =
+géré par l'infra (`techBonus`), **hors** effets de face.
+
+### Config S.U.N.
+**S — Animod** : L1 `[credits 2]` · L2 `[influenceNeighbors count2 amount1]` · L3 `[transfer 3]` ·
+L4 `[mobilize 3 thenInfluence:true]` · L5 `[influence choice 2]`
+**U — Humain** : L1 `[influence choice 1]` · L2 `[mobilize 2 thenInfluence:false]` · L3 `[steal credits 3]` ·
+L4 `[influenceNeighbors count3 amount1]` · L5 `[influence choice 2]`
+**N — Robot** : L1 `[transfer 1]` · L2 `[takeLeader silver]` · L3 `[influence choice 2, influenceDifferent 1]` ·
+L4 `[credits 20]` · L5 `[influence choice 2]`
+
+### Config D.O.P.
+**D — Animod** : L1 `[exile opponent 1]` · L2 `[credits 5]` · L3 `[influence choice 1, bonusToken]` _(influence PUIS jeton)_ ·
+L4 `[influenceEach 1]` · L5 `[influence choice 2]`
+**O — Humain** : L1 `[bonusToken]` · L2 `[steal zenithium 1]` · L3 `[mobilize 3 thenInfluence:false]` ·
+L4 `[influenceNeighbors count2 amount2]` · L5 `[influence choice 2]`
+**P — Robot** : L1 `[mobilize 1 thenInfluence:false]` · L2 `[mobilize 1 thenInfluence:false, transfer 1, exile opponent 1]` _(dans cet ordre)_ ·
+L3 `[credits 10]` · L4 `[exileForInfluence count2 amount2]` _(exiler 2 cartes de couleurs différentes, +2 influence par couleur exilée)_ · L5 `[influence choice 2]`
+
+> Tous les atomes existent déjà dans le moteur. Ce catalogue remplace `FIXTURE_TECH` par du contenu **réel**
+> (plus de marquage non-canonique pour les technos).
