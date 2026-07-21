@@ -3,6 +3,8 @@ import type { CardDef } from '../data/types';
 import { FIXTURE_CARDS } from '../data/fixtures';
 import { PLANETS } from './types';
 import type { Effect, EffectCtx, GameState, Planet, PlayerIndex, PlayerState, Side } from './types';
+import { shuffle } from './rng';
+import { tokenOf } from '../data/tokens';
 
 // Accès au catalogue de cartes (fixtures pour l'instant ; le vrai contenu s'y substituera plus tard).
 const CARDS: Record<string, CardDef> = Object.fromEntries(FIXTURE_CARDS.map((c) => [c.id, c]));
@@ -81,8 +83,7 @@ export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): G
     case 'exileForInfluence':
       throw new Error("applyEffect: 'exileForInfluence' passe par resolve/decide");
     case 'bonusToken':
-      // Déclenchement de l'effet du jeton bonus : ajouté en Tâche 4 (non implémenté ici).
-      throw new Error("applyEffect: 'bonusToken' n'est pas encore implémenté (Tâche 4)");
+      throw new Error("applyEffect: 'bonusToken' passe par resolve (interception)");
   }
 }
 
@@ -143,6 +144,33 @@ export function resolve(state: GameState): GameState {
       }
       s = { ...s, pending: { kind: 'chooseColumn', owner: 'self', purpose: 'exileInfluence', remaining: head.count, amount: head.amount, exclude: [] } };
       break;
+    }
+    if (head.k === 'bonusToken') {
+      let reserve = s.bonusReserve;
+      let discard = s.bonusDiscard;
+      let rng = s.rng;
+      if (reserve.length === 0 && discard.length > 0) {
+        const [refilled, nextRng] = shuffle(discard, rng);
+        reserve = refilled;
+        discard = [];
+        rng = nextRng;
+      }
+      if (reserve.length === 0) {
+        // aucun jeton disponible → no-op : on retire l'atome et on continue
+        s = { ...s, rng, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
+      const [takenId, ...restReserve] = reserve;
+      const tokenFx = tokenOf(takenId!).effects;
+      s = {
+        ...s,
+        rng,
+        bonusReserve: restReserve,
+        bonusDiscard: [...discard, takenId!],
+        // l'atome bonusToken est retiré (slice(1)) ET ses effets insérés en tête du reste
+        resolution: { queue: [...tokenFx, ...s.resolution!.queue.slice(1)], ctx, chosen: s.resolution!.chosen },
+      };
+      continue;
     }
     s = applyEffect(s, head, ctx);
     s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };

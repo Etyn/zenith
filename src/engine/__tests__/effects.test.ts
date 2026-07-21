@@ -3,6 +3,7 @@ import { applyEffect, resolve, decide } from '../effects';
 import { CENTER } from '../setup';
 import { PLANETS } from '../types';
 import type { EffectCtx, GameState } from '../types';
+import { shuffle } from '../rng';
 
 const CONFIG = { techSetup: { animod: 'S', humain: 'U', robot: 'N' }, firstPlayer: 0 } as const;
 const CTX: EffectCtx = { player: 0, planet: 'mars' };
@@ -437,4 +438,65 @@ test('exileForInfluence : aucune colonne → atome ignoré (skip)', () => {
   expect(out.pending).toBeNull();
   expect(out.resolution).toBeNull();
   expect(out.players[0].credits).toBe(base.players[0].credits + 3);
+});
+
+test("bonusToken tire le 1er id de la réserve, applique ses effets et le défausse", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    bonusReserve: ['tok-cred3-1', 'tok-zen1-1'],
+    bonusDiscard: [],
+    resolution: { queue: [{ k: 'bonusToken' } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const out = resolve(s);
+  expect(out.players[0].credits).toBe(base.players[0].credits + 3); // effet de tok-cred3-1
+  expect(out.bonusReserve).toEqual(['tok-zen1-1']);                  // 1er retiré
+  expect(out.bonusDiscard).toEqual(['tok-cred3-1']);                 // passé en défausse
+  expect(out.resolution).toBeNull();
+});
+
+test("bonusToken recharge la réserve depuis la défausse quand elle est vide", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    bonusReserve: [],
+    bonusDiscard: ['tok-cred4-1'],
+    resolution: { queue: [{ k: 'bonusToken' } as const], ctx: { player: 0 as const, planet: 'terra' as const } },
+  };
+  const out = resolve(s);
+  expect(out.players[0].credits).toBe(base.players[0].credits + 4); // rechargé puis appliqué
+  expect(out.bonusReserve).toEqual([]);        // un seul jeton dispo, consommé
+  expect(out.bonusDiscard).toEqual(['tok-cred4-1']); // re-défaussé
+});
+
+test("bonusToken est un no-op quand réserve ET défausse sont vides", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    bonusReserve: [],
+    bonusDiscard: [],
+    resolution: {
+      queue: [{ k: 'bonusToken' } as const, { k: 'credits', amount: 2, target: 'self' } as const],
+      ctx: { player: 0 as const, planet: 'terra' as const },
+    },
+  };
+  const out = resolve(s);
+  expect(out.players[0].credits).toBe(base.players[0].credits + 2); // credits appliqué, bonusToken sauté
+  expect(out.resolution).toBeNull();
+});
+
+test("bonusToken insère ses effets EN TÊTE du reste de la file (résolus avant la suite)", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    bonusReserve: ['tok-inf1-1'], // influence au choix → pose un pending choosePlanet
+    resolution: {
+      queue: [{ k: 'bonusToken' } as const, { k: 'credits', amount: 5, target: 'self' } as const],
+      ctx: { player: 0 as const, planet: 'terra' as const },
+    },
+  };
+  const out = resolve(s);
+  expect(out.pending).toEqual({ kind: 'choosePlanet', amount: 1 }); // le jeton se résout d'abord
+  expect(out.players[0].credits).toBe(base.players[0].credits);     // credits PAS encore appliqué
+  expect(out.bonusDiscard).toEqual(['tok-inf1-1']);
 });
