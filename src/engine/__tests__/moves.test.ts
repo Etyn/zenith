@@ -313,3 +313,54 @@ test('applyMove enchaîne un decide de chooseColumn (exile) puis termine la rés
   expect(out.players[0].columns.terra).toEqual(['a']);
   expect(out.discard).toContain('b');
 });
+
+// Fabrique un état où J0 est au niveau 1 d'un peuple, avec une carte de ce peuple en main
+// et de quoi payer le niveau 2. Le peuple 'robot' a des cartes fixtures (FIX_terra_0, etc.).
+function readyToDevelopRobotLvl2(base: GameState): GameState {
+  const players: [GameState['players'][0], GameState['players'][1]] = [base.players[0], base.players[1]];
+  players[0] = {
+    ...players[0],
+    hand: ['FIX_terra_0'], // people = robot (cf. fixtures)
+    techMarkers: { animod: 0, humain: 0, robot: 1 },
+    zenithium: 8,
+  };
+  return { ...base, players };
+}
+
+test("develop niveau 2 : le 1er joueur prend le jeton de l'emplacement, intercalé entre niveau 2 et 1", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded: GameState = { ...readyToDevelopRobotLvl2(base), techBonus: { ...base.techBonus, robot: 'tok-zen1-1' } };
+  const out = applyMove(seeded, { t: 'develop', cardId: 'FIX_terra_0', people: 'robot' });
+  // fixtures : chaque niveau = +1 credit ; jeton robot = +1 zénithium.
+  // zénithium = 8 - coût(niveau2 = 2) + 1 (jeton) = 7 ; credits = start + 2 (niveaux 2 et 1).
+  expect(out.players[0].zenithium).toBe(8 - 2 + 1);
+  expect(out.players[0].credits).toBe(base.players[0].credits + 2);
+  expect(out.techBonus.robot).toBeNull(); // jeton pris
+  expect(out.bonusDiscard).toContain('tok-zen1-1');
+});
+
+test("develop niveau 2 : si l'emplacement est déjà vide, aucun jeton n'est repris", () => {
+  const base = createGame(CONFIG, 1);
+  const seeded: GameState = { ...readyToDevelopRobotLvl2(base), techBonus: { ...base.techBonus, robot: null } };
+  const out = applyMove(seeded, { t: 'develop', cardId: 'FIX_terra_0', people: 'robot' });
+  expect(out.players[0].zenithium).toBe(8 - 2); // pas de +1 jeton
+  expect(out.players[0].credits).toBe(base.players[0].credits + 2);
+  expect(out.techBonus.robot).toBeNull();
+});
+
+test('develop vers niveau 3+ : le déclencheur ne se produit que pour newLevel === 2, pas au-delà', () => {
+  const base = createGame(CONFIG, 1);
+  const players: [GameState['players'][0], GameState['players'][1]] = [base.players[0], base.players[1]];
+  players[0] = {
+    ...players[0],
+    hand: ['FIX_venus_1'], // people = robot (cf. fixtures)
+    techMarkers: { animod: 0, humain: 0, robot: 2 },
+    zenithium: 8,
+  };
+  const seeded: GameState = { ...base, players, techBonus: { ...base.techBonus, robot: 'tok-zen1-1' } };
+  const out = applyMove(seeded, { t: 'develop', cardId: 'FIX_venus_1', people: 'robot' });
+  // niveau atteint = 3 : le jeton d'emplacement niveau 2 ne se déclenche pas.
+  expect(out.players[0].zenithium).toBe(8 - 3); // pas de +1 jeton
+  expect(out.techBonus.robot).toBe('tok-zen1-1'); // toujours en place
+  expect(out.bonusDiscard).not.toContain('tok-zen1-1');
+});

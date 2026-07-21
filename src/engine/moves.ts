@@ -1,6 +1,7 @@
 import { cardOf, resolve, decide as decideEffect } from './effects';
 import { activeFace } from '../data/tech';
 import { DIPLOMACY } from '../data/diplomacy';
+import { tokenOf } from '../data/tokens';
 import type { Effect, GameState, People, Planet, PlayerIndex, PlayerState } from './types';
 import { PLANETS } from './types';
 
@@ -64,8 +65,19 @@ export function applyMove(state: GameState, move: Move): GameState {
     const techMarkers = { ...players[player].techMarkers, [move.people]: newLevel };
     players[player] = { ...players[player], hand, techMarkers, zenithium: players[player].zenithium - cost };
     // Effets cumulés : niveau atteint puis tous les inférieurs (haut → bas).
+    // Jeton d'emplacement niveau 2 : intercalé entre le niveau 2 et le niveau 1 (pris par le 1er joueur).
     const queue: Effect[] = [];
-    for (let lvl = newLevel; lvl >= 1; lvl--) queue.push(...face.levels[lvl - 1]!.effects);
+    let techBonus = state.techBonus;
+    let bonusDiscard = state.bonusDiscard;
+    for (let lvl = newLevel; lvl >= 1; lvl--) {
+      queue.push(...face.levels[lvl - 1]!.effects);
+      if (lvl === 2 && newLevel === 2 && techBonus[move.people] !== null) {
+        const tokenId = techBonus[move.people]!;
+        queue.push(...tokenOf(tokenId).effects);
+        techBonus = { ...techBonus, [move.people]: null };
+        bonusDiscard = [...bonusDiscard, tokenId];
+      }
+    }
 
     // Primes de ligne : 3 technos au niveau tier → +tier influence au choix (1 fois chacune).
     // Appliquées APRÈS les effets de colonne (poussées à la suite dans la file).
@@ -84,6 +96,8 @@ export function applyMove(state: GameState, move: Move): GameState {
       ...state,
       players,
       discard: [...state.discard, move.cardId],
+      techBonus,
+      bonusDiscard,
       resolution: { queue, ctx: { player, planet: card.planet } },
     };
     const resolved = resolve(started);
