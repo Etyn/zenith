@@ -7,6 +7,7 @@ import { DEFAULT_CONFIG } from '../game/config';
 import type { LabeledMove, SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
 import { CardActionSheet } from '../components/game/CardActionSheet';
+import { DecisionSheet } from '../components/game/DecisionSheet';
 import { HandPanel } from '../components/game/HandPanel';
 import { PlanetsPanel } from '../components/game/PlanetsPanel';
 import { ResourcesPanel } from '../components/game/ResourcesPanel';
@@ -58,6 +59,7 @@ export default function GameScreen() {
           onChoose={(m: Move) => play(m)}
           onClose={() => setSelectedCard(null)}
         />
+        <DecisionSheet decision={snap.decision} onChoose={(m: Move) => play(m)} />
       </View>
     </SafeAreaView>
   );
