@@ -6,6 +6,7 @@ import { cardOf, type Move } from '../engine';
 import { DEFAULT_CONFIG } from '../game/config';
 import type { LabeledMove, SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
+import { BotActionSheet } from '../components/game/BotActionSheet';
 import { CardActionSheet } from '../components/game/CardActionSheet';
 import { DecisionSheet } from '../components/game/DecisionSheet';
 import { GameOverSheet } from '../components/game/GameOverSheet';
@@ -20,7 +21,11 @@ function actionsForCard(snap: SessionSnapshot, cardId: string): LabeledMove[] {
 
 export default function GameScreen() {
   const [seed] = useState(() => Date.now() % 100000);
-  const { snap, botThinking, play, replay } = useGame(DEFAULT_CONFIG, seed, seed + 7);
+  const { snap, botThinking, lastBotTurn, dismissBotTurn, play, replay } = useGame(
+    DEFAULT_CONFIG,
+    seed,
+    seed + 7,
+  );
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
 
   const canAct = snap.phase === 'human' && snap.decision === null;
@@ -61,6 +66,7 @@ export default function GameScreen() {
           onClose={() => setSelectedCard(null)}
         />
         <DecisionSheet decision={snap.decision} onChoose={(m: Move) => play(m)} />
+        <BotActionSheet log={lastBotTurn} onDismiss={dismissBotTurn} />
         <GameOverSheet
           outcome={snap.outcome}
           winner={snap.winner}

@@ -7,6 +7,7 @@ import {
   humanMove,
   initSession,
   replay,
+  runBotTurn,
   snapshot,
   stepBot,
   type SessionState,
@@ -56,6 +57,39 @@ describe('session layer', () => {
   test('replay inverse le premier joueur', () => {
     const s = initSession(DEFAULT_CONFIG, 11, 12);
     expect(replay(s).config.firstPlayer).toBe(1);
+  });
+
+  test('runBotTurn ne fait rien quand c’est au joueur humain (log vide, session inchangée)', () => {
+    const s = initSession(DEFAULT_CONFIG, 7, 8);
+    const { session, log } = runBotTurn(s);
+    expect(session).toBe(s);
+    expect(log.moves).toEqual([]);
+    expect(log.deltas).toEqual([]);
+  });
+
+  test('runBotTurn joue tout le tour du bot quand il commence : moves non vide, main rendue à l’humain (ou fin de partie)', () => {
+    const s = initSession({ ...DEFAULT_CONFIG, firstPlayer: 1 }, 9, 10);
+    expect(snapshot(s).phase).toBe('bot');
+    const { session, log } = runBotTurn(s);
+    const phase = snapshot(session).phase;
+    expect(['human', 'over']).toContain(phase);
+    expect(log.moves.length).toBeGreaterThan(0);
+  });
+
+  test('runBotTurn résume les changements côté colonnes quand le bot recrute (graine fixée)', () => {
+    // Graine choisie car le bot y joue un recruit dès son 1er coup (vérifié).
+    const s = initSession({ ...DEFAULT_CONFIG, firstPlayer: 1 }, 53, 54);
+    const { log } = runBotTurn(s);
+    expect(log.moves.some((m) => m.startsWith('Recruter'))).toBe(true);
+    expect(log.deltas.some((line) => line.includes('Bot') && line.includes('colonnes'))).toBe(true);
+  });
+
+  test('runBotTurn ne boucle pas indéfiniment sur de nombreuses graines', () => {
+    for (let seed = 0; seed < 20; seed++) {
+      const s = initSession({ ...DEFAULT_CONFIG, firstPlayer: 1 }, seed, seed + 1);
+      const { session } = runBotTurn(s);
+      expect(['human', 'over']).toContain(snapshot(session).phase);
+    }
   });
 
   test('partie complète pilotée (humain aléatoire + bot) : se termine sans exception', () => {

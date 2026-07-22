@@ -1,6 +1,6 @@
 import { CENTER, cardOf, type Condition, type Effect, type GameState, type Move, type People, type Planet, type PlanetTrack, type PlayerIndex } from '../engine';
 
-const PLANET_FR: Record<Planet, string> = {
+export const PLANET_FR: Record<Planet, string> = {
   mercure: 'Mercure',
   venus: 'Vénus',
   terra: 'Terra',
@@ -84,7 +84,7 @@ export function describeMove(state: GameState, move: Move): string {
   }
 }
 
-function signed(amount: number): string {
+export function signed(amount: number): string {
   return `${amount >= 0 ? '+' : ''}${amount}`;
 }
 
