@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { cardOf, type Move } from '../engine';
-import { DEFAULT_CONFIG } from '../game/config';
+import { randomConfig } from '../game/config';
 import type { LabeledMove, SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
 import { BotActionSheet } from '../components/game/BotActionSheet';
@@ -21,11 +21,8 @@ function actionsForCard(snap: SessionSnapshot, cardId: string): LabeledMove[] {
 
 export default function GameScreen() {
   const [seed] = useState(() => Date.now() % 100000);
-  const { snap, botThinking, lastBotTurn, dismissBotTurn, play, replay } = useGame(
-    DEFAULT_CONFIG,
-    seed,
-    seed + 7,
-  );
+  const [config] = useState(() => randomConfig(seed));
+  const { snap, botThinking, lastBotTurn, dismissBotTurn, play, replay } = useGame(config, seed, seed + 7);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
 
   const canAct = snap.phase === 'human' && snap.decision === null;
