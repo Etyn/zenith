@@ -1,4 +1,4 @@
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { cardOf, type People, type Planet, type PlayerView } from '../../engine';
 
@@ -16,7 +16,15 @@ const PEOPLE_FR: Record<People, string> = {
   robot: 'Robots',
 };
 
-export function HandPanel({ view }: { view: PlayerView }) {
+export function HandPanel({
+  view,
+  onSelectCard,
+  disabled = false,
+}: {
+  view: PlayerView;
+  onSelectCard?: (id: string) => void;
+  disabled?: boolean;
+}) {
   const me = view.players[view.viewer];
   const hand = me.hand ?? [];
 
@@ -26,12 +34,17 @@ export function HandPanel({ view }: { view: PlayerView }) {
       {hand.map((id) => {
         const card = cardOf(id);
         return (
-          <View key={id} className="bg-slate-800 rounded-xl px-3 py-2">
+          <Pressable
+            key={id}
+            disabled={disabled || onSelectCard === undefined}
+            onPress={() => onSelectCard?.(id)}
+            className={`bg-slate-800 rounded-xl px-3 py-2 ${disabled ? 'opacity-50' : ''}`}
+          >
             <Text className="text-white font-medium">{card?.name ?? id}</Text>
             <Text className="text-slate-400 text-xs">
               {card ? `${PEOPLE_FR[card.people]} · ${PLANET_FR[card.planet]} · coût ${card.cost}` : ''}
             </Text>
-          </View>
+          </Pressable>
         );
       })}
     </View>
