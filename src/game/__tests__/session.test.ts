@@ -81,7 +81,7 @@ describe('session layer', () => {
     const s = initSession({ ...DEFAULT_CONFIG, firstPlayer: 1 }, 53, 54);
     const { log } = runBotTurn(s);
     expect(log.moves.some((m) => m.startsWith('Recruter'))).toBe(true);
-    expect(log.deltas.some((line) => line.includes('Bot') && line.includes('colonnes'))).toBe(true);
+    expect(log.deltas.some((line) => line.includes('Bot') && line.includes('agents en jeu'))).toBe(true);
   });
 
   test('runBotTurn ne boucle pas indéfiniment sur de nombreuses graines', () => {
