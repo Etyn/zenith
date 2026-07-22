@@ -77,14 +77,25 @@ export function describeMove(state: GameState, move: Move): string {
       const c = cardOf(move.cardId);
       return c ? `Leadership ${PEOPLE_FR[c.people]} — « ${c.name} »${cardScanSuffix(move.cardId)}` : 'Leadership';
     }
-    case 'decide':
-      return PLANET_FR[move.planet];
+    case 'decide': {
+      const p = PLANET_FR[move.planet];
+      switch (state.pending?.kind) {
+        case 'chooseColumn':
+          return `Colonne ${p}`;
+        case 'moveDiscToCenter':
+          return `Recentrer ${p}`;
+        case 'chooseSegment':
+          return `Voisines depuis ${p}`;
+        default:
+          return `Influence ${p}`;
+      }
+    }
     case 'choose':
       return describeChoose(state, move.index);
     case 'skip':
       return state.pending?.kind === 'confirmOptional' ? 'Non merci' : 'Passer';
     case 'decideTech':
-      return PEOPLE_FR[move.people];
+      return `Développer ${PEOPLE_FR[move.people]}`;
     case 'decideCard':
       return `Défausser « ${cardName(move.cardId)} »`;
   }
