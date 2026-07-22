@@ -415,12 +415,11 @@ export function resolve(state: GameState): GameState {
       break;
     }
     if (head.k === 'conditional') {
-      if (!evalCondition(s, head.cond, ctx)) {
-        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
-        continue; // condition fausse → atome sauté
-      }
-      s = { ...s, pending: { kind: 'confirmOptional' } };
-      break; // condition vraie → reste facultatif
+      // « ! » = obligatoire si la condition est remplie : aucune décision confirmOptional.
+      s = evalCondition(s, head.cond, ctx)
+        ? { ...s, resolution: { queue: [...head.effects, ...s.resolution!.queue.slice(1)], ctx, chosen: s.resolution!.chosen } } // condition vraie → effets appliqués immédiatement
+        : { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } }; // condition fausse → atome sauté
+      continue;
     }
     if (head.k === 'choice') {
       s = { ...s, pending: { kind: 'chooseOption', count: head.options.length } };
@@ -611,7 +610,7 @@ export function chooseBranch(state: GameState, index: number): GameState {
   const pending = state.pending;
   if (pending.kind === 'confirmOptional') {
     if (index !== 0) throw new Error("chooseBranch: seule l'option 0 (accepter) est valide");
-    if (head.k !== 'optional' && head.k !== 'conditional') {
+    if (head.k !== 'optional') {
       throw new Error('chooseBranch: atome de tête inattendu');
     }
     const s: GameState = { ...state, pending: null, resolution: { queue: [...head.effects, ...rest], ctx, chosen } };

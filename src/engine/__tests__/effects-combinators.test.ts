@@ -34,7 +34,7 @@ test("optional : renoncer (skip) n'applique rien et vide la file", () => {
   expect(done.players[0].credits).toBe(base.players[0].credits);
 });
 
-test("conditional VRAI : pose un confirmOptional (reste facultatif) et accepter applique", () => {
+test("conditional VRAI : les effets sont appliqués immédiatement, sans aucun pending", () => {
   const base = createGame(CONFIG, 1);
   const s: GameState = {
     ...base,
@@ -44,9 +44,9 @@ test("conditional VRAI : pose un confirmOptional (reste facultatif) et accepter 
       ctx: CTX,
     },
   };
-  const paused = resolve(s);
-  expect(paused.pending).toEqual({ kind: 'confirmOptional' });
-  const done = chooseBranch(paused, 0);
+  const done = resolve(s);
+  expect(done.pending).toBeNull(); // aucune confirmation demandée : « ! » est obligatoire
+  expect(done.resolution).toBeNull();
   expect(done.players[0].credits).toBe(base.players[0].credits + 8);
 });
 
@@ -70,18 +70,47 @@ test("conditional FAUX : l'atome est sauté (aucun pending), la suite s'applique
   expect(out.players[0].zenithium).toBe(base.players[0].zenithium + 1); // la suite s'applique
 });
 
-test("conditional VRAI mais le joueur RENONCE (facultatif)", () => {
+test("conditional VRAI : les effets sont insérés en tête de file, avant le reste de la file", () => {
   const base = createGame(CONFIG, 1);
   const s: GameState = {
     ...base,
     diplomacy: { leader: 0, side: 'silver' },
     resolution: {
-      queue: [{ k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'credits', amount: 8, target: 'self' }] }],
+      queue: [
+        { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'credits', amount: 8, target: 'self' }] },
+        { k: 'zenithium', amount: 1, target: 'self' },
+      ],
       ctx: CTX,
     },
   };
-  const out = skipBranch(resolve(s));
-  expect(out.players[0].credits).toBe(base.players[0].credits);
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].credits).toBe(base.players[0].credits + 8);
+  expect(out.players[0].zenithium).toBe(base.players[0].zenithium + 1);
+});
+
+test("conditional VRAI : préserve resolution.chosen et n'affecte pas l'état d'origine (immutabilité)", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    diplomacy: { leader: 0, side: 'silver' },
+    resolution: {
+      queue: [
+        { k: 'conditional', cond: { c: 'hasLeaderBadge' }, effects: [{ k: 'credits', amount: 8, target: 'self' }] },
+        { k: 'influence', on: 'choice', amount: 1 }, // laisse un pending après le conditional, pour vérifier `chosen`
+      ],
+      ctx: CTX,
+      chosen: ['mars'],
+    },
+  };
+  const snapshotQueue = s.resolution!.queue;
+  const out = resolve(s);
+  expect(out.pending).toEqual({ kind: 'choosePlanet', amount: 1 });
+  expect(out.resolution!.chosen).toEqual(['mars']); // chosen préservé au travers du conditional
+  expect(out.players[0].credits).toBe(base.players[0].credits + 8); // effet du conditional bien appliqué
+  expect(s.resolution!.queue).toBe(snapshotQueue); // l'état d'origine n'a pas été muté
+  expect(s.players[0].credits).toBe(base.players[0].credits); // idem pour l'état d'origine
 });
 
 test("choice pose un chooseOption ; choisir l'option 1 applique cette branche seule", () => {
