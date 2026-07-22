@@ -8,6 +8,7 @@ import type { LabeledMove, SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
 import { CardActionSheet } from '../components/game/CardActionSheet';
 import { DecisionSheet } from '../components/game/DecisionSheet';
+import { GameOverSheet } from '../components/game/GameOverSheet';
 import { HandPanel } from '../components/game/HandPanel';
 import { PlanetsPanel } from '../components/game/PlanetsPanel';
 import { ResourcesPanel } from '../components/game/ResourcesPanel';
@@ -19,7 +20,7 @@ function actionsForCard(snap: SessionSnapshot, cardId: string): LabeledMove[] {
 
 export default function GameScreen() {
   const [seed] = useState(() => Date.now() % 100000);
-  const { snap, botThinking, play } = useGame(DEFAULT_CONFIG, seed, seed + 7);
+  const { snap, botThinking, play, replay } = useGame(DEFAULT_CONFIG, seed, seed + 7);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
 
   const canAct = snap.phase === 'human' && snap.decision === null;
@@ -60,6 +61,15 @@ export default function GameScreen() {
           onClose={() => setSelectedCard(null)}
         />
         <DecisionSheet decision={snap.decision} onChoose={(m: Move) => play(m)} />
+        <GameOverSheet
+          outcome={snap.outcome}
+          winner={snap.winner}
+          viewer={snap.view.viewer}
+          onReplay={() => {
+            setSelectedCard(null);
+            replay();
+          }}
+        />
       </View>
     </SafeAreaView>
   );
