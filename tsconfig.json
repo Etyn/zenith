@@ -3,8 +3,19 @@
   "compilerOptions": {
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "paths": { "@/*": ["./src/*"] }
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
   },
-  "include": ["src", "expo-env.d.ts", "nativewind-env.d.ts"],
-  "exclude": ["node_modules", "**/*.test.ts", "**/__tests__/**"]
+  "include": [
+    "src",
+    "nativewind-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/__tests__/**"
+  ]
 }
