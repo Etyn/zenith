@@ -5,6 +5,7 @@ import type {
   PlanetTrack,
   PlayerIndex,
   PendingDecision,
+  TechSetup,
 } from './types';
 
 /**
@@ -43,6 +44,8 @@ export type PlayerView = {
   deckCount: number;
   discard: string[];
   planets: Record<Planet, PlanetTrack>;
+  /** Faces techno tirées au sort (publiques) : Animod S|D, Humain O|U, Robot N|P. */
+  techSetup: TechSetup;
   bonusReserveCount: number;
   bonusDiscard: string[];
   techBonus: Record<People, string | null>;
@@ -72,6 +75,7 @@ export function playerView(state: GameState, viewer: PlayerIndex): PlayerView {
     deckCount: state.deck.length,
     discard: state.discard,
     planets: state.planets,
+    techSetup: state.config.techSetup,
     bonusReserveCount: state.bonusReserve.length,
     bonusDiscard: state.bonusDiscard,
     techBonus: state.techBonus,

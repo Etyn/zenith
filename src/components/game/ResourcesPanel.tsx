@@ -18,7 +18,10 @@ export function ResourcesPanel({ view }: { view: PlayerView }) {
         <Text className="text-amber-300 font-bold">Crédits : {me.credits}</Text>
         <Text className="text-cyan-300 font-bold">Zénithium : {me.zenithium}</Text>
         <Text className="text-slate-400 text-xs mt-1">
-          Techno A{me.techMarkers.animod} · H{me.techMarkers.humain} · R{me.techMarkers.robot}
+          Techno {view.techSetup.animod}
+          {me.techMarkers.animod} · {view.techSetup.humain}
+          {me.techMarkers.humain} · {view.techSetup.robot}
+          {me.techMarkers.robot}
         </Text>
       </View>
       <View className="items-end">
