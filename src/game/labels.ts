@@ -18,6 +18,12 @@ function cardName(id: string): string {
   return cardOf(id)?.name ?? id;
 }
 
+/** Suffixe « [CODE] » avec le scan de la carte (aide au développement), vide si absent (ex. fixtures de test). */
+function cardScanSuffix(id: string): string {
+  const scan = cardOf(id)?.scan;
+  return scan ? ` [${scan}]` : '';
+}
+
 export function decisionPrompt(state: GameState): string {
   const p = state.pending;
   if (p === null) return '';
@@ -63,13 +69,13 @@ export function describeMove(state: GameState, move: Move): string {
   switch (move.t) {
     case 'recruit': {
       const c = cardOf(move.cardId);
-      return c ? `Recruter « ${c.name} » — ${PLANET_FR[c.planet]}` : 'Recruter';
+      return c ? `Recruter « ${c.name} »${cardScanSuffix(move.cardId)} — ${PLANET_FR[c.planet]}` : 'Recruter';
     }
     case 'develop':
-      return `Développer ${PEOPLE_FR[move.people]} — « ${cardName(move.cardId)} »`;
+      return `Développer ${PEOPLE_FR[move.people]} — « ${cardName(move.cardId)} »${cardScanSuffix(move.cardId)}`;
     case 'leadership': {
       const c = cardOf(move.cardId);
-      return c ? `Leadership ${PEOPLE_FR[c.people]} — « ${c.name} »` : 'Leadership';
+      return c ? `Leadership ${PEOPLE_FR[c.people]} — « ${c.name} »${cardScanSuffix(move.cardId)}` : 'Leadership';
     }
     case 'decide':
       return PLANET_FR[move.planet];

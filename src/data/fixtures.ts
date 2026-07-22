@@ -12,6 +12,7 @@ export const FIXTURE_CARDS: CardDef[] = PLANET_LIST.flatMap((planet, i) =>
   [0, 1].map((k) => ({
     id: `FIX_${planet}_${k}`,
     name: `Fixture ${planet} ${k}`,
+    scan: 'FIXTURE',
     planet,
     people: PEOPLE_CYCLE[(i + k) % 3]!,
     cost: 1 + ((i + k) % 5), // 1..5

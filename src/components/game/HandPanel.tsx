@@ -45,6 +45,7 @@ export function HandPanel({
             <Text className="text-slate-400 text-xs">
               {card ? `${PEOPLE_FR[card.people]} · ${PLANET_FR[card.planet]} · coût ${card.cost}` : ''}
             </Text>
+            {card?.scan ? <Text className="text-slate-500 text-[10px]">[{card.scan}]</Text> : null}
             {describeCardEffects(id).map((eff, i) => (
               <Text key={i} className="text-indigo-200 text-xs mt-0.5">
                 • {eff}
