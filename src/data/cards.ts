@@ -441,7 +441,7 @@ export const TERRA_CARDS: CardDef[] = [
     effects: [
       { k: 'influence', amount: 1, on: 'terra' },
       { k: 'credits', amount: 4, target: 'self' },
-      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influence', amount: 2, on: 'choice' }] },
+      { k: 'optional', effects: [{ k: 'giveOpponent', resource: 'zenithium', amount: 1 }, { k: 'influenceChoiceAtCenter', amount: 2 }] },
     ] },
   { // "exiler 1 carte d'une couleur precise -> 1 zenithium", une fois par couleur (Mercure/Venus/Mars/Jupiter).
     id: 'terra-l0v3cr4ft', scan: '23.02_25', name: 'L0v3cr4ft', people: 'robot', planet: 'terra', cost: 5,
