@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 
 import { cardOf, type People, type Planet, type PlayerView } from '../../engine';
+import { describeCardEffects } from '../../game/labels';
 
 const PLANET_FR: Record<Planet, string> = {
   mercure: 'Mercure',
@@ -44,6 +45,11 @@ export function HandPanel({
             <Text className="text-slate-400 text-xs">
               {card ? `${PEOPLE_FR[card.people]} · ${PLANET_FR[card.planet]} · coût ${card.cost}` : ''}
             </Text>
+            {describeCardEffects(id).map((eff, i) => (
+              <Text key={i} className="text-indigo-200 text-xs mt-0.5">
+                • {eff}
+              </Text>
+            ))}
           </Pressable>
         );
       })}
