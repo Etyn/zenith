@@ -112,13 +112,13 @@ function columnsCount(state: GameState, side: PlayerIndex): number {
   return Object.values(state.players[side].columns).reduce((n, c) => n + c.length, 0);
 }
 
-/** Nombre de cartes en colonnes (recrutées/développées/transférées) pour chaque joueur. */
+/** Nombre d'agents posés dans les colonnes (recrutés/transférés/exilés) pour chaque joueur. */
 function columnsDeltaLines(before: GameState, after: GameState): string[] {
   const lines: string[] = [];
   for (const side of [HUMAN, BOT]) {
     const b = columnsCount(before, side);
     const a = columnsCount(after, side);
-    if (a !== b) lines.push(`${playerLabel(side)} : colonnes ${b} → ${a}`);
+    if (a !== b) lines.push(`${playerLabel(side)} : agents en jeu ${b} → ${a}`);
   }
   return lines;
 }
