@@ -87,7 +87,9 @@ export function describeMove(state: GameState, move: Move): string {
         case 'chooseSegment':
           return `Voisines depuis ${p}`;
         default:
-          return `Influence ${p}`;
+          return state.pending?.kind === 'choosePlanet' && state.pending.atCenter
+            ? `Influence (centre) ${p}`
+            : `Influence ${p}`;
       }
     }
     case 'choose':

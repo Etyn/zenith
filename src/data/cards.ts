@@ -122,7 +122,7 @@ export const MARS_CARDS: CardDef[] = [
     id: 'mars-4nd3rs0n', scan: '23.02_45', name: '4nd3rs0n', people: 'robot', planet: 'mars', cost: 6,
     effects: [
       { k: 'influence', amount: 1, on: 'mars' },
-      { k: 'influence', amount: 1, on: 'choice' },
+      { k: 'influenceChoiceAtCenter', amount: 2 },
     ],
   },
   {
