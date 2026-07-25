@@ -34,6 +34,76 @@ test("optional : renoncer (skip) n'applique rien et vide la file", () => {
   expect(done.players[0].credits).toBe(base.players[0].credits);
 });
 
+test("optional avec coût giveLeaderBadge : sans le badge, l'atome est sauté (aucun pending, rien appliqué)", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    diplomacy: { leader: null, side: 'silver' }, // le joueur 0 ne possède pas le badge
+    resolution: {
+      queue: [{ k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'credits', amount: 5, target: 'self' }] }],
+      ctx: CTX,
+    },
+  };
+  const out = resolve(s);
+  expect(out.pending).toBeNull(); // pas de confirmOptional : coût impayable, jamais proposé
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].credits).toBe(base.players[0].credits); // rien gagné « gratuitement »
+  expect(out.diplomacy.leader).toBeNull();
+});
+
+test("optional avec coût giveLeaderBadge : avec le badge, confirmOptional est posé et accepter applique (donne le badge + récompense)", () => {
+  const base = createGame(CONFIG, 1);
+  const s: GameState = {
+    ...base,
+    diplomacy: { leader: 0, side: 'silver' }, // le joueur 0 possède le badge
+    resolution: {
+      queue: [{ k: 'optional', effects: [{ k: 'giveLeaderBadge' }, { k: 'credits', amount: 5, target: 'self' }] }],
+      ctx: CTX,
+    },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'confirmOptional' });
+
+  const done = chooseBranch(paused, 0);
+  expect(done.pending).toBeNull();
+  expect(done.resolution).toBeNull();
+  expect(done.diplomacy.leader).toBe(1); // badge donné à l'adversaire
+  expect(done.players[0].credits).toBe(base.players[0].credits + 5); // récompense appliquée
+});
+
+test("optional avec coût spend non payable : l'atome est sauté (aucun pending, rien appliqué)", () => {
+  const base = createGame(CONFIG, 1); // 1 zenithium au départ
+  const s: GameState = {
+    ...base,
+    resolution: {
+      queue: [{ k: 'optional', effects: [{ k: 'spend', resource: 'zenithium', amount: 5 }, { k: 'credits', amount: 5, target: 'self' }] }],
+      ctx: CTX,
+    },
+  };
+  const out = resolve(s);
+  expect(out.pending).toBeNull();
+  expect(out.resolution).toBeNull();
+  expect(out.players[0].credits).toBe(base.players[0].credits);
+  expect(out.players[0].zenithium).toBe(base.players[0].zenithium);
+});
+
+test("optional sans coût impayable (spend payable) : reste proposé (non-régression)", () => {
+  const base = createGame(CONFIG, 1); // 12 credits au départ
+  const s: GameState = {
+    ...base,
+    resolution: {
+      queue: [{ k: 'optional', effects: [{ k: 'spend', resource: 'credits', amount: 3 }, { k: 'zenithium', amount: 1, target: 'self' }] }],
+      ctx: CTX,
+    },
+  };
+  const paused = resolve(s);
+  expect(paused.pending).toEqual({ kind: 'confirmOptional' });
+
+  const done = chooseBranch(paused, 0);
+  expect(done.players[0].credits).toBe(base.players[0].credits - 3);
+  expect(done.players[0].zenithium).toBe(base.players[0].zenithium + 1);
+});
+
 test("conditional VRAI : les effets sont appliqués immédiatement, sans aucun pending", () => {
   const base = createGame(CONFIG, 1);
   const s: GameState = {

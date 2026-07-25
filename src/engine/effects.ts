@@ -46,8 +46,15 @@ function evalCondition(state: GameState, cond: Condition, ctx: EffectCtx): boole
   }
 }
 
-export function canPayTier(state: GameState, player: PlayerIndex, cost: Effect[]): boolean {
-  return cost.every((e) => (e.k === 'spend' ? state.players[player][e.resource] >= e.amount : true));
+// Renvoie false si `effects` (niveau superficiel) contient un coût impayable pour `player` :
+// un `spend` dont le montant dépasse la réserve du joueur, ou un `giveLeaderBadge` alors que le
+// joueur ne détient pas le badge Leader (rien à donner). Tout le reste est considéré payable.
+export function canAffordEffects(state: GameState, player: PlayerIndex, effects: Effect[]): boolean {
+  return effects.every((e) => {
+    if (e.k === 'spend') return state.players[player][e.resource] >= e.amount;
+    if (e.k === 'giveLeaderBadge') return state.diplomacy.leader === player;
+    return true;
+  });
 }
 
 export function applyEffect(state: GameState, effect: Effect, ctx: EffectCtx): GameState {
@@ -411,6 +418,12 @@ export function resolve(state: GameState): GameState {
       break;
     }
     if (head.k === 'optional') {
+      // Un optionnel dont le coût est impayable (badge Leader absent, spend insuffisant) ne doit
+      // jamais être proposé : on saute l'atome sans poser de confirmOptional (ni au joueur, ni au bot).
+      if (!canAffordEffects(s, ctx.player, head.effects)) {
+        s = { ...s, resolution: { queue: s.resolution!.queue.slice(1), ctx, chosen: s.resolution!.chosen } };
+        continue;
+      }
       s = { ...s, pending: { kind: 'confirmOptional' } };
       break;
     }
@@ -626,7 +639,7 @@ export function chooseBranch(state: GameState, index: number): GameState {
     if (head.k !== 'scale') throw new Error('chooseBranch: atome de tête inattendu');
     if (index < 0 || index >= head.tiers.length) throw new Error('chooseBranch: palier hors bornes');
     const tier = head.tiers[index]!;
-    if (!canPayTier(state, ctx.player, tier.cost)) throw new Error('chooseBranch: palier non payable');
+    if (!canAffordEffects(state, ctx.player, tier.cost)) throw new Error('chooseBranch: palier non payable');
     const s: GameState = { ...state, pending: null, resolution: { queue: [...tier.cost, ...tier.reward, ...rest], ctx, chosen } };
     return resolve(s);
   }

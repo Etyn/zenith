@@ -1,4 +1,4 @@
-import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch, decideTech as decideTechEffect, decideCard as decideCardEffect, canPayTier } from './effects';
+import { cardOf, resolve, decide as decideEffect, chooseBranch, skipBranch, decideTech as decideTechEffect, decideCard as decideCardEffect, canAffordEffects } from './effects';
 import { activeFace } from '../data/tech';
 import { developTech } from './develop';
 import { CENTER } from './setup';
@@ -144,7 +144,7 @@ export function legalMoves(state: GameState, player: PlayerIndex): Move[] {
       const tiers = head && head.k === 'scale' ? head.tiers : [];
       const affordable = tiers
         .map((tier, i) => ({ tier, i }))
-        .filter(({ tier }) => canPayTier(state, player, tier.cost))
+        .filter(({ tier }) => canAffordEffects(state, player, tier.cost))
         .map(({ i }) => ({ t: 'choose' as const, index: i }));
       return [...affordable, { t: 'skip' as const }];
     }
