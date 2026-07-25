@@ -40,7 +40,7 @@ export function HandPanel({
         flexGrow: 1,
         flexDirection: 'row',
         justifyContent: scroll ? 'flex-start' : 'center',
-        alignItems: 'stretch',
+        alignItems: 'center',
         gap: GAP,
         paddingHorizontal: PADDING_H,
         paddingVertical: 8,

@@ -61,7 +61,7 @@ export default function GameScreen() {
             : "Tour de l'adversaire";
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#020617' }} edges={['top', 'left', 'right']}>
       <View style={{ flex: 1 }} className="bg-slate-950">
         <PlayerBanner view={snap.view} side="opponent" seed={seed} />
 
