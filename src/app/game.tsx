@@ -2,16 +2,15 @@ import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { cardOf, type Move } from '../engine';
+import type { Move } from '../engine';
 import { randomConfig } from '../game/config';
-import { PLANET_COLORS } from '../game/planetColors';
 import type { LabeledMove, SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
 import { BotActionSheet } from '../components/game/BotActionSheet';
 import { CardActionSheet } from '../components/game/CardActionSheet';
-import { CollapsibleHand } from '../components/game/CollapsibleHand';
 import { DecisionSheet } from '../components/game/DecisionSheet';
 import { GameOverSheet } from '../components/game/GameOverSheet';
+import { HandPanel } from '../components/game/HandPanel';
 import { PlanetsBoard } from '../components/game/PlanetsBoard';
 import { PlayerBanner } from '../components/game/PlayerBanner';
 
@@ -28,7 +27,6 @@ export default function GameScreen() {
 
   const canAct = snap.phase === 'human' && snap.decision === null;
   const options = selectedCard === null ? [] : actionsForCard(snap, selectedCard);
-  const selectedCardDef = selectedCard === null ? null : cardOf(selectedCard);
 
   const banner =
     snap.phase === 'over'
@@ -58,7 +56,7 @@ export default function GameScreen() {
           </View>
         </ScrollView>
 
-        <CollapsibleHand
+        <HandPanel
           view={snap.view}
           disabled={!canAct}
           onSelectCard={canAct ? setSelectedCard : undefined}
@@ -67,8 +65,7 @@ export default function GameScreen() {
         <PlayerBanner view={snap.view} side="self" />
 
         <CardActionSheet
-          title={selectedCard === null ? null : (selectedCardDef?.name ?? selectedCard)}
-          planetHex={selectedCardDef ? PLANET_COLORS[selectedCardDef.planet].hex : undefined}
+          cardId={selectedCard}
           options={options}
           onChoose={(m: Move) => play(m)}
           onClose={() => setSelectedCard(null)}
