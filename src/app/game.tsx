@@ -12,7 +12,7 @@ import { CardActionSheet } from '../components/game/CardActionSheet';
 import { DecisionSheet } from '../components/game/DecisionSheet';
 import { GameOverSheet } from '../components/game/GameOverSheet';
 import { HandPanel } from '../components/game/HandPanel';
-import { PlanetsPanel } from '../components/game/PlanetsPanel';
+import { PlanetsBoard } from '../components/game/PlanetsBoard';
 import { PlayerBanner } from '../components/game/PlayerBanner';
 
 function actionsForCard(snap: SessionSnapshot, cardId: string): LabeledMove[] {
@@ -54,7 +54,7 @@ export default function GameScreen() {
         <ScrollView className="flex-1 px-3">
           <View className="gap-3 py-3">
             <Text className="text-indigo-300">{banner}</Text>
-            <PlanetsPanel view={snap.view} />
+            <PlanetsBoard view={snap.view} />
             <HandPanel
               view={snap.view}
               disabled={!canAct}
