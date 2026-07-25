@@ -2,12 +2,13 @@ import { useEffect, useRef } from 'react';
 import { Animated, Text, View } from 'react-native';
 
 import { PLANETS, type Planet, type PlanetTrack, type PlayerView } from '../../engine';
-import { PLANET_COLORS, PLANET_FR } from '../../game/planetColors';
+import { PLANET_FR } from '../../game/planetColors';
+import { PlanetDisc } from './PlanetDisc';
 
 /** Hauteur totale de la colonne (zone où le disque peut se déplacer + marge). */
-const TRACK_HEIGHT = 150;
+const TRACK_HEIGHT = 110;
 /** Taille du disque mobile (la planète elle-même). */
-const DISC_SIZE = 22;
+const DISC_SIZE = 16;
 /** Taille du point central (emplacement `discPos 4`). */
 const DOT_CENTER_SIZE = 10;
 /** Taille des points de niveau (+1/+2/+3 de chaque côté). */
@@ -95,14 +96,10 @@ function PlanetColumn({ planet, track, flip }: { planet: Planet; track: PlanetTr
             left: '50%',
             marginLeft: -DISC_SIZE / 2,
             top: discTop,
-            width: DISC_SIZE,
-            height: DISC_SIZE,
-            borderRadius: DISC_SIZE / 2,
-            backgroundColor: PLANET_COLORS[planet].hex,
-            borderWidth: 2,
-            borderColor: 'rgba(255, 255, 255, 0.5)',
           }}
-        />
+        >
+          <PlanetDisc planet={planet} size={DISC_SIZE} />
+        </Animated.View>
       </View>
       <Text className="text-slate-300 text-[11px] mt-1">{PLANET_FR[planet]}</Text>
     </View>

@@ -1,8 +1,11 @@
 import { Text, View } from 'react-native';
 
 import { PLANETS, type PlayerIndex, type PlayerView } from '../../engine';
-import { PLANET_COLORS } from '../../game/planetColors';
 import { playerDotColor } from '../../game/playerColors';
+import { PlanetDisc } from './PlanetDisc';
+
+/** Taille des disques de planètes capturées dans le bandeau (mêmes proportions que le plateau). */
+const CAPTURED_DISC_SIZE = 14;
 
 /**
  * Bandeau d'un joueur (haut = adversaire, bas = moi), réutilisable des deux côtés.
@@ -23,15 +26,7 @@ export function PlayerBanner({ view, side, seed }: { view: PlayerView; side: 'se
     const count = view.planets[planet].captured[playerIndex];
     if (count <= 0) return [];
     return Array.from({ length: count }, (_, i) => (
-      <View
-        key={`${planet}-${i}`}
-        style={{
-          width: 10,
-          height: 10,
-          borderRadius: 5,
-          backgroundColor: PLANET_COLORS[planet].hex,
-        }}
-      />
+      <PlanetDisc key={`${planet}-${i}`} planet={planet} size={CAPTURED_DISC_SIZE} />
     ));
   });
 

@@ -62,7 +62,7 @@ export default function GameScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex-1 bg-slate-950">
+      <View style={{ flex: 1 }} className="bg-slate-950">
         <PlayerBanner view={snap.view} side="opponent" seed={seed} />
 
         <View className="flex-row justify-center gap-4 py-1 bg-slate-900/60">
@@ -72,8 +72,7 @@ export default function GameScreen() {
 
         <ScrollView
           style={{ flex: 1 }}
-          className="px-3"
-          contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, gap: 12 }}
+          contentContainerStyle={{ flexGrow: 1, gap: 12, paddingVertical: 12, paddingHorizontal: 12 }}
         >
           <Text className="text-indigo-300">{banner}</Text>
           <PlanetsBoard view={snap.view} />
