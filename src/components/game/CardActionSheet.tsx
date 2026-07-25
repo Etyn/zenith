@@ -1,9 +1,8 @@
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { cardOf, type Move, type People } from '../../engine';
 import { describeCardEffects } from '../../game/labels';
 import { PLANET_COLORS, PLANET_FR } from '../../game/planetColors';
-import type { LabeledMove } from '../../game/session';
 import { ActionButton } from '../ui/ActionButton';
 import { Sheet } from '../ui/Sheet';
 
@@ -13,10 +12,14 @@ const PEOPLE_FR: Record<People, string> = {
   robot: 'Robots',
 };
 
+/** Action de carte à libellé fixe (Recruter/Technologie/Diplomatie), activée seulement si jouable. */
+export type CardActionOption = { label: string; move: Move; enabled: boolean };
+
 /**
  * Feuille de détail + actions d'une carte sélectionnée dans la main.
  * Affiche d'abord le détail complet de la carte (nom, peuple · planète · coût, code
- * scan, liste des effets) puis les actions disponibles (`options`), dans cet ordre.
+ * scan, liste des effets) puis les 3 boutons d'action à libellé fixe (`options`),
+ * désactivés quand l'action correspondante n'est pas jouable.
  */
 export function CardActionSheet({
   cardId,
@@ -25,7 +28,7 @@ export function CardActionSheet({
   onClose,
 }: {
   cardId: string | null;
-  options: LabeledMove[];
+  options: CardActionOption[];
   onChoose: (move: Move) => void;
   onClose: () => void;
 }) {
@@ -62,21 +65,20 @@ export function CardActionSheet({
             ))}
           </View>
           <View className="h-px bg-slate-700 mb-3" />
-          <ScrollView className="max-h-72">
-            {options.length === 0 ? (
-              <Text className="text-slate-400">Aucune action possible avec cette carte.</Text>
-            ) : null}
+          <View>
             {options.map((opt, i) => (
               <ActionButton
                 key={`${opt.move.t}-${i}`}
                 label={opt.label}
+                disabled={!opt.enabled}
                 onPress={() => {
+                  if (!opt.enabled) return;
                   onChoose(opt.move);
                   onClose();
                 }}
               />
             ))}
-          </ScrollView>
+          </View>
         </View>
       ) : null}
     </Sheet>

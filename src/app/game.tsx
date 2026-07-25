@@ -2,21 +2,41 @@ import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import type { Move } from '../engine';
+import { cardOf, type Move } from '../engine';
 import { randomConfig } from '../game/config';
-import type { LabeledMove, SessionSnapshot } from '../game/session';
+import type { SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
 import { BotActionSheet } from '../components/game/BotActionSheet';
-import { CardActionSheet } from '../components/game/CardActionSheet';
+import { CardActionSheet, type CardActionOption } from '../components/game/CardActionSheet';
 import { DecisionSheet } from '../components/game/DecisionSheet';
 import { GameOverSheet } from '../components/game/GameOverSheet';
 import { HandPanel } from '../components/game/HandPanel';
 import { PlanetsBoard } from '../components/game/PlanetsBoard';
 import { PlayerBanner } from '../components/game/PlayerBanner';
 
-function actionsForCard(snap: SessionSnapshot, cardId: string): LabeledMove[] {
-  const all = [...snap.actions.recruit, ...snap.actions.develop, ...snap.actions.leadership];
-  return all.filter((lm) => 'cardId' in lm.move && lm.move.cardId === cardId);
+function isLegal(snap: SessionSnapshot, kind: 'recruit' | 'develop' | 'leadership', cardId: string): boolean {
+  return snap.actions[kind].some((lm) => 'cardId' in lm.move && lm.move.cardId === cardId);
+}
+
+function actionsForCard(snap: SessionSnapshot, cardId: string): CardActionOption[] {
+  const cardDef = cardOf(cardId);
+  return [
+    {
+      label: 'Recruter',
+      move: { t: 'recruit', cardId },
+      enabled: isLegal(snap, 'recruit', cardId),
+    },
+    {
+      label: 'Technologie',
+      move: { t: 'develop', cardId, people: cardDef!.people },
+      enabled: isLegal(snap, 'develop', cardId),
+    },
+    {
+      label: 'Diplomatie',
+      move: { t: 'leadership', cardId },
+      enabled: isLegal(snap, 'leadership', cardId),
+    },
+  ];
 }
 
 export default function GameScreen() {
