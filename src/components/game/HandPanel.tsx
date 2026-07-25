@@ -35,9 +35,9 @@ export function HandPanel({
       horizontal
       scrollEnabled={scroll}
       showsHorizontalScrollIndicator={false}
-      style={{ width: '100%' }}
+      style={{ width: '100%', flexGrow: 0, flexShrink: 0 }}
       contentContainerStyle={{
-        flexGrow: 1,
+        minWidth: '100%',
         flexDirection: 'row',
         justifyContent: scroll ? 'flex-start' : 'center',
         alignItems: 'center',

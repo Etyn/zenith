@@ -61,7 +61,7 @@ export default function GameScreen() {
             : "Tour de l'adversaire";
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#020617' }} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#020617' }}>
       <View style={{ flex: 1 }} className="bg-slate-950">
         <PlayerBanner view={snap.view} side="opponent" seed={seed} />
 
@@ -70,15 +70,19 @@ export default function GameScreen() {
           <Text className="text-slate-500 text-xs">Jetons : {snap.view.bonusReserveCount}</Text>
         </View>
 
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1, gap: 12, paddingVertical: 12, paddingHorizontal: 12 }}
-        >
-          <Text className="text-indigo-300">{banner}</Text>
-          <PlanetsBoard view={snap.view} />
-          <TechPanel view={snap.view} seed={seed} />
-        </ScrollView>
+        {/* Zone plateaux : remplit toute la hauteur restante, scroll si trop haut. */}
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ gap: 12, paddingVertical: 12, paddingHorizontal: 12 }}
+          >
+            <Text className="text-indigo-300">{banner}</Text>
+            <PlanetsBoard view={snap.view} />
+            <TechPanel view={snap.view} seed={seed} />
+          </ScrollView>
+        </View>
 
+        {/* Main + bandeau joueur : bande compacte collée en bas. */}
         <HandPanel
           view={snap.view}
           disabled={!canAct}
