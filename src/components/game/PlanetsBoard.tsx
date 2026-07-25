@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Text, View } from 'react-native';
 
-import { PLANETS, type Planet, type PlanetTrack, type PlayerView } from '../../engine';
+import { PLANETS, type Planet, type PlanetTrack, type PlayerIndex, type PlayerView } from '../../engine';
 import { PLANET_FR } from '../../game/planetColors';
+import { ColumnCards } from './ColumnCards';
 import { PlanetDisc } from './PlanetDisc';
 
 /** Hauteur totale de la colonne (zone où le disque peut se déplacer + marge). */
@@ -31,15 +32,27 @@ const LEVEL_DOT_POSITIONS = [1, 2, 3, 4, 5, 6, 7];
 const DISC_SLIDE_DURATION_MS = 280;
 
 /**
- * Colonne verticale d'une planète : barre + points de niveau, disque coloré mobile
- * (sa hauteur reflète `discPos` : haut = adversaire, bas = moi, centre = 4) et nom de la
- * planète.
+ * Colonne verticale d'une planète : agents adverses posés, barre + points de niveau, disque
+ * coloré mobile (sa hauteur reflète `discPos` : haut = adversaire, bas = moi, centre = 4),
+ * nom de la planète, puis agents du viewer posés.
  *
  * Le disque glisse (au lieu de sauter) d'une position à l'autre : chaque colonne possède
  * sa propre `Animated.Value`, ce qui exige un composant dédié (les hooks ne peuvent pas
  * être appelés dans une boucle `PLANETS.map`).
  */
-function PlanetColumn({ planet, track, flip }: { planet: Planet; track: PlanetTrack; flip: boolean }) {
+function PlanetColumn({
+  planet,
+  track,
+  flip,
+  opponentCardIds,
+  selfCardIds,
+}: {
+  planet: Planet;
+  track: PlanetTrack;
+  flip: boolean;
+  opponentCardIds: string[];
+  selfCardIds: string[];
+}) {
   const displayPos = flip ? 8 - track.discPos : track.discPos;
   const barTop = centerY(8);
   const barHeight = centerY(0) - centerY(8);
@@ -56,6 +69,9 @@ function PlanetColumn({ planet, track, flip }: { planet: Planet; track: PlanetTr
 
   return (
     <View className="flex-1 items-center">
+      <View style={{ width: '100%' }}>
+        <ColumnCards cardIds={opponentCardIds} orientation="opponent" />
+      </View>
       <View style={{ width: '100%', height: TRACK_HEIGHT, position: 'relative' }}>
         <View
           style={{
@@ -102,23 +118,37 @@ function PlanetColumn({ planet, track, flip }: { planet: Planet; track: PlanetTr
         </Animated.View>
       </View>
       <Text className="text-slate-300 text-[11px] mt-1">{PLANET_FR[planet]}</Text>
+      <View style={{ width: '100%' }}>
+        <ColumnCards cardIds={selfCardIds} orientation="self" />
+      </View>
     </View>
   );
 }
 
 /**
  * Plateau visuel des 5 planètes, une colonne verticale par planète (ordre `PLANETS`,
- * gauche → droite).
+ * gauche → droite). Chaque colonne affiche aussi les agents posés sur cette planète :
+ * ceux de l'adversaire au-dessus de la piste, les siens en dessous.
  */
 export function PlanetsBoard({ view }: { view: PlayerView }) {
   // Le viewer humain est toujours 0 en pratique, mais on reste correct si ce n'était pas le cas :
   // "bas = moi" doit toujours pointer vers le viewer, quel que soit son index côté moteur.
   const flip = view.viewer !== 0;
+  const opponentIndex: PlayerIndex = view.viewer === 0 ? 1 : 0;
+  const opponent = view.players[opponentIndex];
+  const self = view.players[view.viewer];
 
   return (
     <View className="flex-row justify-between bg-slate-900/40 rounded-2xl px-2 py-3">
       {PLANETS.map((planet) => (
-        <PlanetColumn key={planet} planet={planet} track={view.planets[planet]} flip={flip} />
+        <PlanetColumn
+          key={planet}
+          planet={planet}
+          track={view.planets[planet]}
+          flip={flip}
+          opponentCardIds={opponent.columns[planet]}
+          selfCardIds={self.columns[planet]}
+        />
       ))}
     </View>
   );
