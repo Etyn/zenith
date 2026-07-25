@@ -13,6 +13,7 @@ import { GameOverSheet } from '../components/game/GameOverSheet';
 import { HandPanel } from '../components/game/HandPanel';
 import { PlanetsBoard } from '../components/game/PlanetsBoard';
 import { PlayerBanner } from '../components/game/PlayerBanner';
+import { TechPanel } from '../components/game/TechPanel';
 
 function isLegal(snap: SessionSnapshot, kind: 'recruit' | 'develop' | 'leadership', cardId: string): boolean {
   return snap.actions[kind].some((lm) => 'cardId' in lm.move && lm.move.cardId === cardId);
@@ -73,6 +74,7 @@ export default function GameScreen() {
           <View className="gap-3 py-3">
             <Text className="text-indigo-300">{banner}</Text>
             <PlanetsBoard view={snap.view} />
+            <TechPanel view={snap.view} seed={seed} />
           </View>
         </ScrollView>
 
