@@ -41,13 +41,11 @@ export function PlayerBanner({ view, side, seed }: { view: PlayerView; side: 'se
             <Text className="text-amber-300">Crédits {player.credits}</Text>
             <Text className="text-slate-500"> · </Text>
             <Text className="text-cyan-300">Zénithium {player.zenithium}</Text>
+            {side === 'opponent' ? <Text className="text-white">{' · '}Main {player.handCount ?? 0}</Text> : null}
           </Text>
         </View>
         {leaderLabel ? <Text className="text-indigo-300 text-xs font-semibold">{leaderLabel}</Text> : null}
       </View>
-      {side === 'opponent' ? (
-        <Text className="text-slate-400 text-xs">Main : {player.handCount ?? 0}</Text>
-      ) : null}
       {capturedDots.length > 0 ? (
         <View className="flex-row flex-wrap gap-1 justify-center">{capturedDots}</View>
       ) : null}
