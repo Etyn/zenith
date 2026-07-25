@@ -9,9 +9,9 @@ import type { LabeledMove, SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
 import { BotActionSheet } from '../components/game/BotActionSheet';
 import { CardActionSheet } from '../components/game/CardActionSheet';
+import { CollapsibleHand } from '../components/game/CollapsibleHand';
 import { DecisionSheet } from '../components/game/DecisionSheet';
 import { GameOverSheet } from '../components/game/GameOverSheet';
-import { HandPanel } from '../components/game/HandPanel';
 import { PlanetsBoard } from '../components/game/PlanetsBoard';
 import { PlayerBanner } from '../components/game/PlayerBanner';
 
@@ -55,13 +55,14 @@ export default function GameScreen() {
           <View className="gap-3 py-3">
             <Text className="text-indigo-300">{banner}</Text>
             <PlanetsBoard view={snap.view} />
-            <HandPanel
-              view={snap.view}
-              disabled={!canAct}
-              onSelectCard={canAct ? setSelectedCard : undefined}
-            />
           </View>
         </ScrollView>
+
+        <CollapsibleHand
+          view={snap.view}
+          disabled={!canAct}
+          onSelectCard={canAct ? setSelectedCard : undefined}
+        />
 
         <PlayerBanner view={snap.view} side="self" />
 
