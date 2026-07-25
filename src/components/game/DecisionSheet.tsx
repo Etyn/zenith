@@ -21,14 +21,14 @@ export function DecisionSheet({
           <ScrollView className="max-h-96">
             {decision.options.map((opt, i) => {
               // Décision de planète : juste le nom de la planète, bouton à sa couleur.
-              const isPlanet = opt.move.t === 'decide';
+              const m = opt.move;
               return (
                 <ActionButton
-                  key={`${opt.move.t}-${i}`}
-                  label={isPlanet ? PLANET_FR[opt.move.planet] : opt.label}
+                  key={`${m.t}-${i}`}
+                  label={m.t === 'decide' ? PLANET_FR[m.planet] : opt.label}
                   tone="primary"
-                  bgColor={isPlanet ? PLANET_COLORS[opt.move.planet].hex : undefined}
-                  onPress={() => onChoose(opt.move)}
+                  bgColor={m.t === 'decide' ? PLANET_COLORS[m.planet].hex : undefined}
+                  onPress={() => onChoose(m)}
                 />
               );
             })}
