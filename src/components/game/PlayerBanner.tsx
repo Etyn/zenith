@@ -2,16 +2,20 @@ import { Text, View } from 'react-native';
 
 import { PLANETS, type PlayerIndex, type PlayerView } from '../../engine';
 import { PLANET_COLORS } from '../../game/planetColors';
+import { playerDotColor } from '../../game/playerColors';
 
 /**
  * Bandeau d'un joueur (haut = adversaire, bas = moi), réutilisable des deux côtés.
- * Affiche crédits, zénithium, technos, leader (si ce joueur l'est) et ses planètes capturées.
- * Côté adversaire, ajoute le nombre de cartes en main.
+ * Affiche crédits/zénithium (une ligne), le leader argent/or (poussé à droite sur
+ * cette même ligne) et les planètes capturées par ce joueur (rangée centrée en bas).
+ * Un point de légende indique la couleur (gris/blanc) de ce joueur pour le futur
+ * panneau technos. Côté adversaire, ajoute le nombre de cartes en main.
  */
-export function PlayerBanner({ view, side }: { view: PlayerView; side: 'self' | 'opponent' }) {
+export function PlayerBanner({ view, side, seed }: { view: PlayerView; side: 'self' | 'opponent'; seed: number }) {
   const opponentIndex: PlayerIndex = view.viewer === 0 ? 1 : 0;
   const playerIndex: PlayerIndex = side === 'self' ? view.viewer : opponentIndex;
   const player = view.players[playerIndex];
+  const dotColor = playerDotColor(seed, playerIndex);
   const leaderLabel =
     view.diplomacy.leader === playerIndex ? (view.diplomacy.side === 'gold' ? 'Leader or' : 'Leader argent') : null;
 
@@ -32,26 +36,26 @@ export function PlayerBanner({ view, side }: { view: PlayerView; side: 'self' | 
   });
 
   return (
-    <View className="flex-row justify-between items-center bg-slate-800 rounded-2xl p-3">
-      <View className="gap-0.5">
-        <Text className="text-amber-300 font-bold">Crédits : {player.credits}</Text>
-        <Text className="text-cyan-300 font-bold">Zénithium : {player.zenithium}</Text>
-        <Text className="text-slate-400 text-xs">
-          Techno {view.techSetup.animod}
-          {player.techMarkers.animod} · {view.techSetup.humain}
-          {player.techMarkers.humain} · {view.techSetup.robot}
-          {player.techMarkers.robot}
-        </Text>
-        {side === 'opponent' ? (
-          <Text className="text-slate-400 text-xs">Main : {player.handCount ?? 0}</Text>
-        ) : null}
-      </View>
-      <View className="items-end gap-1">
+    <View className="bg-slate-800 rounded-2xl p-3 gap-1.5">
+      <View className="flex-row justify-between items-center">
+        <View className="flex-row items-center gap-2">
+          <View
+            style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: dotColor }}
+          />
+          <Text className="font-bold">
+            <Text className="text-amber-300">💰 {player.credits}</Text>
+            <Text className="text-slate-500"> · </Text>
+            <Text className="text-cyan-300">🔷 {player.zenithium}</Text>
+          </Text>
+        </View>
         {leaderLabel ? <Text className="text-indigo-300 text-xs font-semibold">{leaderLabel}</Text> : null}
-        {capturedDots.length > 0 ? (
-          <View className="flex-row flex-wrap gap-1 justify-end">{capturedDots}</View>
-        ) : null}
       </View>
+      {side === 'opponent' ? (
+        <Text className="text-slate-400 text-xs">Main : {player.handCount ?? 0}</Text>
+      ) : null}
+      {capturedDots.length > 0 ? (
+        <View className="flex-row flex-wrap gap-1 justify-center">{capturedDots}</View>
+      ) : null}
     </View>
   );
 }

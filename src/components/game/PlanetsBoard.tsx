@@ -31,8 +31,8 @@ const DISC_SLIDE_DURATION_MS = 280;
 
 /**
  * Colonne verticale d'une planète : barre + points de niveau, disque coloré mobile
- * (sa hauteur reflète `discPos` : haut = adversaire, bas = moi, centre = 4), nom de la
- * planète, et un `◈` discret si un jeton bonus est posé dessus.
+ * (sa hauteur reflète `discPos` : haut = adversaire, bas = moi, centre = 4) et nom de la
+ * planète.
  *
  * Le disque glisse (au lieu de sauter) d'une position à l'autre : chaque colonne possède
  * sa propre `Animated.Value`, ce qui exige un composant dédié (les hooks ne peuvent pas
@@ -88,21 +88,6 @@ function PlanetColumn({ planet, track, flip }: { planet: Planet; track: PlanetTr
             />
           );
         })}
-
-        {track.bonusToken ? (
-          <Text
-            style={{
-              position: 'absolute',
-              left: '50%',
-              marginLeft: DOT_CENTER_SIZE,
-              top: centerY(4) - 9,
-              fontSize: 12,
-              color: 'rgba(226, 232, 240, 0.8)',
-            }}
-          >
-            ◈
-          </Text>
-        ) : null}
 
         <Animated.View
           style={{

@@ -42,7 +42,7 @@ export default function GameScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="flex-1 bg-slate-950">
-        <PlayerBanner view={snap.view} side="opponent" />
+        <PlayerBanner view={snap.view} side="opponent" seed={seed} />
 
         <View className="flex-row justify-center gap-4 py-1 bg-slate-900/60">
           <Text className="text-slate-500 text-xs">Pioche : {snap.view.deckCount}</Text>
@@ -62,7 +62,7 @@ export default function GameScreen() {
           onSelectCard={canAct ? setSelectedCard : undefined}
         />
 
-        <PlayerBanner view={snap.view} side="self" />
+        <PlayerBanner view={snap.view} side="self" seed={seed} />
 
         <CardActionSheet
           cardId={selectedCard}
