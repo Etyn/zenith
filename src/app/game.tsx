@@ -70,12 +70,14 @@ export default function GameScreen() {
           <Text className="text-slate-500 text-xs">Jetons : {snap.view.bonusReserveCount}</Text>
         </View>
 
-        <ScrollView className="flex-1 px-3">
-          <View className="gap-3 py-3">
-            <Text className="text-indigo-300">{banner}</Text>
-            <PlanetsBoard view={snap.view} />
-            <TechPanel view={snap.view} seed={seed} />
-          </View>
+        <ScrollView
+          style={{ flex: 1 }}
+          className="px-3"
+          contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, gap: 12 }}
+        >
+          <Text className="text-indigo-300">{banner}</Text>
+          <PlanetsBoard view={snap.view} />
+          <TechPanel view={snap.view} seed={seed} />
         </ScrollView>
 
         <HandPanel

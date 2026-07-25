@@ -43,9 +43,9 @@ export function PlayerBanner({ view, side, seed }: { view: PlayerView; side: 'se
             style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: dotColor }}
           />
           <Text className="font-bold">
-            <Text className="text-amber-300">💰 {player.credits}</Text>
+            <Text className="text-amber-300">Crédits {player.credits}</Text>
             <Text className="text-slate-500"> · </Text>
-            <Text className="text-cyan-300">🔷 {player.zenithium}</Text>
+            <Text className="text-cyan-300">Zénithium {player.zenithium}</Text>
           </Text>
         </View>
         {leaderLabel ? <Text className="text-indigo-300 text-xs font-semibold">{leaderLabel}</Text> : null}
