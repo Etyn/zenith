@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { cardOf, type Move } from '../engine';
 import { randomConfig } from '../game/config';
+import { PLANET_COLORS } from '../game/planetColors';
 import type { LabeledMove, SessionSnapshot } from '../game/session';
 import { useGame } from '../game/useGame';
 import { BotActionSheet } from '../components/game/BotActionSheet';
@@ -12,7 +13,7 @@ import { DecisionSheet } from '../components/game/DecisionSheet';
 import { GameOverSheet } from '../components/game/GameOverSheet';
 import { HandPanel } from '../components/game/HandPanel';
 import { PlanetsPanel } from '../components/game/PlanetsPanel';
-import { ResourcesPanel } from '../components/game/ResourcesPanel';
+import { PlayerBanner } from '../components/game/PlayerBanner';
 
 function actionsForCard(snap: SessionSnapshot, cardId: string): LabeledMove[] {
   const all = [...snap.actions.recruit, ...snap.actions.develop, ...snap.actions.leadership];
@@ -27,6 +28,7 @@ export default function GameScreen() {
 
   const canAct = snap.phase === 'human' && snap.decision === null;
   const options = selectedCard === null ? [] : actionsForCard(snap, selectedCard);
+  const selectedCardDef = selectedCard === null ? null : cardOf(selectedCard);
 
   const banner =
     snap.phase === 'over'
@@ -42,11 +44,16 @@ export default function GameScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="flex-1 bg-slate-950">
+        <PlayerBanner view={snap.view} side="opponent" />
+
+        <View className="flex-row justify-center gap-4 py-1 bg-slate-900/60">
+          <Text className="text-slate-500 text-xs">Pioche : {snap.view.deckCount}</Text>
+          <Text className="text-slate-500 text-xs">Jetons : {snap.view.bonusReserveCount}</Text>
+        </View>
+
         <ScrollView className="flex-1 px-3">
           <View className="gap-3 py-3">
-            <Text className="text-white text-xl font-bold">Zenith</Text>
             <Text className="text-indigo-300">{banner}</Text>
-            <ResourcesPanel view={snap.view} />
             <PlanetsPanel view={snap.view} />
             <HandPanel
               view={snap.view}
@@ -56,8 +63,11 @@ export default function GameScreen() {
           </View>
         </ScrollView>
 
+        <PlayerBanner view={snap.view} side="self" />
+
         <CardActionSheet
-          title={selectedCard === null ? null : (cardOf(selectedCard)?.name ?? selectedCard)}
+          title={selectedCard === null ? null : (selectedCardDef?.name ?? selectedCard)}
+          planetHex={selectedCardDef ? PLANET_COLORS[selectedCardDef.planet].hex : undefined}
           options={options}
           onChoose={(m: Move) => play(m)}
           onClose={() => setSelectedCard(null)}

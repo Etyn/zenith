@@ -1,15 +1,8 @@
 import { Pressable, Text, View } from 'react-native';
 
-import { cardOf, type People, type Planet, type PlayerView } from '../../engine';
+import { cardOf, type People, type PlayerView } from '../../engine';
 import { describeCardEffects } from '../../game/labels';
-
-const PLANET_FR: Record<Planet, string> = {
-  mercure: 'Mercure',
-  venus: 'Vénus',
-  terra: 'Terra',
-  mars: 'Mars',
-  jupiter: 'Jupiter',
-};
+import { PLANET_COLORS, PLANET_FR } from '../../game/planetColors';
 
 const PEOPLE_FR: Record<People, string> = {
   animod: 'Animods',
@@ -34,12 +27,14 @@ export function HandPanel({
       <Text className="text-slate-300 font-semibold mb-1">Ta main ({hand.length})</Text>
       {hand.map((id) => {
         const card = cardOf(id);
+        const bgTint = card ? PLANET_COLORS[card.planet].bgTint : undefined;
         return (
           <Pressable
             key={id}
             disabled={disabled || onSelectCard === undefined}
             onPress={() => onSelectCard?.(id)}
-            className={`bg-slate-800 rounded-xl px-3 py-2 ${disabled ? 'opacity-50' : ''}`}
+            style={bgTint ? { backgroundColor: bgTint } : undefined}
+            className={`rounded-xl px-3 py-2 ${bgTint ? '' : 'bg-slate-800'} ${disabled ? 'opacity-50' : ''}`}
           >
             <Text className="text-white font-medium">{card?.name ?? id}</Text>
             <Text className="text-slate-400 text-xs">

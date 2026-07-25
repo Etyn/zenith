@@ -7,11 +7,14 @@ import { Sheet } from '../ui/Sheet';
 
 export function CardActionSheet({
   title,
+  planetHex,
   options,
   onChoose,
   onClose,
 }: {
   title: string | null;
+  /** Couleur (hex) de la planète de la carte, pour un accent visuel discret dans l'entête. */
+  planetHex?: string;
   options: LabeledMove[];
   onChoose: (move: Move) => void;
   onClose: () => void;
@@ -20,7 +23,14 @@ export function CardActionSheet({
     <Sheet visible={title !== null} onClose={onClose}>
       {title !== null ? (
         <View>
-          <Text className="text-white text-lg font-bold mb-3">{title}</Text>
+          <View className="flex-row items-center gap-2 mb-3">
+            {planetHex ? (
+              <View
+                style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: planetHex }}
+              />
+            ) : null}
+            <Text className="text-white text-lg font-bold">{title}</Text>
+          </View>
           <ScrollView className="max-h-96">
             {options.length === 0 ? (
               <Text className="text-slate-400">Aucune action possible avec cette carte.</Text>
